@@ -35,7 +35,6 @@ uint16_t keycode=0;
 // Sizing the report for N-key rollover
 uint8_t current_report[2+MATRIX_ROWS*KEYMAP_COLS] = {0};
 uint8_t SLAVE_MATRIX_STATE[MATRIX_ROWS][MATRIX_COLS]={0};
-uint8_t corrected_report[7] = {0};
 uint8_t index_holder[5] = {0};
 
 // find the correct definition for a pressed key
@@ -158,57 +157,9 @@ uint8_t *check_key_state( uint16_t keymap[MATRIX_ROWS][KEYMAP_COLS] ){
 	}
 	current_report[0]=led_status;
 	current_report[1]=modifier;
-//	for(int i=0; i<10;i++){
-//	printf("\n%d",current_report[i]);
-//	}
 #endif
 	return current_report;
 
-}
-
-// resizing current report status for proper buffer size (8 Bit until i figure out how to increase the buffer)
-uint8_t *check_key_state_corrected( uint16_t keymap[MATRIX_ROWS][KEYMAP_COLS] ){
-
-	check_key_state(keymap);
-	// Adding modifiers and led status
-	memcpy(corrected_report,current_report,2);
-
-	// Adding keys to the report
-	for(uint8_t i=2; i< sizeof(corrected_report); i++){
-		if(corrected_report[i]== 0){
-			for(uint8_t j=2; j<2+MATRIX_ROWS*KEYMAP_COLS;j++)
-			{
-				// Checking if key is still pressed (to not add it twice)
-				for(uint8_t y=2; y< sizeof(corrected_report); y++){
-					if((current_report[j]==corrected_report[y])&&(current_report[j]!= 0)){
-						break;
-					}
-					// If the key has been recently pressed add it to the report
-					else{
-					corrected_report[i]=current_report[j];
-					index_holder[i-2]=j;
-							break;
-					}
-				}
-
-			}
-		}
-		// releasing keys from the report
-		if(corrected_report[i]!= 0){
-				if(current_report[index_holder[i-2]]!=corrected_report[i]){
-					corrected_report[i]=0;
-
-			}
-		}
-
-	}
-	// releasing keys from the report
-
-
-
-
-
-return corrected_report;
 }
 
 
