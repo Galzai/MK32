@@ -19,7 +19,7 @@ In order to define your keyboard:
 
 ## To Implement:
 - Layers
-- Split functionlity (with multiple pad selection).
+- Split functionlity (with multiple keypads).
 
 
 
