@@ -3,7 +3,7 @@ ESP32 implementation for an HID over GATT Keyboard (Bluetooth Low Energy).
 Any tips for improvments would be greatly appriciated.
 
 ### Many thanks to:
-- Benjamin Aigner for his work on implementing HID over BLE on the ESP32 :https://github.com/asterics/esp32_mouse_keyboard.
+- Benjamin Aigner for his work on implementing HID over BLE on the ESP32: https://github.com/asterics/esp32_mouse_keyboard.
 - Neil Kolban for his great contributions to the ESP32 SW (in particular the Bluetooth support): https://github.com/nkolban
 - QMK for their layouts and inspiration for this project: https://github.com/qmk/qmk_firmware/
 
