@@ -1,5 +1,5 @@
 # MK32 - Simple BLE keyboard for ESP32
-ESP32 implementation for an HID over GATT Keyboard (Bluetooth Low Energy).
+ESP32 implementation for an HID over GATT Keyboard (Bluetooth Low Energy).  
 Any tips for improvments would be greatly appriciated.
 
 ### Many thanks to:
