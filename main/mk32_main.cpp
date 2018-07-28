@@ -47,11 +47,6 @@ static config_data_t config;
 
 extern "C" void key_reports(void *pvParameters)
 {
-
-	// set up a variable to hold the keymaps
-	uint16_t layouts[LAYERS];
-	uint16_t layout[MATRIX_ROWS][KEYMAP_COLS];
-
 	// Arrays for holding the report at various stages
 	uint8_t past_report[2+MATRIX_ROWS*KEYMAP_COLS]={0};
 	uint8_t report_state[2+MATRIX_ROWS*KEYMAP_COLS];
@@ -64,7 +59,7 @@ extern "C" void key_reports(void *pvParameters)
 
 		while(HID_kbdmousejoystick_isConnected() != 0) {
 
-			memcpy(report_state, check_key_state(_QWERTY), sizeof report_state);
+			memcpy(report_state, check_key_state(*layouts[current_layout]), sizeof report_state);
 
 			//Do not send anything if queues are uninitialized
 			if(mouse_q == NULL || keyboard_q == NULL || joystick_q == NULL)
@@ -75,7 +70,7 @@ extern "C" void key_reports(void *pvParameters)
 				if(memcmp(past_report, report_state, sizeof past_report)!=0){
 					memcpy(past_report,report_state, sizeof past_report );
 					xQueueSend(keyboard_q,(void*)&report_state, (TickType_t) 0);
-					vTaskDelay(5);
+					vTaskDelay(3);
 
 				}
 			}

@@ -42,7 +42,7 @@ typedef struct joystick_data {
 #define KEYMAP_COLS MATRIX_COLS*KEYPADS  // use this for a split keyboard, multiply MATRIX_COLS by number of keypads.
 
 //#define KEYMAP_COLS MATRIX_COLS   // use this for a regular keyboard
-#define LAYERS 3 // number of layers defined
+#define LAYERS 2 // number of layers defined (besides default)
 
 /* Define pins, notice that:
  * GPIO6-11 are usually used for SPI flash

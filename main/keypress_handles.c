@@ -19,10 +19,13 @@
 
 #ifndef KEYPRESS_HANDLES_C
 #define KEYPRESS_HANDLES_C
-
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "esp_log.h"
 #include "keymap.c"
 #include "matrix.c"
 
+#define KEY_PRESS_TAG "KEY_PRESS"
 
 /*
  * Current state of the keymap,each cell will hold the location of the key in the key report,
@@ -84,6 +87,34 @@ uint16_t check_led_status( uint16_t key ){
 	return 0;
 }
 
+// adjust current layer
+void layer_adjust( uint16_t keycode ){
+
+	switch(keycode){
+		case DEFAULT:
+			current_layout=0;
+			break;
+
+		case LOWER:
+			if(current_layout==0){
+				current_layout=LAYERS;
+				break;
+			}
+			current_layout--;
+			break;
+
+		case RAISE:
+			if(current_layout==LAYERS){
+				current_layout=0;
+				break;
+			}
+			current_layout++;
+			break;
+	}
+	vTaskDelay(15);
+	ESP_LOGI(KEY_PRESS_TAG,"Layer modified!, Current layer: %d ",current_layout);
+}
+
 
 // checking the state of each key in the matrix
 uint8_t *check_key_state( uint16_t keymap[MATRIX_ROWS][KEYMAP_COLS] ){
@@ -96,15 +127,16 @@ uint8_t *check_key_state( uint16_t keymap[MATRIX_ROWS][KEYMAP_COLS] ){
 			led_status=check_led_status(keycode);
 
 			if(MATRIX_STATE[row][col]==1){
+
+				if(keycode>0xFF){
+					layer_adjust(keycode);
+					continue;
+				}
+
 				if(current_report[report_index]==0){
 					modifier|=check_modifier(keycode);
 					current_report[report_index]=keycode;
-
-
-
-
 				}
-
 			}
 			if(MATRIX_STATE[row][col]==0){
 				if(current_report[report_index]!=0){
@@ -131,16 +163,19 @@ uint8_t *check_key_state( uint16_t keymap[MATRIX_ROWS][KEYMAP_COLS] ){
 			led_status=check_led_status(keycode);
 
 			if(SLAVE_MATRIX_STATE[row][col-MATRIX_COLS]==1){
+
+				if(keycode>0xFF){
+					printf("\nkeycode:%d",keycode);
+					layer_adjust(keycode);
+					continue;
+				}
+
 				if(current_report[report_index]==0){
 					modifier|=check_modifier(keycode);
 					current_report[report_index]=keycode;
-
-
-
-
 				}
-
 			}
+
 			if(SLAVE_MATRIX_STATE[row][col-MATRIX_COLS]==0){
 				if(current_report[report_index]!=0){
 					if(led_status!=0){
@@ -149,8 +184,6 @@ uint8_t *check_key_state( uint16_t keymap[MATRIX_ROWS][KEYMAP_COLS] ){
 						modifier&=check_modifier(keycode);
 						current_report[KEY_STATE[row][col]]=0;
 						current_report[report_index]=0;
-
-
 				}
 			}
 		}

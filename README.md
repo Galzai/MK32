@@ -9,17 +9,19 @@ Any tips for improvments would be greatly appriciated.
 
 
 ## Defining your keyboard
-
 In order to wire your desired keyboard (if handwired) I reccomend checking out:
 https://geekhack.org/index.php?topic=87689.0
 
 In order to define your keyboard:
 - Modify keboard_config.h for your desired keyboard size, features, gpio pins etc.
-- Modify keymap.c for your desired layouts (multiple layers in progress).
+- Modify keymap.c for your desired layouts.
 
 ## To Implement:
-- Layers
 - Split functionlity (with multiple keypads).
-
+- macros.
+- battery level indication.
+- connection switching.
+- potentiometer (volume etc).
+- modify keymap via webserver.
 
 
