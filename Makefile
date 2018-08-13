@@ -3,7 +3,7 @@
 # project subdirectory.
 #
 
-PROJECT_NAME := hidd_demos
+PROJECT_NAME := MK32
 
 COMPONENT_ADD_INCLUDEDIRS := components/include	\
 								

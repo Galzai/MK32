@@ -25,6 +25,14 @@
 #include "driver/gpio.h"
 #include "keyboard_config.h"
 
+
+/* Define pins, notice that:
+ * GPIO6-11 are usually used for SPI flash
+ * GPIO34-39 can only be set as input mode and do not have software pullup or pulldown functions.
+ */
+const gpio_num_t MATRIX_ROWS_PINS[]={GPIO_NUM_0,GPIO_NUM_4,GPIO_NUM_5,GPIO_NUM_12};
+const gpio_num_t MATRIX_COLS_PINS[]={GPIO_NUM_13,GPIO_NUM_14,GPIO_NUM_15,GPIO_NUM_16,GPIO_NUM_17,GPIO_NUM_18};
+
 // matrix state
  uint8_t MATRIX_STATE[MATRIX_ROWS][MATRIX_COLS]={0};
 

@@ -13,15 +13,20 @@ In order to wire your desired keyboard (if handwired) I reccomend checking out:
 https://geekhack.org/index.php?topic=87689.0
 
 In order to define your keyboard:
-- Modify keboard_config.h for your desired keyboard size, features, gpio pins etc.
+- Modify keboard_config.h for your desired keyboard size, features, etc.
+- modify matrix.c for your gpio layout
 - Modify keymap.c for your desired layouts.
 
+### For spli keyboards:
+- When uploading code to main board, make sure MASTER and SPLIT_MASTER are defined in keyboard_config.h.
+- When uploading code to slave board, make sure SLAVE is defined in keyboard_config.h, currently you will also need to update the correct Mac adress of your main board in espnow_send.c.
+
 ## To Implement:
-- Split functionlity (with multiple keypads).
+- more than 2 pads (currently supports 2 pads).
 - macros.
 - battery level indication.
 - connection switching.
 - potentiometer (volume etc).
 - modify keymap via webserver.
-
+- security (?).
 

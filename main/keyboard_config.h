@@ -31,8 +31,8 @@ typedef struct joystick_data {
 } joystick_data_t;
 
 //Defines for split communication, to be moved to header file later.
-#define MASTER  // undefine if you are not flashing the main controller
-#define SPLIT_MASTER	 // undefine if keyboard is not split and master
+//#define MASTER  // undefine if you are not flashing the main controller
+//#define SPLIT_MASTER	 // undefine if keyboard is not split and master
 #define SLAVE	 // undefine if keyboard is master
 
 //Define matrix
@@ -44,12 +44,6 @@ typedef struct joystick_data {
 //#define KEYMAP_COLS MATRIX_COLS   // use this for a regular keyboard
 #define LAYERS 2 // number of layers defined (besides default)
 
-/* Define pins, notice that:
- * GPIO6-11 are usually used for SPI flash
- * GPIO34-39 can only be set as input mode and do not have software pullup or pulldown functions.
- */
-const gpio_num_t MATRIX_ROWS_PINS[]={GPIO_NUM_0,GPIO_NUM_4,GPIO_NUM_5,GPIO_NUM_12};
-const gpio_num_t MATRIX_COLS_PINS[]={GPIO_NUM_13,GPIO_NUM_14,GPIO_NUM_15,GPIO_NUM_16,GPIO_NUM_17,GPIO_NUM_18};
 
 // Select diode direction
 #define COL2ROW

@@ -639,11 +639,11 @@ uint8_t HID_kbdmousejoystick_isConnected(void)
  * @note After init, just use the queues! */
 esp_err_t HID_kbdmousejoystick_init(uint8_t enableKeyboard, uint8_t enableMouse, uint8_t enableJoystick,  char * name)
 {
-	uint8_t a[2+MATRIX_ROWS*KEYMAP_COLS];
+	uint8_t array_sample[2+MATRIX_ROWS*KEYMAP_COLS];
 	//init FreeRTOS queues
 	//initialise queues, even if they might not be used.
 	mouse_q = xQueueCreate(32,sizeof(mouse_command_t));
-	keyboard_q = xQueueCreate(100,sizeof(a));
+	keyboard_q = xQueueCreate(32,sizeof(array_sample));
 	joystick_q = xQueueCreate(32,sizeof(joystick_command_t));
 	ESP_LOGI(LOG_TAG,"Queues initialized");
 	strncpy(btname, name, sizeof(btname)-1);

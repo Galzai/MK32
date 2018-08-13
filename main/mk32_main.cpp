@@ -31,6 +31,8 @@
 #include "nvs_flash.h"
 #include "esp_bt.h"
 #include "driver/gpio.h"
+#include "espnow_recieve.h"
+#include "espnow_send.h"
 
 //HID Ble functions
 #include "HID_kbdmousejoystick.h"
@@ -40,10 +42,13 @@
 #include "keypress_handles.c"
 #include "keyboard_config.h"
 
-
+//ESP-NOW functions
+#include "espnow_recieve.h"
+#include "espnow_send.h"
 #define KEY_REPORT_TAG "KEY_REPORT"
 
 static config_data_t config;
+QueueHandle_t espnow_recieve_q;
 
 extern "C" void key_reports(void *pvParameters)
 {
@@ -82,6 +87,45 @@ extern "C" void key_reports(void *pvParameters)
 
 }
 
+//Function for sending out the modified matrix
+extern "C" void slave_scan(void *pvParameters){
+
+	uint8_t PAST_MATRIX[MATRIX_ROWS][MATRIX_COLS]={0};
+
+while(1){
+	scan_matrix();
+
+
+	if(memcmp(&PAST_MATRIX, &MATRIX_STATE, sizeof MATRIX_STATE)!=0){
+		printf("Slave matrix state\n");
+//		for(int i=0 ;i<MATRIX_ROWS;i++){
+//			for(int j=0 ;j<MATRIX_COLS;j++){
+//			printf(" %d ", PAST_MATRIX[i][j]);
+//			}
+//			printf("\n");
+//		}
+		printf("\n****************\n");
+		memcpy(&PAST_MATRIX, &MATRIX_STATE, sizeof MATRIX_STATE );
+
+		xQueueSend(espnow_send_q,(void*)&MATRIX_STATE, (TickType_t) 0);
+		vTaskDelay(1);
+	 }
+	}
+}
+
+//Update the matrix state via reports recieved by espnow
+extern "C" void espnow_update_matrix(void *pvParameters){
+
+
+	uint8_t CURRENT_MATRIX[MATRIX_ROWS][MATRIX_COLS]={0};
+	while(1){
+		if(xQueueReceive(espnow_recieve_q,&CURRENT_MATRIX,10000))
+		{
+			memcpy(&SLAVE_MATRIX_STATE, &CURRENT_MATRIX, sizeof CURRENT_MATRIX );
+		}
+	}
+}
+
 
 extern "C" void app_main()
 {
@@ -110,7 +154,23 @@ extern "C" void app_main()
 		strcpy(config.bt_device_name, GATTS_TAG);
 	} else ESP_LOGI("MAIN","bt device name is: %s",config.bt_device_name);
 
+//If the device is a slave initialize sending reports to master
+#ifdef SLAVE
+	xTaskCreatePinnedToCore(slave_scan, "Scan changes for slave", 4096, NULL, configMAX_PRIORITIES, NULL,1);
+	espnow_send();
+#endif
 
+
+//If the device is a master for split board initialize receiving reports from slave
+#ifdef SPLIT_MASTER
+
+	uint8_t array_sample[2+MATRIX_ROWS*MATRIX_COLS];
+	espnow_recieve_q = xQueueCreate(32,sizeof(array_sample));
+	espnow_recieve();
+	xTaskCreatePinnedToCore(espnow_update_matrix, "ESP-NOW slave matrix state", 4096, NULL, configMAX_PRIORITIES, NULL,1);
+#endif
+
+#ifdef MASTER
 	//activate keyboard BT stack
 	HID_kbdmousejoystick_init(1,0,0,config.bt_device_name);
 	ESP_LOGI("HIDD","MAIN finished...");
@@ -120,7 +180,7 @@ extern "C" void app_main()
 	// Start the keyboard Tasks
 	// Create the key scanning task on core 1 (otherwise it will crash)
 	xTaskCreatePinnedToCore(key_reports, "key reports", 4096, NULL, configMAX_PRIORITIES, NULL,1);
-
+#endif
 
 
 }
