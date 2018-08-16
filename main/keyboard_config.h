@@ -31,9 +31,9 @@ typedef struct joystick_data {
 } joystick_data_t;
 
 //Defines for split communication, to be moved to header file later.
-//#define MASTER  // undefine if you are not flashing the main controller
+#define MASTER  // undefine if you are not flashing the main controller
 //#define SPLIT_MASTER	 // undefine if keyboard is not split and master
-#define SLAVE	 // undefine if keyboard is master
+//#define SLAVE	 // undefine if keyboard is master
 
 //Define matrix
 #define KEYPADS 2 // intended in order to create a Multiple keypad split boards

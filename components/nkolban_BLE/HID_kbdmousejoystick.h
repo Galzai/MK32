@@ -52,6 +52,11 @@ extern QueueHandle_t keyboard_q;
  * @see joystick_command_t */
 extern QueueHandle_t joystick_q;
 
+/** @brief Queue for sending media reports
+ * @see media_command_t */
+extern QueueHandle_t media_q;
+
+
 /** @brief Main init function to start HID interface
  * 
  * @param enableKeyboard If != 0, keyboard will be active
@@ -60,7 +65,7 @@ extern QueueHandle_t joystick_q;
  * @param testmode If set to 0, HID data is only sent if something is put
  * to the queue. If set != 0, keyboard/mouse/joystick will send test data.
  * @note After init, just use the queues! */
-esp_err_t HID_kbdmousejoystick_init(uint8_t enableKeyboard, uint8_t enableMouse, uint8_t enableJoystick, char * name);
+esp_err_t HID_kbdmousejoystick_init(uint8_t enableKeyboard,uint8_t enableMedia, uint8_t enableMouse, uint8_t enableJoystick, char * name);
 
 /** @brief Activate pairing, disconnect from paired device
  * */

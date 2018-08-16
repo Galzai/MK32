@@ -52,6 +52,8 @@ QueueHandle_t joystick_q;
 QueueHandle_t keyboard_q;
 /// @brief Input queue for sending mouse reports
 QueueHandle_t mouse_q;
+/// @brief Input queue for sending media reports
+QueueHandle_t media_q;
 
 /// @brief Is the BLE currently connected?
 uint8_t isConnected = 0;
@@ -62,6 +64,8 @@ uint8_t activateKeyboard = 0;
 uint8_t activateMouse = 0;
 ///@brief Is Joystick interface active?
 uint8_t activateJoystick = 0;
+///@brief Is Media interface active?
+uint8_t activateMedia = 0;
 
 ///@brief The BT Devicename for advertising
 char btname[40];
@@ -77,6 +81,8 @@ BLECharacteristic* inputKbd;
 BLECharacteristic* inputMouse;
 //characteristic for sending mouse reports to the host
 BLECharacteristic* inputJoystick;
+//characteristic for sending mouse reports to the host
+BLECharacteristic* inputMedia;
 //characteristic for receiving keyboard reports from the host (status LEDs)
 BLECharacteristic* outputKbd;
 
@@ -121,8 +127,33 @@ const uint8_t reportMapKeyboard[] = {
 		USAGE_MINIMUM(1),   0x00,       //   Num Lock
 		USAGE_MAXIMUM(1),   104,       //   Kana
 		INPUT(1),           0x00,
+        USAGE_PAGE(1),      0x0C,       //   Consumer
+        USAGE(1),           0x00,
+        COLLECTION(1),      0x02,       // Logical
+            REPORT_ID(1),       0x01,
+            USAGE_MINIMUM(1),   0x00,
+            USAGE_MAXIMUM(1),   0xFF,
+            REPORT_COUNT(1),    0x01,       //   1 byte
+            REPORT_SIZE(1),     0x08,
+            FEATURE(1),         0x02,       //   Data,Var,Abs,No Wrap,Linear,Preferred State,No Null Position,Non-volatile
+			END_COLLECTION(0),
 		END_COLLECTION(0)
+//
+//		USAGE_PAGE(1),      0x0C,
+//		USAGE(1),           0x01,
+//		COLLECTION(1),      0x01,
+//			REPORT_ID(1),       0x03,
+//			REPORT_SIZE(1), 0x10,
+//			REPORT_COUNT(1), 0x01,
+//			LOGICAL_MINIMUM(1), 1,
+//			LOGICAL_MAXIMUM(2), 0xFF, 0x03,
+//			USAGE_MINIMUM(1), 1,
+//			USAGE_MAXIMUM(2), 0xFF, 0x03,
+//			INPUT(1), 0x60,
+//		END_COLLECTION(0),
+
 };
+
 
 /** @brief Constant report map for mouse
  * 
@@ -218,6 +249,45 @@ const uint8_t reportMapJoystick[] = {
 		END_COLLECTION(0)
 };
 
+/** @brief Constant report map for joystick
+ *
+ * This report map will be used on init do build a report map according
+ * to init functions (with activated interfaces).
+ *
+ * @note Report id is on all reports in offset 7.
+ * */
+static const uint8_t reportMapMedia[] = {
+
+
+		USAGE_PAGE(1), 0x0c,                    // USAGE_PAGE (Consumer Devices)
+		USAGE(1), 0x01,                    // USAGE (Consumer Control)
+		COLLECTION(1), 0x01,                    // COLLECTION (Application)
+		REPORT_ID(1), 0x04,                    // REPORT_ID (2)
+		LOGICAL_MINIMUM(1), 0x00,                    //   LOGICAL_MINIMUM (0)
+		LOGICAL_MAXIMUM(1), 0x01,                    //   LOGICAL_MAXIMUM (1)
+		REPORT_SIZE(1), 0x01,                    //   REPORT_SIZE (1)
+	                                 // bit 0-3
+		REPORT_COUNT(1), 0x04,                    //   REPORT_COUNT (4)
+		USAGE_MINIMUM(1), 0xb5,                    //   USAGE_MINIMUM (Scan Next Track)
+		USAGE_MAXIMUM(1), 0xb7,                    //   USAGE_MAXIMUM (Stop)
+		USAGE(1), 0xcd,                    //   USAGE (Play/Pause)
+		INPUT(1), 0x02,                    //   INPUT (Data,Var,Abs)
+	                                 // bit 4
+		REPORT_COUNT(1), 0x01,                    //   REPORT_COUNT (1)
+		USAGE(1), 0xe2,                    //   USAGE (Mute)
+		INPUT(1), 0x06,                    //   INPUT (Data,Var,Rel)
+	                                 // bit 5,6
+		REPORT_COUNT(1), 0x02,                    //   REPORT_COUNT (2)
+		USAGE(1), 0xe9,                    //   USAGE (Volume Up)
+		USAGE(1), 0xea,                    //   USAGE (Volume Down)
+		INPUT(1), 0x02,                    //   INPUT (Data,Var,Abs)
+	                                 // bit 7 - padding
+		REPORT_COUNT(1), 0x01,                    //   REPORT_COUNT (1)
+		INPUT(1), 0x03,                    //   INPUT (Cnst,Var,Abs)
+		END_COLLECTION(0)                           // END_COLLECTION
+                          // End Collection
+};
+
 class kbdOutputCB : public BLECharacteristicCallbacks {
 	void onWrite(BLECharacteristic* me){
 		uint8_t* value = (uint8_t*)(me->getValue().c_str());
@@ -283,6 +353,26 @@ class JoystickTask : public Task {
 };
 JoystickTask *joystick; //instance for this task
 
+class MediaTask : public Task {
+	void run(void*){
+
+		uint8_t report[1]={0};
+		while(1)
+		{
+			//wait for a new media control command
+			if(xQueueReceive(media_q,&report,10000))
+			{
+				ESP_LOGI(LOG_TAG,"Media received");
+
+
+				inputMedia->setValue(report,sizeof(report));
+				inputMedia->notify();
+			}
+		}
+	}
+};
+MediaTask *media; //instance for this task
+
 class CBs: public BLEServerCallbacks {
 	void onConnect(BLEServer* pServer){
 		BLE2902* desc;
@@ -310,6 +400,13 @@ class CBs: public BLEServerCallbacks {
 			desc = (BLE2902*) inputJoystick->getDescriptorByUUID(BLEUUID((uint16_t)0x2902));
 			desc->setNotifications(true);
 			joystick->start();
+		}
+
+		if(activateMedia)
+		{
+			desc = (BLE2902*) inputMedia->getDescriptorByUUID(BLEUUID((uint16_t)0x2902));
+			desc->setNotifications(true);
+			media-> start();
 		}
 		ESP_LOGI(LOG_TAG,"Client connected ! ");
 	}
@@ -342,6 +439,14 @@ class CBs: public BLEServerCallbacks {
 			desc->setNotifications(false);
 			joystick->stop();
 		}
+
+		if(activateMedia)
+		{
+			desc = (BLE2902*) inputMedia->getDescriptorByUUID(BLEUUID((uint16_t)0x2902));
+			desc->setNotifications(false);
+			media->stop();
+		}
+
 
 		//restart advertising
 		BLEAdvertising *pAdvertising = pServer->getAdvertising();
@@ -430,6 +535,11 @@ class BLE_HOG: public Task {
 			joystick = new JoystickTask();
 			joystick->setStackSize(8096);
 		}
+		if(activateMedia)
+		{
+			media = new MediaTask();
+			media->setStackSize(8096);
+		}
 
 		BLEDevice::init(btname);
 		pServer = BLEDevice::createServer();
@@ -446,7 +556,7 @@ class BLE_HOG: public Task {
 		 * Set manufacturer name
 		 * https://www.bluetooth.com/specifications/gatt/viewer?attributeXmlFile=org.bluetooth.characteristic.manufacturer_name_string.xml
 		 */
-		std::string name = "AsTeRICS Foundation";
+		std::string name = "Galzai";
 		hid->manufacturer()->setValue(name);
 
 		/*
@@ -475,6 +585,7 @@ class BLE_HOG: public Task {
 		if(activateKeyboard) reportMapSize += sizeof(reportMapKeyboard);
 		if(activateMouse) reportMapSize += sizeof(reportMapMouse);
 		if(activateJoystick) reportMapSize += sizeof(reportMapJoystick);
+		if(activateMedia) reportMapSize += sizeof(reportMapMedia);
 
 		uint8_t *reportMap = (uint8_t *)malloc(reportMapSize);
 		uint8_t *reportMapCurrent = reportMap;
@@ -528,6 +639,20 @@ class BLE_HOG: public Task {
 				inputMouse = hid->inputReport(reportID);
 
 				ESP_LOGI(LOG_TAG,"Mouse added @report ID %d, current report Map:", reportID);
+				ESP_LOG_BUFFER_HEXDUMP(LOG_TAG,reportMap,(uint16_t)(reportMapCurrent-reportMap),ESP_LOG_INFO);
+
+				reportID++; //increase report id for next interface
+			}
+			if(activateMedia)
+			{
+				memcpy(reportMapCurrent,reportMapMedia,sizeof(reportMapMedia));
+				reportMapCurrent[7] = reportID;
+				reportMapCurrent += sizeof(reportMapMedia);
+
+				//create in characteristics/reports for mouse
+				inputMedia = hid->inputReport(reportID);
+
+				ESP_LOGI(LOG_TAG,"Media added @report ID %d, current report Map:", reportID);
 				ESP_LOG_BUFFER_HEXDUMP(LOG_TAG,reportMap,(uint16_t)(reportMapCurrent-reportMap),ESP_LOG_INFO);
 
 				reportID++; //increase report id for next interface
@@ -637,7 +762,7 @@ uint8_t HID_kbdmousejoystick_isConnected(void)
 /** @brief Main init function to start HID interface (C interface)
  *
  * @note After init, just use the queues! */
-esp_err_t HID_kbdmousejoystick_init(uint8_t enableKeyboard, uint8_t enableMouse, uint8_t enableJoystick,  char * name)
+esp_err_t HID_kbdmousejoystick_init(uint8_t enableKeyboard,uint8_t enableMedia, uint8_t enableMouse, uint8_t enableJoystick,  char * name)
 {
 	uint8_t array_sample[2+MATRIX_ROWS*KEYMAP_COLS];
 	//init FreeRTOS queues
@@ -645,13 +770,17 @@ esp_err_t HID_kbdmousejoystick_init(uint8_t enableKeyboard, uint8_t enableMouse,
 	mouse_q = xQueueCreate(32,sizeof(mouse_command_t));
 	keyboard_q = xQueueCreate(32,sizeof(array_sample));
 	joystick_q = xQueueCreate(32,sizeof(joystick_command_t));
+	media_q = xQueueCreate(32,1);
+
 	ESP_LOGI(LOG_TAG,"Queues initialized");
 	strncpy(btname, name, sizeof(btname)-1);
 
 	//save enabled interfaces
 	activateMouse = enableMouse;
+	activateMedia = enableMedia;
 	activateKeyboard = enableKeyboard;
 	activateJoystick = enableJoystick;
+
 
 	ESP_LOGI(LOG_TAG,"enabled interfaces");
 

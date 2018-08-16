@@ -31,8 +31,7 @@
 #include "nvs_flash.h"
 #include "esp_bt.h"
 #include "driver/gpio.h"
-#include "espnow_recieve.h"
-#include "espnow_send.h"
+
 
 //HID Ble functions
 #include "HID_kbdmousejoystick.h"
@@ -76,6 +75,7 @@ extern "C" void key_reports(void *pvParameters)
 					memcpy(past_report,report_state, sizeof past_report );
 					xQueueSend(keyboard_q,(void*)&report_state, (TickType_t) 0);
 					vTaskDelay(3);
+;
 
 				}
 			}
@@ -94,17 +94,7 @@ extern "C" void slave_scan(void *pvParameters){
 
 while(1){
 	scan_matrix();
-
-
 	if(memcmp(&PAST_MATRIX, &MATRIX_STATE, sizeof MATRIX_STATE)!=0){
-		printf("Slave matrix state\n");
-//		for(int i=0 ;i<MATRIX_ROWS;i++){
-//			for(int j=0 ;j<MATRIX_COLS;j++){
-//			printf(" %d ", PAST_MATRIX[i][j]);
-//			}
-//			printf("\n");
-//		}
-		printf("\n****************\n");
 		memcpy(&PAST_MATRIX, &MATRIX_STATE, sizeof MATRIX_STATE );
 
 		xQueueSend(espnow_send_q,(void*)&MATRIX_STATE, (TickType_t) 0);
@@ -172,7 +162,7 @@ extern "C" void app_main()
 
 #ifdef MASTER
 	//activate keyboard BT stack
-	HID_kbdmousejoystick_init(1,0,0,config.bt_device_name);
+	HID_kbdmousejoystick_init(1,1,0,0,config.bt_device_name);
 	ESP_LOGI("HIDD","MAIN finished...");
 
 	esp_log_level_set("*", ESP_LOG_INFO);
