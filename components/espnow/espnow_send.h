@@ -5,8 +5,8 @@
  *      Author: gal
  */
 
-#ifndef ESPNOW_RECIEVE_H_
-#define ESPNOW_RECIEVE_H_
+#ifndef ESPNOW_SEND_H_
+#define ESPNOW_SEND_H_
 
 #include <freertos/queue.h>
 
@@ -14,12 +14,13 @@
 extern "C" {
 #endif
 
-//Queue for recieving report from slave
-extern QueueHandle_t espnow_recieve_q;
+//Queue for sending report from matrix scan
+extern QueueHandle_t espnow_send_q;
 
+/** @Setup the function for sending data via espnow
+ * */
+void espnow_send(void);
 
-
-void espnow_recieve(void);
 
 #ifdef __cplusplus
 }

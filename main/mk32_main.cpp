@@ -40,10 +40,12 @@
 #include "matrix.c"
 #include "keypress_handles.c"
 #include "keyboard_config.h"
+#include "r_encoder.h"
 
 //ESP-NOW functions
 #include "espnow_recieve.h"
 #include "espnow_send.h"
+
 #define KEY_REPORT_TAG "KEY_REPORT"
 
 static config_data_t config;
@@ -87,6 +89,22 @@ extern "C" void key_reports(void *pvParameters)
 
 }
 
+extern "C" void media_report(void *pvParameters){
+
+	uint8_t encoder_state[1]={0};
+	uint8_t past_encoder_state[1]={0};
+	while(1){
+#ifdef R_ENCODER
+		encoder_state[0]=r_encoder_state();
+		if(encoder_state[0]!=past_encoder_state[0]){
+		xQueueSend(media_q,(void*)&encoder_state, (TickType_t) 0);
+		past_encoder_state[0] = encoder_state[0];
+		}
+
+	}
+}
+#endif
+
 //Function for sending out the modified matrix
 extern "C" void slave_scan(void *pvParameters){
 
@@ -98,7 +116,6 @@ while(1){
 		memcpy(&PAST_MATRIX, &MATRIX_STATE, sizeof MATRIX_STATE );
 
 		xQueueSend(espnow_send_q,(void*)&MATRIX_STATE, (TickType_t) 0);
-		vTaskDelay(1);
 	 }
 	}
 }
@@ -144,6 +161,7 @@ extern "C" void app_main()
 		strcpy(config.bt_device_name, GATTS_TAG);
 	} else ESP_LOGI("MAIN","bt device name is: %s",config.bt_device_name);
 
+	esp_log_level_set("*", ESP_LOG_INFO);
 //If the device is a slave initialize sending reports to master
 #ifdef SLAVE
 	xTaskCreatePinnedToCore(slave_scan, "Scan changes for slave", 4096, NULL, configMAX_PRIORITIES, NULL,1);
@@ -164,13 +182,17 @@ extern "C" void app_main()
 	//activate keyboard BT stack
 	HID_kbdmousejoystick_init(1,1,0,0,config.bt_device_name);
 	ESP_LOGI("HIDD","MAIN finished...");
-
-	esp_log_level_set("*", ESP_LOG_INFO);
+//activate encoder functions
+#ifdef	R_ENCODER
+	r_encoder_setup();
+	xTaskCreatePinnedToCore(media_report, "media report", 4096, NULL, configMAX_PRIORITIES, NULL,1);
+	#endif
 
 	// Start the keyboard Tasks
 	// Create the key scanning task on core 1 (otherwise it will crash)
 	xTaskCreatePinnedToCore(key_reports, "key reports", 4096, NULL, configMAX_PRIORITIES, NULL,1);
 #endif
+
 
 
 }

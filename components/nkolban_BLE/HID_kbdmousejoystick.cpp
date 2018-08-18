@@ -94,63 +94,40 @@ BLECharacteristic* outputKbd;
  * @note Report id is on all reports in offset 7.
  * */
 const uint8_t reportMapKeyboard[] = {
-		USAGE_PAGE(1),      0x01,       // Generic Desktop Ctrls
-		USAGE(1),           0x06,       // Keyboard
-		COLLECTION(1),      0x01,       // Application
-		REPORT_ID(1),       0x01,
-		//report equal to usb_bridge (https://github.com/benjaminaigner/usb_bridge
-		REPORT_SIZE(1),     0x01,
-		REPORT_COUNT(1),    0x08,
-		USAGE_PAGE(1),      0x07,       //   Kbrd/Keypad
-		USAGE_MINIMUM(1),   0xE0,
-		USAGE_MAXIMUM(1),   0xE7,
-		LOGICAL_MINIMUM(1), 0x00,
-		LOGICAL_MAXIMUM(1), 0x01,
-		INPUT(1),           0x02,       //   Data,Var,Abs,No Wrap,Linear,Preferred State,No Null Position
-		REPORT_COUNT(1),    0x01,
-		REPORT_SIZE(1),     0x08,
-		INPUT(1),           0x03,
-		REPORT_COUNT(1),    0x05,
-		REPORT_SIZE(1),     0x01,
-		USAGE_PAGE(1),      0x08,       //   LEDs
-		USAGE_MINIMUM(1),   0x01,       //   Num Lock
-		USAGE_MAXIMUM(1),   0x05,       //   Kana
-		OUTPUT(1),          0x02,       //   Data,Var,Abs,No Wrap,Linear,Preferred State,No Null Position,Non-volatile
-		REPORT_COUNT(1),    0x01,       //   3 bits (Padding)
-		REPORT_SIZE(1),     0x03,
-		OUTPUT(1),          0x03,
-		REPORT_COUNT(1),    MATRIX_ROWS*KEYMAP_COLS,       //   N (Keys)
-		REPORT_SIZE(1),     0x08,
-		LOGICAL_MINIMUM(1), 0x00,
-		LOGICAL_MAXIMUM(1), 104,       //   255 keys
-		USAGE_PAGE(1),      0x07,       //   Kbrd/Keypad
-		USAGE_MINIMUM(1),   0x00,       //   Num Lock
-		USAGE_MAXIMUM(1),   104,       //   Kana
-		INPUT(1),           0x00,
-        USAGE_PAGE(1),      0x0C,       //   Consumer
-        USAGE(1),           0x00,
-        COLLECTION(1),      0x02,       // Logical
-            REPORT_ID(1),       0x01,
-            USAGE_MINIMUM(1),   0x00,
-            USAGE_MAXIMUM(1),   0xFF,
-            REPORT_COUNT(1),    0x01,       //   1 byte
-            REPORT_SIZE(1),     0x08,
-            FEATURE(1),         0x02,       //   Data,Var,Abs,No Wrap,Linear,Preferred State,No Null Position,Non-volatile
-			END_COLLECTION(0),
-		END_COLLECTION(0)
-//
-//		USAGE_PAGE(1),      0x0C,
-//		USAGE(1),           0x01,
-//		COLLECTION(1),      0x01,
-//			REPORT_ID(1),       0x03,
-//			REPORT_SIZE(1), 0x10,
-//			REPORT_COUNT(1), 0x01,
-//			LOGICAL_MINIMUM(1), 1,
-//			LOGICAL_MAXIMUM(2), 0xFF, 0x03,
-//			USAGE_MINIMUM(1), 1,
-//			USAGE_MAXIMUM(2), 0xFF, 0x03,
-//			INPUT(1), 0x60,
-//		END_COLLECTION(0),
+		  USAGE_PAGE(1),      0x01,       // Generic Desktop Ctrls
+		  USAGE(1),           0x06,       // Keyboard
+		  COLLECTION(1),      0x01,       // Application
+		    REPORT_ID(1),       0x01,
+		    //report equal to usb_bridge (https://github.com/benjaminaigner/usb_bridge
+		    REPORT_SIZE(1),     0x01,
+		    REPORT_COUNT(1),    0x08,
+		    USAGE_PAGE(1),      0x07,       //   Kbrd/Keypad
+		    USAGE_MINIMUM(1),   0xE0,
+		    USAGE_MAXIMUM(1),   0xE7,
+		    LOGICAL_MINIMUM(1), 0x00,
+		    LOGICAL_MAXIMUM(1), 0x01,
+		    INPUT(1),           0x02,       //   Data,Var,Abs,No Wrap,Linear,Preferred State,No Null Position
+		    REPORT_COUNT(1),    0x01,
+		    REPORT_SIZE(1),     0x08,
+		    INPUT(1),           0x03,
+		    REPORT_COUNT(1),    0x05,
+		    REPORT_SIZE(1),     0x01,
+		    USAGE_PAGE(1),      0x08,       //   LEDs
+		    USAGE_MINIMUM(1),   0x01,       //   Num Lock
+		    USAGE_MAXIMUM(1),   0x05,       //   Kana
+		    OUTPUT(1),          0x02,       //   Data,Var,Abs,No Wrap,Linear,Preferred State,No Null Position,Non-volatile
+		    REPORT_COUNT(1),    0x01,       //   3 bits (Padding)
+		    REPORT_SIZE(1),     0x03,
+		    OUTPUT(1),          0x03,
+		    REPORT_COUNT(1),    MATRIX_ROWS*KEYMAP_COLS,       //   MATRIX_ROWS*KEYMAP_COLS bytes (Keys)
+		    REPORT_SIZE(1),     0x08,
+		    LOGICAL_MINIMUM(1), 0x00,
+		    LOGICAL_MAXIMUM(1), 104,       //   104 keys
+		    USAGE_PAGE(1),      0x07,       //   Kbrd/Keypad
+		    USAGE_MINIMUM(1),   0x00,       //   Num Lock
+		    USAGE_MAXIMUM(1),   104,       //   Kana
+		    INPUT(1),           0x00,
+		  END_COLLECTION(0)
 
 };
 
@@ -249,7 +226,7 @@ const uint8_t reportMapJoystick[] = {
 		END_COLLECTION(0)
 };
 
-/** @brief Constant report map for joystick
+/** @brief Constant report map for media
  *
  * This report map will be used on init do build a report map according
  * to init functions (with activated interfaces).

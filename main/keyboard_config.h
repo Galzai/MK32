@@ -35,6 +35,12 @@ typedef struct joystick_data {
 //#define SPLIT_MASTER	 // undefine if keyboard is not split and master
 //#define SLAVE	 // undefine if keyboard is master
 
+#define R_ENCODER // undefine if no rotary encoder is used
+
+#define ENCODER_A_PIN GPIO_NUM_32 // encoder phase A pin
+#define ENCODER_B_PIN GPIO_NUM_33// encoder phase B pin
+#define ENCODER_S_PIN GPIO_NUM_27// encoder switch pin
+
 //Define matrix
 #define KEYPADS 2 // intended in order to create a Multiple keypad split boards
 #define MATRIX_ROWS 4

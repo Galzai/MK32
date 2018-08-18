@@ -5,7 +5,6 @@
 
 PROJECT_NAME := MK32
 
-COMPONENT_ADD_INCLUDEDIRS := components/include	\
-								
+COMPONENT_ADD_INCLUDEDIRS := components/include	\							
 
 include $(IDF_PATH)/make/project.mk

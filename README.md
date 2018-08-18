@@ -21,12 +21,16 @@ In order to define your keyboard:
 - When uploading code to main board, make sure MASTER and SPLIT_MASTER are defined in keyboard_config.h.
 - When uploading code to slave board, make sure SLAVE is defined in keyboard_config.h, currently you will also need to update the correct Mac adress of your main board in espnow_send.c.
 
+### For rotary encoders (for volume knob etc):
+- define R_ENCODER and set encoder pins in keyboard_config.h (undefine ENCODER_S_PIN if your encoder does not have a switch).
+- currently only supports volume +/- and mute, will improve functionality in the future.
+- currently only supported on MASTER pad (will be improved in future).
+
 ## To Implement:
 - more than 2 pads (currently supports 2 pads).
 - macros.
 - battery level indication.
 - connection switching.
-- potentiometer (volume etc).
 - modify keymap via webserver.
 - security (?).
 

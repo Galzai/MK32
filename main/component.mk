@@ -6,5 +6,13 @@
 # lib(subdirectory_name).a in the build directory. This behaviour is entirely configurable,
 # please read the ESP-IDF documents if you need to do this.
 #
+
+COMPONENT_SRCDIRS +=../components/r_encoder
+COMPONENT_SRCDIRS +=../components/espnow
+COMPONENT_SRCDIRS +=../components/nkolban_BLE
+
 COMPONENT_ADD_INCLUDEDIRS=.
+COMPONENT_ADD_INCLUDEDIRS +=../components/r_encoder
+COMPONENT_ADD_INCLUDEDIRS +=../components/espnow
+COMPONENT_ADD_INCLUDEDIRS +=../components/nkolban_BLE
 # include $(IDF_PATH)/make/component_common.mk
