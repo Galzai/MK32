@@ -4,6 +4,10 @@
 #include "key_definitions.h"
 #include "keyboard_config.h"
 
+// A bit different from QMK, default return you to the first layer, LOWER and raise increase/lower layer by order.
+#define DEFAULT 0x100
+#define LOWER 0x101
+#define RAISE 0x102
 
 // Keymaps are designed to be relatively interchangeable with QMK
 enum custom_keycodes {
@@ -13,11 +17,25 @@ enum custom_keycodes {
 };
 
 
-// A bit different from QMK, default return you to the first layer, LOWER and raise increase/lower layer by order.
-#define DEFAULT 0x100
-#define LOWER 0x101
-#define RAISE 0x102
+/* select a keycode for your macro
+ * important - first macro must be initialized as 0x103
+ * */
 
+#define MACROS_NUM 2
+enum custom_macros {
+  KC_CTRL_ALT_DELETE = 0x103 ,
+  KC_ALT_F4,
+};
+
+/*define what the macros do
+ * important- make sure you you put the macros in the same order as the their enumeration
+ */
+uint16_t macros[MACROS_NUM][3]={
+// CTRL+ALT+DEL
+{KC_LCTRL, KC_LALT,KC_DEL},
+//ALT +F4
+{KC_RALT, KC_LALT, KC_NO}
+};
 
 // Fillers to make layering more clear
 #define _______ KC_TRNS
@@ -38,7 +56,7 @@ enum custom_keycodes {
 			 * `------------------------------------------------------------------------------------'
 			 */
 
-			  {KC_ESC,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_BSPC },
+			  {KC_ESC,  KC_AUDIO_MUTE,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_BSPC },
 			  {KC_TAB,  KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT },
 			  {KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_ENT } ,
 			  {KC_LCTRL,KC_LGUI, KC_LALT, DEFAULT,  LOWER,   KC_SPC,  KC_SPC,  RAISE,   KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT }

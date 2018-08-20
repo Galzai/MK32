@@ -15,7 +15,7 @@ https://geekhack.org/index.php?topic=87689.0
 In order to define your keyboard:
 - Modify keboard_config.h for your desired keyboard size, features, etc.
 - modify matrix.c for your gpio layout
-- Modify keymap.c for your desired layouts.
+- Modify keymap.c for your desired layouts and macros.
 
 ### For split keyboards:
 - When uploading code to main board, make sure MASTER and SPLIT_MASTER are defined in keyboard_config.h.
@@ -28,7 +28,6 @@ In order to define your keyboard:
 
 ## To Implement:
 - more than 2 pads (currently supports 2 pads).
-- macros.
 - battery level indication.
 - connection switching.
 - modify keymap via webserver.

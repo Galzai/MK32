@@ -22,12 +22,12 @@
 /** @file
  * @brief This file is the implementation for Neil Kolbans CPP utils
  * 
- * It initializes 3 queues for sending mouse, keyboard and joystick data
+ * It initializes 4 queues for sending mouse, keyboard and joystick data
  * from within the C-side. C++ classes are instantiated here.
  * If you want to have a different BLE HID device, you need to adapt this file.
  * Minor modifications were made to work with with key reports in a way I find more intuitive (Gal Zaidenstein)
  * 
- * @note Thank you very much Neil Kolban for this impressive work!
+ * @note Thank you very much Neil Kolban and Benjamin Aigner for this impressive work!
  */
 
 #include "BLEDevice.h"
@@ -119,7 +119,7 @@ const uint8_t reportMapKeyboard[] = {
 		    REPORT_COUNT(1),    0x01,       //   3 bits (Padding)
 		    REPORT_SIZE(1),     0x03,
 		    OUTPUT(1),          0x03,
-		    REPORT_COUNT(1),    MATRIX_ROWS*KEYMAP_COLS,       //   MATRIX_ROWS*KEYMAP_COLS bytes (Keys)
+		    REPORT_COUNT(1),    REPORT_COUNT_BYTES,       //   MATRIX_ROWS*KEYMAP_COLS bytes (Keys)
 		    REPORT_SIZE(1),     0x08,
 		    LOGICAL_MINIMUM(1), 0x00,
 		    LOGICAL_MAXIMUM(1), 104,       //   104 keys
@@ -274,7 +274,7 @@ class kbdOutputCB : public BLECharacteristicCallbacks {
 
 class KeyboardTask : public Task {
 	void run(void*){
-		uint8_t report[2+MATRIX_ROWS*KEYMAP_COLS]={0};
+		uint8_t report[REPORT_LEN]={0};
 		while(1)
 		{
 			if(xQueueReceive(keyboard_q,&report,10000))
@@ -518,6 +518,7 @@ class BLE_HOG: public Task {
 			media->setStackSize(8096);
 		}
 
+
 		BLEDevice::init(btname);
 		pServer = BLEDevice::createServer();
 		pServer->setCallbacks(new CBs());
@@ -681,38 +682,6 @@ class BLE_HOG: public Task {
 
 extern "C" {
 
-
-/** @brief Directly send a HID keyboard report
- *
- * @param a Pointer to report buffer
- * @param len Size of report buffer
- * @note Buffer lenght must equal 8 Bytes!
- * @note 1st Byte is modifier, 2nd is empty, 3 to 8 are keycodes
- * */
-esp_err_t HID_kbdmousejoystick_rawKeyboard(uint8_t *a, uint8_t len)
-{
-	if(len != 2+MATRIX_ROWS*KEYMAP_COLS || a == nullptr) return ESP_FAIL;
-	inputKbd->setValue(a,len);
-	inputKbd->notify();
-	return ESP_OK;
-}
-
-/** @brief Directly send a HID mouse report
- *
- * @param a Pointer to report buffer
- * @param len Size of report buffer
- * @note Buffer lenght must equal 4 Bytes!
- * @note 1st Byte is button mask, 2nd/3rd are X/Y, 4th is wheel
- * */
-esp_err_t HID_kbdmousejoystick_rawMouse(uint8_t *a, uint8_t len)
-{
-	if(len != 4 || a == nullptr) return ESP_FAIL;
-	inputMouse->setValue(a,len);
-	inputMouse->notify();
-	vTaskDelay(1);
-	return ESP_OK;
-}
-
 esp_err_t HID_kbdmousejoystick_activatePairing(void)
 {
 	BLEAdvertising *pAdvertising = pServer->getAdvertising();
@@ -741,7 +710,7 @@ uint8_t HID_kbdmousejoystick_isConnected(void)
  * @note After init, just use the queues! */
 esp_err_t HID_kbdmousejoystick_init(uint8_t enableKeyboard,uint8_t enableMedia, uint8_t enableMouse, uint8_t enableJoystick,  char * name)
 {
-	uint8_t array_sample[2+MATRIX_ROWS*KEYMAP_COLS];
+	uint8_t array_sample[REPORT_LEN];
 	//init FreeRTOS queues
 	//initialise queues, even if they might not be used.
 	mouse_q = xQueueCreate(32,sizeof(mouse_command_t));

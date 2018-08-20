@@ -12,7 +12,12 @@
 extern "C" {
 #endif
 
+/** @brief Setup the rotary encoder
+ * */
 void r_encoder_setup(void);
+
+/** @brief check rotary encoder status
+ * */
 uint8_t r_encoder_state(void);
 
 #ifdef __cplusplus

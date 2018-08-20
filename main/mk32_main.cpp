@@ -54,8 +54,8 @@ QueueHandle_t espnow_recieve_q;
 extern "C" void key_reports(void *pvParameters)
 {
 	// Arrays for holding the report at various stages
-	uint8_t past_report[2+MATRIX_ROWS*KEYMAP_COLS]={0};
-	uint8_t report_state[2+MATRIX_ROWS*KEYMAP_COLS];
+	uint8_t past_report[REPORT_LEN]={0};
+	uint8_t report_state[REPORT_LEN];
 
 	while(1){
 		while(HID_kbdmousejoystick_isConnected() == 0) {
@@ -90,11 +90,11 @@ extern "C" void key_reports(void *pvParameters)
 }
 
 extern "C" void media_report(void *pvParameters){
-
+#ifdef R_ENCODER
 	uint8_t encoder_state[1]={0};
 	uint8_t past_encoder_state[1]={0};
+
 	while(1){
-#ifdef R_ENCODER
 		encoder_state[0]=r_encoder_state();
 		if(encoder_state[0]!=past_encoder_state[0]){
 		xQueueSend(media_q,(void*)&encoder_state, (TickType_t) 0);
@@ -102,8 +102,9 @@ extern "C" void media_report(void *pvParameters){
 		}
 
 	}
-}
 #endif
+}
+
 
 //Function for sending out the modified matrix
 extern "C" void slave_scan(void *pvParameters){
@@ -172,7 +173,7 @@ extern "C" void app_main()
 //If the device is a master for split board initialize receiving reports from slave
 #ifdef SPLIT_MASTER
 
-	uint8_t array_sample[2+MATRIX_ROWS*MATRIX_COLS];
+	uint8_t array_sample[REPORT_LEN];
 	espnow_recieve_q = xQueueCreate(32,sizeof(array_sample));
 	espnow_recieve();
 	xTaskCreatePinnedToCore(espnow_update_matrix, "ESP-NOW slave matrix state", 4096, NULL, configMAX_PRIORITIES, NULL,1);

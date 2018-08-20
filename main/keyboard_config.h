@@ -35,7 +35,7 @@ typedef struct joystick_data {
 //#define SPLIT_MASTER	 // undefine if keyboard is not split and master
 //#define SLAVE	 // undefine if keyboard is master
 
-#define R_ENCODER // undefine if no rotary encoder is used
+//#define R_ENCODER // undefine if no rotary encoder is used
 
 #define ENCODER_A_PIN GPIO_NUM_32 // encoder phase A pin
 #define ENCODER_B_PIN GPIO_NUM_33// encoder phase B pin
@@ -46,6 +46,8 @@ typedef struct joystick_data {
 #define MATRIX_ROWS 4
 #define MATRIX_COLS 6 // For split keyboards, define columns for one side only.
 #define KEYMAP_COLS MATRIX_COLS*KEYPADS  // use this for a split keyboard, multiply MATRIX_COLS by number of keypads.
+#define REPORT_LEN 2+MATRIX_ROWS*KEYMAP_COLS+3 //size of hid reports with room for 3 key macro
+#define REPORT_COUNT_BYTES MATRIX_ROWS*KEYMAP_COLS+3
 
 //#define KEYMAP_COLS MATRIX_COLS   // use this for a regular keyboard
 #define LAYERS 2 // number of layers defined (besides default)
