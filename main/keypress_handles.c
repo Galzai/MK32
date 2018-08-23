@@ -132,7 +132,7 @@ uint8_t media_state[1]={0};
 void media_control_release(uint16_t keycode ){
 uint8_t media_state[1]={0};
 xQueueSend(media_q,(void*)&media_state, (TickType_t) 0);
-
+vTaskDelay(3);
 }
 
 
@@ -198,7 +198,6 @@ uint8_t *check_key_state( uint16_t keymap[MATRIX_ROWS][KEYMAP_COLS] ){
 				// checking for media control keycodes
 				if((keycode>=0xA5)&&(keycode<=0xAE)){
 					media_control_send(keycode);
-					continue;
 				}
 
 				// checking for system control keycodes

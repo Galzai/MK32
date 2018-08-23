@@ -8,7 +8,7 @@
 #include <string.h>
 #include <inttypes.h>
 #include "driver/gpio.h"
-
+#include "driver/touch_pad.h"
 
 #define MODULE_ID "LOLIN 32"
 #define GATTS_TAG "MK32 TESTER" // The device's name
@@ -48,6 +48,18 @@ typedef struct joystick_data {
 #define KEYMAP_COLS MATRIX_COLS*KEYPADS  // use this for a split keyboard, multiply MATRIX_COLS by number of keypads.
 #define REPORT_LEN 2+MATRIX_ROWS*KEYMAP_COLS+3 //size of hid reports with room for 3 key macro
 #define REPORT_COUNT_BYTES MATRIX_ROWS*KEYMAP_COLS+3
+
+/*
+ * Define time without keystroke for deep sleep (in minutes)
+ * if deep sleep isn't needed simply undefine
+ * */
+
+
+//deep sleep parameters, mind that reconnecting after deep sleep might take a minute or two
+#define SLEEP_MINS 30 // undefine if you do not need deep sleep
+//#define WAKE_PAD TOUCH_PAD_NUM_2 // pin for waking from deep sleep via touch capacitance
+#define TOUCH_THRESHOLD 700 //Threshold for waking up via touch sensor
+
 
 //#define KEYMAP_COLS MATRIX_COLS   // use this for a regular keyboard
 #define LAYERS 2 // number of layers defined (besides default)

@@ -13,7 +13,7 @@ In order to wire your desired keyboard (if handwired) I reccomend checking out:
 https://geekhack.org/index.php?topic=87689.0
 
 In order to define your keyboard:
-- Modify keboard_config.h for your desired keyboard size, features, etc.
+- Modify keyboard_config.h for your desired keyboard size, features, etc.
 - modify matrix.c for your gpio layout
 - Modify keymap.c for your desired layouts and macros.
 
@@ -21,15 +21,20 @@ In order to define your keyboard:
 - When uploading code to main board, make sure MASTER and SPLIT_MASTER are defined in keyboard_config.h.
 - When uploading code to slave board, make sure SLAVE is defined in keyboard_config.h, currently you will also need to update the correct Mac adress of your main board in espnow_send.c.
 
+### Power consumption and deep sleep:
+- For better battery usage you can define the number of inactive minutes you would like your device to wait before sleeping in keyboard_config.h. The controller is defined to wake up when the capacity on GPIO pin 2 is modified ("touch sensor"), if you do not want to enable deep sleep simply undefine SLEEP_MINS.
+- Notice that reconnection after waking from deep sleep might take a couple of minutes (or you can rescan for bluetooth devices and it should recconect quickly).
+- Power consumption has not been tested or optimized yet.
+
 ### For rotary encoders (for volume knob etc):
-- define R_ENCODER and set encoder pins in keyboard_config.h (undefine ENCODER_S_PIN if your encoder does not have a switch).
-- currently only supports volume +/- and mute, will improve functionality in the future.
-- currently only supported on MASTER pad (will be improved in future).
+- Define R_ENCODER and set encoder pins in keyboard_config.h (undefine ENCODER_S_PIN if your encoder does not have a switch).
+- Currently only supports volume +/- and mute, will improve functionality in the future.
+- Currently only supported on MASTER pad (will be improved in future).
 
 ## To Implement:
-- more than 2 pads (currently supports 2 pads).
-- battery level indication.
-- connection switching.
-- modify keymap via webserver.
-- security (?).
+- More than 2 pads (currently supports 2 pads).
+- Battery level indication.
+- Connection switching.
+- Modify keymap via webserver.
+- Security (?).
 

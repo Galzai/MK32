@@ -432,7 +432,7 @@ class CBs: public BLEServerCallbacks {
 	}
 };
 
-uint32_t passKey = 1307;
+uint32_t passKey = 1234;
 /** @brief security callback
  * 
  * This class is passed to the BLEServer as callbacks for security
@@ -666,11 +666,11 @@ class BLE_HOG: public Task {
 
 
 		BLESecurity *pSecurity = new BLESecurity();
-		//		pSecurity->setAuthenticationMode(ESP_LE_AUTH_REQ_SC_BOND);
-		//pSecurity->setAuthenticationMode(ESP_LE_AUTH_BOND );
+//		pSecurity->setAuthenticationMode(ESP_LE_AUTH_REQ_SC_BOND);
+//		pSecurity->setAuthenticationMode(ESP_LE_AUTH_BOND );
 
 		pSecurity->setCapability(ESP_IO_CAP_NONE);
-		//pSecurity->setCapability(ESP_IO_CAP_OUT);
+//		pSecurity->setCapability(ESP_IO_CAP_OUT);
 		//pSecurity->setCapability(ESP_IO_CAP_KBDISP);
 		//pSecurity->setInitEncryptionKey(ESP_BLE_ENC_KEY_MASK | ESP_BLE_ID_KEY_MASK);
 

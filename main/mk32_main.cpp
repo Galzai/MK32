@@ -30,7 +30,11 @@
 #include "esp_log.h"
 #include "nvs_flash.h"
 #include "esp_bt.h"
+#include "esp_bt_main.h"
 #include "driver/gpio.h"
+#include "driver/touch_pad.h"
+#include "esp_timer.h"
+#include "esp_sleep.h"
 
 
 //HID Ble functions
@@ -47,9 +51,13 @@
 #include "espnow_send.h"
 
 #define KEY_REPORT_TAG "KEY_REPORT"
+#define SYSTEM_REPORT_TAG "KEY_REPORT"
 
 static config_data_t config;
 QueueHandle_t espnow_recieve_q;
+
+bool DEEP_SLEEP = true; // flag to check if we need to go to deep sleep
+
 
 extern "C" void key_reports(void *pvParameters)
 {
@@ -57,14 +65,18 @@ extern "C" void key_reports(void *pvParameters)
 	uint8_t past_report[REPORT_LEN]={0};
 	uint8_t report_state[REPORT_LEN];
 
+	bool CON_LOG_FLAG = false; // Just because I don't want it to keep logging the same thing a billion times
+
 	while(1){
 		while(HID_kbdmousejoystick_isConnected() == 0) {
+			if (CON_LOG_FLAG == false){
 			ESP_LOGI(KEY_REPORT_TAG,"Not connected, waiting for connection ");
-			vTaskDelay(500);
+			}
+			DEEP_SLEEP = false;
+			CON_LOG_FLAG = true;
 		}
 
 		while(HID_kbdmousejoystick_isConnected() != 0) {
-
 			memcpy(report_state, check_key_state(*layouts[current_layout]), sizeof report_state);
 
 			//Do not send anything if queues are uninitialized
@@ -74,6 +86,7 @@ extern "C" void key_reports(void *pvParameters)
 			}
 			else{
 				if(memcmp(past_report, report_state, sizeof past_report)!=0){
+					DEEP_SLEEP = false;
 					memcpy(past_report,report_state, sizeof past_report );
 					xQueueSend(keyboard_q,(void*)&report_state, (TickType_t) 0);
 					vTaskDelay(3);
@@ -82,9 +95,9 @@ extern "C" void key_reports(void *pvParameters)
 				}
 			}
 
+
 		}
-
-
+		CON_LOG_FLAG = false;
 	}
 
 }
@@ -97,6 +110,7 @@ extern "C" void media_report(void *pvParameters){
 	while(1){
 		encoder_state[0]=r_encoder_state();
 		if(encoder_state[0]!=past_encoder_state[0]){
+		DEEP_SLEEP = false
 		xQueueSend(media_q,(void*)&encoder_state, (TickType_t) 0);
 		past_encoder_state[0] = encoder_state[0];
 		}
@@ -114,6 +128,7 @@ extern "C" void slave_scan(void *pvParameters){
 while(1){
 	scan_matrix();
 	if(memcmp(&PAST_MATRIX, &MATRIX_STATE, sizeof MATRIX_STATE)!=0){
+		DEEP_SLEEP = false;
 		memcpy(&PAST_MATRIX, &MATRIX_STATE, sizeof MATRIX_STATE );
 
 		xQueueSend(espnow_send_q,(void*)&MATRIX_STATE, (TickType_t) 0);
@@ -129,14 +144,58 @@ extern "C" void espnow_update_matrix(void *pvParameters){
 	while(1){
 		if(xQueueReceive(espnow_recieve_q,&CURRENT_MATRIX,10000))
 		{
+			DEEP_SLEEP = false;
 			memcpy(&SLAVE_MATRIX_STATE, &CURRENT_MATRIX, sizeof CURRENT_MATRIX );
 		}
 	}
 }
 
 
+/*If no key press has been recieved in SLEEP_MINS amount of minutes, put device into deep sleep
+ *  wake up on touch on GPIO pin 2
+ *  */
+extern "C" void deep_sleep(void *pvParameters){
+
+
+	uint64_t initial_time = esp_timer_get_time(); // notice that timer returns time passed in microseconds!
+	uint64_t current_time_passed = 0;
+	while(1){
+
+		current_time_passed=(esp_timer_get_time()-initial_time);
+
+		if(DEEP_SLEEP == false){
+			current_time_passed  = 0;
+			initial_time = esp_timer_get_time();
+			DEEP_SLEEP= true;
+		}
+		//
+		if(current_time_passed>=1000000*60*SLEEP_MINS){
+			if(DEEP_SLEEP == true){
+				ESP_LOGE(SYSTEM_REPORT_TAG,"going to sleep!");
+
+	// wake up esp32 using touch sensor
+				touch_pad_init();
+				touch_pad_config(TOUCH_PAD_NUM2,TOUCH_THRESHOLD);
+				esp_sleep_enable_touchpad_wakeup();
+				esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_PERIPH,ESP_PD_OPTION_AUTO);
+				esp_deep_sleep_start();
+
+			}
+			if(DEEP_SLEEP == false){
+				current_time_passed = 0;
+				initial_time = esp_timer_get_time();
+				DEEP_SLEEP= true;
+			}
+		}
+
+
+	}
+
+}
+
 extern "C" void app_main()
 {
+	touch_pad_deinit();
 	matrix_setup();
 	esp_err_t ret;
 
@@ -191,7 +250,11 @@ extern "C" void app_main()
 
 	// Start the keyboard Tasks
 	// Create the key scanning task on core 1 (otherwise it will crash)
-	xTaskCreatePinnedToCore(key_reports, "key reports", 4096, NULL, configMAX_PRIORITIES, NULL,1);
+	xTaskCreatePinnedToCore(key_reports, "key report task", 4096, NULL, configMAX_PRIORITIES, NULL,1);
+#endif
+
+#ifdef SLEEP_MINS
+	xTaskCreatePinnedToCore(deep_sleep, "deep sleep task", 4096, NULL, configMAX_PRIORITIES, NULL,1);
 #endif
 
 
