@@ -22,7 +22,8 @@ In order to define your keyboard:
 - When uploading code to slave board, make sure SLAVE is defined in keyboard_config.h, currently you will also need to update the correct Mac adress of your main board in espnow_send.c.
 
 ### Power consumption and deep sleep:
-- For better battery usage you can define the number of inactive minutes you would like your device to wait before sleeping in keyboard_config.h. The controller is defined to wake up when the capacity on GPIO pin 2 is modified ("touch sensor"), if you do not want to enable deep sleep simply undefine SLEEP_MINS.
+- For better battery usage you can define the number of inactive minutes you would like your device to wait before sleeping in keyboard_config.h. 
+- The controller is defined to wake up when the capacity on GPIO pin 2 is modified ("touch sensor"), if you do not want to enable deep sleep simply undefine SLEEP_MINS.
 - Notice that reconnection after waking from deep sleep might take a couple of minutes (or you can rescan for bluetooth devices and it should recconect quickly).
 - Power consumption has not been tested or optimized yet.
 
