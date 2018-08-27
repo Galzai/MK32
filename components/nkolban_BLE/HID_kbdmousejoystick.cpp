@@ -94,40 +94,40 @@ BLECharacteristic* outputKbd;
  * @note Report id is on all reports in offset 7.
  * */
 const uint8_t reportMapKeyboard[] = {
-		  USAGE_PAGE(1),      0x01,       // Generic Desktop Ctrls
-		  USAGE(1),           0x06,       // Keyboard
-		  COLLECTION(1),      0x01,       // Application
-		    REPORT_ID(1),       0x01,
-		    //report equal to usb_bridge (https://github.com/benjaminaigner/usb_bridge
-		    REPORT_SIZE(1),     0x01,
-		    REPORT_COUNT(1),    0x08,
-		    USAGE_PAGE(1),      0x07,       //   Kbrd/Keypad
-		    USAGE_MINIMUM(1),   0xE0,
-		    USAGE_MAXIMUM(1),   0xE7,
-		    LOGICAL_MINIMUM(1), 0x00,
-		    LOGICAL_MAXIMUM(1), 0x01,
-		    INPUT(1),           0x02,       //   Data,Var,Abs,No Wrap,Linear,Preferred State,No Null Position
-		    REPORT_COUNT(1),    0x01,
-		    REPORT_SIZE(1),     0x08,
-		    INPUT(1),           0x03,
-		    REPORT_COUNT(1),    0x05,
-		    REPORT_SIZE(1),     0x01,
-		    USAGE_PAGE(1),      0x08,       //   LEDs
-		    USAGE_MINIMUM(1),   0x01,       //   Num Lock
-		    USAGE_MAXIMUM(1),   0x05,       //   Kana
-		    OUTPUT(1),          0x02,       //   Data,Var,Abs,No Wrap,Linear,Preferred State,No Null Position,Non-volatile
-		    REPORT_COUNT(1),    0x01,       //   3 bits (Padding)
-		    REPORT_SIZE(1),     0x03,
-		    OUTPUT(1),          0x03,
-		    REPORT_COUNT(1),    REPORT_COUNT_BYTES,       //   MATRIX_ROWS*KEYMAP_COLS bytes (Keys)
-		    REPORT_SIZE(1),     0x08,
-		    LOGICAL_MINIMUM(1), 0x00,
-		    LOGICAL_MAXIMUM(1), 104,       //   104 keys
-		    USAGE_PAGE(1),      0x07,       //   Kbrd/Keypad
-		    USAGE_MINIMUM(1),   0x00,       //   Num Lock
-		    USAGE_MAXIMUM(1),   104,       //   Kana
-		    INPUT(1),           0x00,
-		  END_COLLECTION(0)
+		USAGE_PAGE(1),      0x01,       // Generic Desktop Ctrls
+		USAGE(1),           0x06,       // Keyboard
+		COLLECTION(1),      0x01,       // Application
+		REPORT_ID(1),       0x01,
+		//report equal to usb_bridge (https://github.com/benjaminaigner/usb_bridge
+		REPORT_SIZE(1),     0x01,
+		REPORT_COUNT(1),    0x08,
+		USAGE_PAGE(1),      0x07,       //   Kbrd/Keypad
+		USAGE_MINIMUM(1),   0xE0,
+		USAGE_MAXIMUM(1),   0xE7,
+		LOGICAL_MINIMUM(1), 0x00,
+		LOGICAL_MAXIMUM(1), 0x01,
+		INPUT(1),           0x02,       //   Data,Var,Abs,No Wrap,Linear,Preferred State,No Null Position
+		REPORT_COUNT(1),    0x01,
+		REPORT_SIZE(1),     0x08,
+		INPUT(1),           0x03,
+		REPORT_COUNT(1),    0x05,
+		REPORT_SIZE(1),     0x01,
+		USAGE_PAGE(1),      0x08,       //   LEDs
+		USAGE_MINIMUM(1),   0x01,       //   Num Lock
+		USAGE_MAXIMUM(1),   0x05,       //   Kana
+		OUTPUT(1),          0x02,       //   Data,Var,Abs,No Wrap,Linear,Preferred State,No Null Position,Non-volatile
+		REPORT_COUNT(1),    0x01,       //   3 bits (Padding)
+		REPORT_SIZE(1),     0x03,
+		OUTPUT(1),          0x03,
+		REPORT_COUNT(1),    REPORT_COUNT_BYTES,       //   MATRIX_ROWS*KEYMAP_COLS bytes (Keys)
+		REPORT_SIZE(1),     0x08,
+		LOGICAL_MINIMUM(1), 0x00,
+		LOGICAL_MAXIMUM(1), 104,       //   104 keys
+		USAGE_PAGE(1),      0x07,       //   Kbrd/Keypad
+		USAGE_MINIMUM(1),   0x00,       //   Num Lock
+		USAGE_MAXIMUM(1),   104,       //   Kana
+		INPUT(1),           0x00,
+		END_COLLECTION(0)
 
 };
 
@@ -243,26 +243,26 @@ static const uint8_t reportMapMedia[] = {
 		LOGICAL_MINIMUM(1), 0x00,                    //   LOGICAL_MINIMUM (0)
 		LOGICAL_MAXIMUM(1), 0x01,                    //   LOGICAL_MAXIMUM (1)
 		REPORT_SIZE(1), 0x01,                    //   REPORT_SIZE (1)
-	                                 // bit 0-3
+		// bit 0-3
 		REPORT_COUNT(1), 0x04,                    //   REPORT_COUNT (4)
 		USAGE_MINIMUM(1), 0xb5,                    //   USAGE_MINIMUM (Scan Next Track)
 		USAGE_MAXIMUM(1), 0xb7,                    //   USAGE_MAXIMUM (Stop)
 		USAGE(1), 0xcd,                    //   USAGE (Play/Pause)
 		INPUT(1), 0x02,                    //   INPUT (Data,Var,Abs)
-	                                 // bit 4
+		// bit 4
 		REPORT_COUNT(1), 0x01,                    //   REPORT_COUNT (1)
 		USAGE(1), 0xe2,                    //   USAGE (Mute)
 		INPUT(1), 0x06,                    //   INPUT (Data,Var,Rel)
-	                                 // bit 5,6
+		// bit 5,6
 		REPORT_COUNT(1), 0x02,                    //   REPORT_COUNT (2)
 		USAGE(1), 0xe9,                    //   USAGE (Volume Up)
 		USAGE(1), 0xea,                    //   USAGE (Volume Down)
 		INPUT(1), 0x02,                    //   INPUT (Data,Var,Abs)
-	                                 // bit 7 - padding
+		// bit 7 - padding
 		REPORT_COUNT(1), 0x01,                    //   REPORT_COUNT (1)
 		INPUT(1), 0x03,                    //   INPUT (Cnst,Var,Abs)
 		END_COLLECTION(0)                           // END_COLLECTION
-                          // End Collection
+		// End Collection
 };
 
 class kbdOutputCB : public BLECharacteristicCallbacks {
@@ -666,11 +666,11 @@ class BLE_HOG: public Task {
 
 
 		BLESecurity *pSecurity = new BLESecurity();
-//		pSecurity->setAuthenticationMode(ESP_LE_AUTH_REQ_SC_BOND);
-//		pSecurity->setAuthenticationMode(ESP_LE_AUTH_BOND );
+		//		pSecurity->setAuthenticationMode(ESP_LE_AUTH_REQ_SC_BOND);
+		//		pSecurity->setAuthenticationMode(ESP_LE_AUTH_BOND );
 
 		pSecurity->setCapability(ESP_IO_CAP_NONE);
-//		pSecurity->setCapability(ESP_IO_CAP_OUT);
+		//		pSecurity->setCapability(ESP_IO_CAP_OUT);
 		//pSecurity->setCapability(ESP_IO_CAP_KBDISP);
 		//pSecurity->setInitEncryptionKey(ESP_BLE_ENC_KEY_MASK | ESP_BLE_ID_KEY_MASK);
 
@@ -734,6 +734,7 @@ esp_err_t HID_kbdmousejoystick_init(uint8_t enableKeyboard,uint8_t enableMedia, 
 	BLE_HOG* blehid = new BLE_HOG();
 	blehid->setStackSize(16192);
 	blehid->start();
+
 	return ESP_OK;
 }
 }

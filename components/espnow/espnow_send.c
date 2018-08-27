@@ -36,13 +36,16 @@
 
 #include "espnow_send.h"
 #include "keyboard_config.h"
+
+#include "r_encoder.h"
+
 #define ESP_NOW_TAG "ESP-NOW"
 
 // Queue for sending esp-now reports
-QueueHandle_t espnow_send_q;
-
+QueueHandle_t espnow_matrix_send_q;
+QueueHandle_t espnow_encoder_send_q;
 //Mac adress of the main device (only mac address needed for ESP-NOW)
-static uint8_t master_mac_adr[6]= {0x30,0xAE,0xA4,0x5D,0xBF,0x54};
+static uint8_t master_mac_adr[6]= {0x30,0xAE,0xA4,0x5D,0xBE,0x54};
 
 static esp_now_peer_info_t Peer;
 static esp_now_peer_info_t *pPeer=&Peer;
@@ -50,14 +53,14 @@ static esp_now_peer_info_t *pPeer=&Peer;
 // To my understanind the you need to assign a handlfer for the WiFi loop in order to start the function.
 static esp_err_t example_event_handler(void *ctx, system_event_t *event)
 {
-    switch(event->event_id) {
-    case SYSTEM_EVENT_STA_START:;
-		ESP_LOGI(ESP_NOW_TAG,"Wifi Initialized!");
-        break;
-    default:
-        break;
-    }
-    return ESP_OK;
+	switch(event->event_id) {
+	case SYSTEM_EVENT_STA_START:;
+	ESP_LOGI(ESP_NOW_TAG,"Wifi Initialized!");
+	break;
+	default:
+		break;
+	}
+	return ESP_OK;
 }
 
 // Initializing WiFi
@@ -77,11 +80,11 @@ void wifi_initialize_send(void){
 	ESP_ERROR_CHECK( esp_wifi_set_channel(1, 0) ); // Make sure we are on the same channel
 	ESP_ERROR_CHECK(esp_wifi_get_mac(ESP_IF_WIFI_STA,slave_mac_adr));
 
-//Printout the mac ID (in case we change the starting one)
+	//Printout the mac ID (in case we change the starting one)
 	printf("DEVICE MAC ADDRESS:[");
 	for(int i=0;i<6; i++)
 	{
-	printf("%d:", slave_mac_adr[i]);
+		printf("%d:", slave_mac_adr[i]);
 	}
 	printf("]");
 }
@@ -92,32 +95,42 @@ void espnow_send_cb(const uint8_t *mac_addr, esp_now_send_status_t status){
 
 	switch(status){
 	case(ESP_NOW_SEND_SUCCESS):
-			ESP_LOGI(ESP_NOW_TAG,"Data Sent successfully!");
-		break;
+		ESP_LOGI(ESP_NOW_TAG,"Data Sent successfully!");
+	break;
 
 	case(ESP_NOW_SEND_FAIL):
-					ESP_LOGI(ESP_NOW_TAG,"Data not Sent");
-		break;
+		ESP_LOGI(ESP_NOW_TAG,"Data not Sent");
+	break;
 
 	break;
 	}
 }
 
-
 // Function for sending state
-void espnow_send_matrix_state(){
+void espnow_send_state(void *pvParameters){
 	uint8_t CURRENT_MATRIX[MATRIX_ROWS][MATRIX_COLS]={0};
 	while(1)
 	{
 		//Wait to receive update matrix state
-		if(xQueueReceive(espnow_send_q,&CURRENT_MATRIX,10000))
+		if(xQueueReceive(espnow_matrix_send_q,&CURRENT_MATRIX,2))
 		{
 			ESP_LOGI(ESP_NOW_TAG,"Sending Slave matrix state!");
 			//send the report
 			esp_now_send(pPeer->peer_addr,(uint8_t*)&CURRENT_MATRIX,sizeof(CURRENT_MATRIX));
 
-			}
 		}
+
+#ifdef R_ENCODER_SLAVE
+		uint8_t CURRENT_ENCODER[1]={0};
+		if(xQueueReceive(espnow_encoder_send_q,&CURRENT_ENCODER,2))
+		{
+			ESP_LOGI(ESP_NOW_TAG,"Sending encoder state!");
+			//send the report
+			esp_now_send(pPeer->peer_addr,(uint8_t*)&CURRENT_ENCODER,sizeof(CURRENT_ENCODER));
+
+		}
+#endif
+	}
 
 }
 // Initialize sending via espnow
@@ -136,7 +149,7 @@ void espnow_initialize_send(void){
 	esp_now_add_peer(pPeer);
 
 	//Sending matrix state
-	espnow_send_matrix_state();
+	xTaskCreate(espnow_send_state, "Send matrix changes", 4096, NULL, configMAX_PRIORITIES, NULL);
 
 }
 
@@ -145,7 +158,11 @@ void espnow_send(void){
 	ESP_LOGI(ESP_NOW_TAG,"Initialing ESP-NOW functions for sending data");
 
 	uint8_t array_sample[2+MATRIX_ROWS*MATRIX_COLS];
-	espnow_send_q = xQueueCreate(32,sizeof(array_sample));
+	espnow_matrix_send_q = xQueueCreate(32,sizeof(array_sample));
+#ifdef R_ENCODER_SLAVE
+	r_encoder_setup();
+	espnow_encoder_send_q = xQueueCreate(32,sizeof(uint8_t));
+#endif
 
 	wifi_initialize_send();
 	espnow_initialize_send();

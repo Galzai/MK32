@@ -24,13 +24,16 @@ In order to define your keyboard:
 ### Power consumption and deep sleep:
 - For better battery usage you can define the number of inactive minutes you would like your device to wait before sleeping in keyboard_config.h. 
 - The controller is defined to wake up when the capacity on GPIO pin 2 is modified ("touch sensor"), if you do not want to enable deep sleep simply undefine SLEEP_MINS.
-- Notice that reconnection after waking from deep sleep might take a couple of minutes (or you can rescan for bluetooth devices and it should recconect quickly).
-- Power consumption has not been tested or optimized yet.
+- Notice that on windows reconnection after waking from deep sleep might take a couple of minutes, no problem on linux.
+ (on windows can rescan for bluetooth devices and it should recconect without waiting).
+- Tested current (hopefully will improve in future):
+ 40 mA for BLE (without split functionality).
+ 100 mA with split mode enabled (possible to reduce if I change from ESP-NOW to BLE). 
+ <1 mA while in deep sleep.
 
 ### For rotary encoders (for volume knob etc):
-- Define R_ENCODER and set encoder pins in keyboard_config.h (undefine ENCODER_S_PIN if your encoder does not have a switch).
+- Define R_ENCODER or (R_ENCODER_SLAVE if on slave pad) and set encoder pins in keyboard_config.h (undefine ENCODER_S_PIN if your encoder does not have a switch).
 - Currently only supports volume +/- and mute, will improve functionality in the future.
-- Currently only supported on MASTER pad (will be improved in future).
 
 ## To Implement:
 - More than 2 pads (currently supports 2 pads).

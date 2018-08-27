@@ -15,7 +15,8 @@ extern "C" {
 #endif
 
 //Queue for sending report from matrix scan
-extern QueueHandle_t espnow_send_q;
+extern QueueHandle_t espnow_matrix_send_q;
+extern QueueHandle_t espnow_encoder_send_q;
 
 /** @Setup the function for sending data via espnow
  * */

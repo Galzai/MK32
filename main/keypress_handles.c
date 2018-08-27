@@ -31,7 +31,7 @@
 /*
  * Current state of the keymap,each cell will hold the location of the key in the key report,
  *if a key is not in the report it will be set to 0
-*/
+ */
 
 uint8_t KEY_STATE[MATRIX_ROWS][KEYMAP_COLS]={0};
 uint16_t led_status=0;
@@ -48,7 +48,7 @@ uint8_t macro_release[3] = {0};
 // checking if a modifier key was pressed
 uint16_t check_modifier( uint16_t key ){
 
-    uint8_t cur_mod = 0;
+	uint8_t cur_mod = 0;
 	// these are the modifier keys
 	if(( 0xE0 <= key )&&( key <= 0xE7 )){
 		cur_mod = (1 << (key-0xE0));
@@ -62,17 +62,17 @@ uint16_t check_modifier( uint16_t key ){
 uint16_t check_led_status( uint16_t key ){
 
 	switch(key){
-		case KC_NLCK:
-			return 1;
-			break;
+	case KC_NLCK:
+		return 1;
+		break;
 
-		case KC_CAPS:
-			return 2;
-			break;
+	case KC_CAPS:
+		return 2;
+		break;
 
-		case KC_SLCK:
-			return 3;
-			break;
+	case KC_SLCK:
+		return 3;
+		break;
 
 	}
 	return 0;
@@ -81,7 +81,7 @@ uint16_t check_led_status( uint16_t key ){
 // what to do on a media key press
 void media_control_send(uint16_t keycode ){
 
-uint8_t media_state[1]={0};
+	uint8_t media_state[1]={0};
 
 	switch(keycode){
 
@@ -130,9 +130,9 @@ uint8_t media_state[1]={0};
 }
 
 void media_control_release(uint16_t keycode ){
-uint8_t media_state[1]={0};
-xQueueSend(media_q,(void*)&media_state, (TickType_t) 0);
-vTaskDelay(3);
+	uint8_t media_state[1]={0};
+	xQueueSend(media_q,(void*)&media_state, (TickType_t) 0);
+	vTaskDelay(3);
 }
 
 
@@ -141,25 +141,25 @@ vTaskDelay(3);
 void layer_adjust( uint16_t keycode ){
 
 	switch(keycode){
-		case DEFAULT:
+	case DEFAULT:
+		current_layout=0;
+		break;
+
+	case LOWER:
+		if(current_layout==0){
+			current_layout=LAYERS;
+			break;
+		}
+		current_layout--;
+		break;
+
+	case RAISE:
+		if(current_layout==LAYERS){
 			current_layout=0;
 			break;
-
-		case LOWER:
-			if(current_layout==0){
-				current_layout=LAYERS;
-				break;
-			}
-			current_layout--;
-			break;
-
-		case RAISE:
-			if(current_layout==LAYERS){
-				current_layout=0;
-				break;
-			}
-			current_layout++;
-			break;
+		}
+		current_layout++;
+		break;
 	}
 	vTaskDelay(15);
 	ESP_LOGI(KEY_PRESS_TAG,"Layer modified!, Current layer: %d ",current_layout);
@@ -201,10 +201,10 @@ uint8_t *check_key_state( uint16_t keymap[MATRIX_ROWS][KEYMAP_COLS] ){
 				}
 
 				// checking for system control keycodes
-//				if((keycode>=0XA8)&&(keycode<=0XA7)){
-//					system_control(keycode);
-//					continue;
-//				}
+				//				if((keycode>=0XA8)&&(keycode<=0XA7)){
+				//					system_control(keycode);
+				//					continue;
+				//				}
 
 				if(current_report[report_index]==0){
 					modifier|=check_modifier(keycode);
@@ -216,9 +216,9 @@ uint8_t *check_key_state( uint16_t keymap[MATRIX_ROWS][KEYMAP_COLS] ){
 				//checking if macro was released
 				if(keycode>0x102){
 					for(uint8_t i=0; i < 3; i++){
-					uint16_t key=macros[0x103-keycode][i];
-					current_report[REPORT_LEN-1-i]=0;
-					modifier&=~check_modifier(key);
+						uint16_t key=macros[0x103-keycode][i];
+						current_report[REPORT_LEN-1-i]=0;
+						modifier&=~check_modifier(key);
 					}
 				}
 
@@ -227,28 +227,28 @@ uint8_t *check_key_state( uint16_t keymap[MATRIX_ROWS][KEYMAP_COLS] ){
 						led_status=0;
 					}
 
-						modifier&=~check_modifier(keycode);
-						current_report[KEY_STATE[row][col]]=0;
-						current_report[report_index]=0;
+					modifier&=~check_modifier(keycode);
+					current_report[KEY_STATE[row][col]]=0;
+					current_report[report_index]=0;
 
-						// checking for media control keycodes
-						if((keycode>=0xA5)&&(keycode<=0xAE)){
-							media_control_release(keycode);
-						}
-
-
-				}
-
-						// checking for system control keycodes
-		//				if((keycode>=0XA8)&&(keycode<=0XA7)){
-		//					system_control_release(keycode);
-		//					continue;
-		//				}
+					// checking for media control keycodes
+					if((keycode>=0xA5)&&(keycode<=0xAE)){
+						media_control_release(keycode);
+					}
 
 
 				}
+
+				// checking for system control keycodes
+				//				if((keycode>=0XA8)&&(keycode<=0XA7)){
+				//					system_control_release(keycode);
+				//					continue;
+				//				}
+
+
 			}
 		}
+	}
 
 
 
@@ -287,10 +287,10 @@ uint8_t *check_key_state( uint16_t keymap[MATRIX_ROWS][KEYMAP_COLS] ){
 				}
 
 				// checking for system control keycodes
-//				if((keycode>=0XA8)&&(keycode<=0XA7)){
-//					system_control(keycode);
-//					continue;
-//				}
+				//				if((keycode>=0XA8)&&(keycode<=0XA7)){
+				//					system_control(keycode);
+				//					continue;
+				//				}
 
 
 				if(current_report[report_index]==0){
@@ -304,9 +304,9 @@ uint8_t *check_key_state( uint16_t keymap[MATRIX_ROWS][KEYMAP_COLS] ){
 				//checking if macro was released
 				if(keycode>0x102){
 					for(uint8_t i=0; i < 3; i++){
-					uint16_t key=macros[0x103-keycode][i];
-					current_report[REPORT_LEN-1-i]=0;
-					modifier&=~check_modifier(key);
+						uint16_t key=macros[0x103-keycode][i];
+						current_report[REPORT_LEN-1-i]=0;
+						modifier&=~check_modifier(key);
 					}
 				}
 
@@ -321,22 +321,22 @@ uint8_t *check_key_state( uint16_t keymap[MATRIX_ROWS][KEYMAP_COLS] ){
 					}
 
 
-			}
-
-					// checking for system control keycodes
-	//				if((keycode>=0XA8)&&(keycode<=0XA7)){
-	//					system_control_release(keycode);
-	//					continue;
-	//				}
-
-
-						modifier&=~check_modifier(keycode);
-						current_report[KEY_STATE[row][col]]=0;
-						current_report[report_index]=0;
 				}
+
+				// checking for system control keycodes
+				//				if((keycode>=0XA8)&&(keycode<=0XA7)){
+				//					system_control_release(keycode);
+				//					continue;
+				//				}
+
+
+				modifier&=~check_modifier(keycode);
+				current_report[KEY_STATE[row][col]]=0;
+				current_report[report_index]=0;
 			}
 		}
 	}
+
 
 #endif
 	current_report[0]=modifier;

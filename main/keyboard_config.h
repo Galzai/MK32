@@ -15,27 +15,27 @@
 #define MAX_BT_DEVICENAME_LENGTH 40
 
 typedef struct config_data {
-    char bt_device_name[MAX_BT_DEVICENAME_LENGTH];
+	char bt_device_name[MAX_BT_DEVICENAME_LENGTH];
 } config_data_t;
 
 typedef struct joystick_data {
-    uint16_t X;
-    uint16_t Y;
-    uint16_t Z;
-    uint16_t Z_rotate;
-    uint16_t slider_left;
-    uint16_t slider_right;
-    uint16_t buttons1;
-    uint16_t buttons2;
-    int16_t hat;
+	uint16_t X;
+	uint16_t Y;
+	uint16_t Z;
+	uint16_t Z_rotate;
+	uint16_t slider_left;
+	uint16_t slider_right;
+	uint16_t buttons1;
+	uint16_t buttons2;
+	int16_t hat;
 } joystick_data_t;
 
-//Defines for split communication, to be moved to header file later.
 #define MASTER  // undefine if you are not flashing the main controller
-//#define SPLIT_MASTER	 // undefine if keyboard is not split and master
+#define SPLIT_MASTER	 // undefine if keyboard is not split and master
 //#define SLAVE	 // undefine if keyboard is master
 
 //#define R_ENCODER // undefine if no rotary encoder is used
+//#define R_ENCODER_SLAVE // undefine if no rotary encoder is used on slave pad
 
 #define ENCODER_A_PIN GPIO_NUM_32 // encoder phase A pin
 #define ENCODER_B_PIN GPIO_NUM_33// encoder phase B pin
@@ -56,8 +56,8 @@ typedef struct joystick_data {
 
 
 //deep sleep parameters, mind that reconnecting after deep sleep might take a minute or two
-#define SLEEP_MINS 30 // undefine if you do not need deep sleep
-//#define WAKE_PAD TOUCH_PAD_NUM_2 // pin for waking from deep sleep via touch capacitance
+#define SLEEP_MINS 5 // undefine if you do not need deep sleep
+#define WAKE_PAD TOUCH_PAD_NUM_2 // pin for waking from deep sleep via touch capacitance
 #define TOUCH_THRESHOLD 700 //Threshold for waking up via touch sensor
 
 

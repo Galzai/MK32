@@ -35,6 +35,7 @@
 #include "esp_system.h"
 #include "esp_now.h"
 
+#include "HID_kbdmousejoystick.h"
 #include "espnow_recieve.h"
 #include "keyboard_config.h"
 //ESP-now tag for reports
@@ -49,14 +50,14 @@ static const uint8_t channel=1;
 // To my understanding the you need to assign a handler for the WiFi loop in order to start the function.
 static esp_err_t example_event_handler(void *ctx, system_event_t *event)
 {
-    switch(event->event_id) {
-    case SYSTEM_EVENT_STA_START:;
+	switch(event->event_id) {
+	case SYSTEM_EVENT_STA_START:;
 	ESP_LOGI(ESP_NOW_TAG,"WiFi Initialized");
-        break;
-    default:
-        break;
-    }
-    return ESP_OK;
+	break;
+	default:
+		break;
+	}
+	return ESP_OK;
 }
 
 // Initializing WiFi
@@ -76,22 +77,33 @@ static void wifi_initialize_recieve(void){
 	esp_wifi_set_channel(channel, WIFI_SECOND_CHAN_NONE); // Make sure we are on the same channel
 	ESP_ERROR_CHECK(esp_wifi_get_mac(ESP_IF_WIFI_STA,slave_mac_adr));
 
+
 	//Printout the mac ID (in case we change the starting one)
 	printf("DEVICE MAC ADDRESS:[");
 	for(int i=0;i<6; i++)
 	{
-	printf("%d:", slave_mac_adr[i]);
+		printf("%d:", slave_mac_adr[i]);
 	}
 	printf("]");
 }
 
-//ESP-NOW callback upon receiving data (will be modified to update the report)
+//ESP-NOW callback upon receiving data
 static void espnow_recv_cb(const uint8_t *mac_addr, const uint8_t *data, int data_len){
 	ESP_LOGI(ESP_NOW_TAG,"Data received!");
-
+	uint8_t CURRENT_ENCODER[1]={0};
 	uint8_t CURRENT_MATRIX[MATRIX_ROWS][MATRIX_COLS]={0};
-	memcpy(CURRENT_MATRIX, data, sizeof(CURRENT_MATRIX) );
-	xQueueSend(espnow_recieve_q,(void*)&CURRENT_MATRIX, (TickType_t) 0);
+
+	// for key reports
+	if(data_len == MATRIX_ROWS*MATRIX_COLS){
+		memcpy(CURRENT_MATRIX, data, sizeof(CURRENT_MATRIX) );
+		xQueueSend(espnow_recieve_q,(void*)&CURRENT_MATRIX, (TickType_t) 0);
+	}
+
+	// currently for encoder reports
+	if(data_len==1){
+		memcpy(CURRENT_ENCODER, data, sizeof(CURRENT_ENCODER) );
+		xQueueSend(media_q,(void*)&CURRENT_ENCODER, (TickType_t) 0);
+	}
 
 }
 

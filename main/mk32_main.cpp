@@ -35,6 +35,7 @@
 #include "driver/touch_pad.h"
 #include "esp_timer.h"
 #include "esp_sleep.h"
+#include "esp_pm.h"
 
 
 //HID Ble functions
@@ -57,6 +58,7 @@ static config_data_t config;
 QueueHandle_t espnow_recieve_q;
 
 bool DEEP_SLEEP = true; // flag to check if we need to go to deep sleep
+bool BLE_SLEEP= true;
 
 
 extern "C" void key_reports(void *pvParameters)
@@ -70,7 +72,7 @@ extern "C" void key_reports(void *pvParameters)
 	while(1){
 		while(HID_kbdmousejoystick_isConnected() == 0) {
 			if (CON_LOG_FLAG == false){
-			ESP_LOGI(KEY_REPORT_TAG,"Not connected, waiting for connection ");
+				ESP_LOGI(KEY_REPORT_TAG,"Not connected, waiting for connection ");
 			}
 			DEEP_SLEEP = false;
 			CON_LOG_FLAG = true;
@@ -85,38 +87,53 @@ extern "C" void key_reports(void *pvParameters)
 				ESP_LOGE(KEY_REPORT_TAG,"queues not initialized");
 			}
 			else{
+				if(BLE_SLEEP){
+					esp_bt_sleep_enable();
+					BLE_SLEEP=false;
+				}
 				if(memcmp(past_report, report_state, sizeof past_report)!=0){
 					DEEP_SLEEP = false;
 					memcpy(past_report,report_state, sizeof past_report );
 					xQueueSend(keyboard_q,(void*)&report_state, (TickType_t) 0);
 					vTaskDelay(3);
-;
 
 				}
+
 			}
-
-
 		}
 		CON_LOG_FLAG = false;
 	}
 
 }
 
-extern "C" void media_report(void *pvParameters){
-#ifdef R_ENCODER
+extern "C" void encoder_report(void *pvParameters){
 	uint8_t encoder_state[1]={0};
 	uint8_t past_encoder_state[1]={0};
 
 	while(1){
 		encoder_state[0]=r_encoder_state();
 		if(encoder_state[0]!=past_encoder_state[0]){
-		DEEP_SLEEP = false
-		xQueueSend(media_q,(void*)&encoder_state, (TickType_t) 0);
-		past_encoder_state[0] = encoder_state[0];
+			DEEP_SLEEP = false;
+			xQueueSend(media_q,(void*)&encoder_state, (TickType_t) 0);
+			past_encoder_state[0] = encoder_state[0];
 		}
 
 	}
-#endif
+}
+
+extern "C" void slave_encoder_report(void *pvParameters){
+	uint8_t encoder_state[1]={0};
+	uint8_t past_encoder_state[1]={0};
+
+	while(1){
+		encoder_state[0]=r_encoder_state();
+		if(encoder_state[0]!=past_encoder_state[0]){
+			DEEP_SLEEP = false;
+			xQueueSend(espnow_encoder_send_q,(void*)&encoder_state, (TickType_t) 0);
+			past_encoder_state[0] = encoder_state[0];
+		}
+
+	}
 }
 
 
@@ -125,14 +142,14 @@ extern "C" void slave_scan(void *pvParameters){
 
 	uint8_t PAST_MATRIX[MATRIX_ROWS][MATRIX_COLS]={0};
 
-while(1){
-	scan_matrix();
-	if(memcmp(&PAST_MATRIX, &MATRIX_STATE, sizeof MATRIX_STATE)!=0){
-		DEEP_SLEEP = false;
-		memcpy(&PAST_MATRIX, &MATRIX_STATE, sizeof MATRIX_STATE );
+	while(1){
+		scan_matrix();
+		if(memcmp(&PAST_MATRIX, &MATRIX_STATE, sizeof MATRIX_STATE)!=0){
+			DEEP_SLEEP = false;
+			memcpy(&PAST_MATRIX, &MATRIX_STATE, sizeof MATRIX_STATE );
 
-		xQueueSend(espnow_send_q,(void*)&MATRIX_STATE, (TickType_t) 0);
-	 }
+			xQueueSend(espnow_matrix_send_q,(void*)&MATRIX_STATE, (TickType_t) 0);
+		}
 	}
 }
 
@@ -154,6 +171,7 @@ extern "C" void espnow_update_matrix(void *pvParameters){
 /*If no key press has been recieved in SLEEP_MINS amount of minutes, put device into deep sleep
  *  wake up on touch on GPIO pin 2
  *  */
+#ifdef SLEEP_MINS
 extern "C" void deep_sleep(void *pvParameters){
 
 
@@ -173,7 +191,7 @@ extern "C" void deep_sleep(void *pvParameters){
 			if(DEEP_SLEEP == true){
 				ESP_LOGE(SYSTEM_REPORT_TAG,"going to sleep!");
 
-	// wake up esp32 using touch sensor
+				// wake up esp32 using touch sensor
 				touch_pad_init();
 				touch_pad_config(TOUCH_PAD_NUM2,TOUCH_THRESHOLD);
 				esp_sleep_enable_touchpad_wakeup();
@@ -192,9 +210,13 @@ extern "C" void deep_sleep(void *pvParameters){
 	}
 
 }
-
+#endif
 extern "C" void app_main()
 {
+	//	esp_pm_config_esp32_t pm_config;
+	//	pm_config.max_freq_mhz = 10;
+	//	pm_config.min_freq_mhz = 10;
+	//	esp_pm_configure(&pm_config);
 	touch_pad_deinit();
 	matrix_setup();
 	esp_err_t ret;
@@ -222,14 +244,18 @@ extern "C" void app_main()
 	} else ESP_LOGI("MAIN","bt device name is: %s",config.bt_device_name);
 
 	esp_log_level_set("*", ESP_LOG_INFO);
-//If the device is a slave initialize sending reports to master
+
+	//If the device is a slave initialize sending reports to master
 #ifdef SLAVE
-	xTaskCreatePinnedToCore(slave_scan, "Scan changes for slave", 4096, NULL, configMAX_PRIORITIES, NULL,1);
+	xTaskCreatePinnedToCore(slave_scan, "Scan matrix changes for slave", 4096, NULL, configMAX_PRIORITIES, NULL,1);
+#ifdef R_ENCODER_SLAVE
+	xTaskCreatePinnedToCore(slave_encoder_report, "Scan encoder changes for slave", 4096, NULL, configMAX_PRIORITIES, NULL,1);
 	espnow_send();
+#endif
 #endif
 
 
-//If the device is a master for split board initialize receiving reports from slave
+	//If the device is a master for split board initialize receiving reports from slave
 #ifdef SPLIT_MASTER
 
 	uint8_t array_sample[REPORT_LEN];
@@ -242,11 +268,11 @@ extern "C" void app_main()
 	//activate keyboard BT stack
 	HID_kbdmousejoystick_init(1,1,0,0,config.bt_device_name);
 	ESP_LOGI("HIDD","MAIN finished...");
-//activate encoder functions
+	//activate encoder functions
 #ifdef	R_ENCODER
 	r_encoder_setup();
-	xTaskCreatePinnedToCore(media_report, "media report", 4096, NULL, configMAX_PRIORITIES, NULL,1);
-	#endif
+	xTaskCreatePinnedToCore(encoder_report, "encoder report", 4096, NULL, configMAX_PRIORITIES, NULL,1);
+#endif
 
 	// Start the keyboard Tasks
 	// Create the key scanning task on core 1 (otherwise it will crash)
