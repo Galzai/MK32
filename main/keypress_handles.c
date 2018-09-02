@@ -161,7 +161,7 @@ void layer_adjust( uint16_t keycode ){
 		current_layout++;
 		break;
 	}
-	vTaskDelay(15);
+	vTaskDelay(3);
 	ESP_LOGI(KEY_PRESS_TAG,"Layer modified!, Current layer: %d ",current_layout);
 }
 

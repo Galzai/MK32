@@ -21,6 +21,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include "../components/u8g2_OLED/oled_tasks.h"
+#include "../components/u8g2_OLED/oled_tasks.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/event_groups.h"
@@ -45,11 +48,9 @@
 #include "matrix.c"
 #include "keypress_handles.c"
 #include "keyboard_config.h"
-#include "r_encoder.h"
-
-//ESP-NOW functions
 #include "espnow_recieve.h"
 #include "espnow_send.h"
+#include "r_encoder.h"
 
 #define KEY_REPORT_TAG "KEY_REPORT"
 #define SYSTEM_REPORT_TAG "KEY_REPORT"
@@ -74,23 +75,29 @@ extern "C" void key_reports(void *pvParameters)
 			if (CON_LOG_FLAG == false){
 				ESP_LOGI(KEY_REPORT_TAG,"Not connected, waiting for connection ");
 			}
+#ifdef OLED_ENABLE
+			waiting_oled();
+#endif
 			DEEP_SLEEP = false;
 			CON_LOG_FLAG = true;
 		}
 
+#ifdef OLED_ENABLE
+			ble_connected_oled();
+#endif
+
 		while(HID_kbdmousejoystick_isConnected() != 0) {
 			memcpy(report_state, check_key_state(*layouts[current_layout]), sizeof report_state);
 
+#ifdef OLED_ENABLE
+			update_oled();
+#endif
 			//Do not send anything if queues are uninitialized
 			if(mouse_q == NULL || keyboard_q == NULL || joystick_q == NULL)
 			{
 				ESP_LOGE(KEY_REPORT_TAG,"queues not initialized");
 			}
 			else{
-				if(BLE_SLEEP){
-					esp_bt_sleep_enable();
-					BLE_SLEEP=false;
-				}
 				if(memcmp(past_report, report_state, sizeof past_report)!=0){
 					DEEP_SLEEP = false;
 					memcpy(past_report,report_state, sizeof past_report );
@@ -190,7 +197,9 @@ extern "C" void deep_sleep(void *pvParameters){
 		if(current_time_passed>=1000000*60*SLEEP_MINS){
 			if(DEEP_SLEEP == true){
 				ESP_LOGE(SYSTEM_REPORT_TAG,"going to sleep!");
-
+#ifdef OLED_ENABLE
+				deinit_oled();
+#endif
 				// wake up esp32 using touch sensor
 				touch_pad_init();
 				touch_pad_config(TOUCH_PAD_NUM2,TOUCH_THRESHOLD);
@@ -254,7 +263,10 @@ extern "C" void app_main()
 #endif
 #endif
 
-
+	//activate oled
+#ifdef	OLED_ENABLE
+	init_oled();
+#endif
 	//If the device is a master for split board initialize receiving reports from slave
 #ifdef SPLIT_MASTER
 
