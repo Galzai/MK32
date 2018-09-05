@@ -14,9 +14,9 @@
 #define GATTS_TAG "MK32 V1.5" // The device's name
 #define MAX_BT_DEVICENAME_LENGTH 40
 
-#define MASTER  // undefine if you are not flashing the main controller
-#define SPLIT_MASTER	 // undefine if keyboard is not split and master
-//#define SLAVE	 // undefine if keyboard is master
+//#define MASTER  // undefine if you are not flashing the main controller
+//#define SPLIT_MASTER	 // undefine if keyboard is not split and master
+#define SLAVE	 // undefine if keyboard is master
 
 //Define matrix
 #define KEYPADS 2 // intended in order to create a Multiple keypad split boards
@@ -31,7 +31,7 @@
 
 //Encoder definitions
 //#define R_ENCODER // undefine if no rotary encoder is used
-//#define R_ENCODER_SLAVE // undefine if no rotary encoder is used on slave pad
+#define R_ENCODER_SLAVE // undefine if no rotary encoder is used on slave pad
 #define ENCODER_A_PIN GPIO_NUM_32 // encoder phase A pin
 #define ENCODER_B_PIN GPIO_NUM_33// encoder phase B pin
 #define ENCODER_S_PIN GPIO_NUM_27// encoder switch pin

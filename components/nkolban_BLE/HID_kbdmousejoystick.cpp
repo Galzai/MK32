@@ -669,12 +669,12 @@ class BLE_HOG: public Task {
 
 		BLESecurity *pSecurity = new BLESecurity();
 		//		pSecurity->setAuthenticationMode(ESP_LE_AUTH_REQ_SC_BOND);
-				pSecurity->setAuthenticationMode(ESP_LE_AUTH_BOND );
+//				pSecurity->setAuthenticationMode(ESP_LE_AUTH_BOND );
 
 		pSecurity->setCapability(ESP_IO_CAP_NONE);
 		//		pSecurity->setCapability(ESP_IO_CAP_OUT);
 		//pSecurity->setCapability(ESP_IO_CAP_KBDISP);
-		pSecurity->setInitEncryptionKey(ESP_BLE_ENC_KEY_MASK | ESP_BLE_ID_KEY_MASK);
+//		pSecurity->setInitEncryptionKey(ESP_BLE_ENC_KEY_MASK | ESP_BLE_ID_KEY_MASK);
 
 		ESP_LOGI(LOG_TAG, "Advertising started!");
 		while(1) { delay(1000000); }

@@ -1,3 +1,22 @@
+/*
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301, USA.
+ *
+ * Copyright 2018 Gal Zaidenstein.
+ */
+
 #include "../u8g2_OLED/oled_tasks.h"
 
 #include <driver/gpio.h>
@@ -129,6 +148,21 @@ void ble_connected_oled(void){
 		u8g2_SetFont(&u8g2, u8g2_font_open_iconic_all_1x_t );
 		u8g2_DrawGlyph(&u8g2,88,32,LOCK_ICON);
 	}
+
+	u8g2_SendBuffer(&u8g2);
+}
+
+//Slave oled display
+void ble_slave_oled(void){
+
+
+	u8g2_ClearBuffer(&u8g2);
+	u8g2_SetFont(&u8g2, u8g2_font_5x7_tf );
+	u8g2_DrawStr(&u8g2, 0,6,GATTS_TAG);
+	u8g2_DrawStr(&u8g2, 0,14,"Slave pad 1");
+	u8g2_SetFont(&u8g2, u8g2_font_open_iconic_all_1x_t );
+	u8g2_DrawGlyph(&u8g2, 110,8,BATT_ICON);
+	u8g2_DrawGlyph(&u8g2, 120,8,BT_ICON);
 
 	u8g2_SendBuffer(&u8g2);
 }

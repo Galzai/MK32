@@ -254,19 +254,28 @@ extern "C" void app_main()
 
 	esp_log_level_set("*", ESP_LOG_INFO);
 
-	//If the device is a slave initialize sending reports to master
-#ifdef SLAVE
-	xTaskCreatePinnedToCore(slave_scan, "Scan matrix changes for slave", 4096, NULL, configMAX_PRIORITIES, NULL,1);
-#ifdef R_ENCODER_SLAVE
-	xTaskCreatePinnedToCore(slave_encoder_report, "Scan encoder changes for slave", 4096, NULL, configMAX_PRIORITIES, NULL,1);
-	espnow_send();
-#endif
-#endif
-
 	//activate oled
 #ifdef	OLED_ENABLE
 	init_oled();
 #endif
+
+	//If the device is a slave initialize sending reports to master
+#ifdef SLAVE
+	xTaskCreatePinnedToCore(slave_scan, "Scan matrix changes for slave", 4096, NULL, configMAX_PRIORITIES, NULL,1);
+
+#ifdef R_ENCODER_SLAVE
+	xTaskCreatePinnedToCore(slave_encoder_report, "Scan encoder changes for slave", 4096, NULL, configMAX_PRIORITIES, NULL,1);
+#endif
+
+#ifdef OLED_ENABLE
+	ble_slave_oled();
+#endif
+
+	espnow_send();
+#endif
+
+
+
 	//If the device is a master for split board initialize receiving reports from slave
 #ifdef SPLIT_MASTER
 

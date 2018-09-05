@@ -12,7 +12,7 @@
 // Keymaps are designed to be relatively interchangeable with QMK
 enum custom_keycodes {
   QWERTY ,
-  COLEMAK,
+  NUM,
   DVORAK,
 };
 
@@ -20,7 +20,7 @@ enum custom_keycodes {
 // array to hold names of layouts for oled
 char layout_names[LAYERS+1][8] ={
 		  "QWERTY" ,
-		  "COLEMAK",
+		  "NUM",
 		  "DVORAK",
 };
 #endif
@@ -72,24 +72,24 @@ uint16_t macros[MACROS_NUM][3]={
 
 	};
 
-	 uint16_t _COLEMAK[MATRIX_ROWS][KEYMAP_COLS]={
+	 uint16_t _NUM[MATRIX_ROWS][KEYMAP_COLS]={
 
-			/* Colemak
-			 * ,------------------------------------------------------------------------------------.
-			 * | Tab   |   Q  |   W  |   F  |   P  |   G  |   J  |   L  |   U  |   Y  |   ;  | Bksp |
-			 * |------+------+------+------+------+-------------+------+------+------+-------+------|
-			 * | Esc   |   A  |   R  |   S  |   T  |   D  |   H  |   N  |   E  |   I  |   O  |  '   |
-			 * |------+------+------+------+------+------|------+------+------+------+-------+------|
-			 * | Shift |   Z  |   X  |   C  |   V  |   B  |   K  |   M  |   ,  |   .  |   /  |Enter |
-			 * |------+------+------+------+------+------+------+------+------+------+-------+------|
-			 * |Default| Ctrl | Alt  | GUI  |Lower |Space |Space |Raise | Left | Down |  Up  |Right |
-			 * `------------------------------------------------------------------------------------'
-			 */
+			 /* Nums
+			  * ,-----------------------------------------------------------------------------------.
+			  * |   `  |   1  |   2  |   3  |   4  |   5  |   6  |   7  |   8  |   9  |   0  | Bksp |
+			  * |------+------+------+------+------+-------------+------+------+------+------+------|
+			  * | Del  |  F1  |  F2  |  F3  |  F4  |  F5  |  F6  |   -  |   =  |   [  |   ]  |  \   |
+			  * |------+------+------+------+------+------|------+------+------+------+------+------|
+			  * |      |  F7  |  F8  |  F9  |  F10 |  F11 |  F12 |ISO # |ISO / |Pg Up |Pg Dn |      |
+			  * |------+------+------+------+------+------+------+------+------+------+------+------|
+			  * |      |      |      |      |      |             |      |      |      |      |      |
+			  * `-----------------------------------------------------------------------------------'
+			  */
 
-			  {KC_TAB,  KC_Q,    KC_W,    KC_F,    KC_P,    KC_G,    KC_J,    KC_L,    KC_U,    KC_Y,    KC_SCLN, KC_BSPC },
-			  {KC_ESC,  KC_A,    KC_R,    KC_S,    KC_T,    KC_D,    KC_H,    KC_N,    KC_E,    KC_I,    KC_O,    KC_QUOT },
-			  {KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_K,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_ENT  } ,
-			  {DEFAULT,  KC_LCTL, KC_LALT, KC_LGUI, LOWER,   KC_SPC,  KC_SPC,  RAISE,   KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT }
+			  {KC_GRV,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_BSPC },
+			  {KC_DEL,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_MINS, KC_EQL,  KC_LBRC, KC_RBRC, KC_BSLS },
+			  {KC_LSFT, KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_NUHS, KC_NUBS, KC_PGUP, KC_PGDN, KC_ENT  } ,
+			  {DEFAULT,  KC_LCTL, KC_LALT, KC_LGUI, LOWER,   KC_SPC,  KC_SPC,  RAISE,   KC_LEFT, KC_DOWN, KC_UP,  KC_RGHT }
 
 	};
 
@@ -117,7 +117,7 @@ uint16_t macros[MACROS_NUM][3]={
 
 	 uint16_t (*layouts[])[MATRIX_ROWS][KEYMAP_COLS]={
 			 &_QWERTY,
-			 &_COLEMAK,
+			 &_NUM,
 			 &_DVORAK
 	 };
 
