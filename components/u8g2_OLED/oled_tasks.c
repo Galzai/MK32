@@ -123,6 +123,7 @@ void update_oled(void){
 			u8g2_DrawGlyph(&u8g2,88,32,LOCK_ICON);
 		}
 		u8g2_SendBuffer(&u8g2);
+		prev_led = curr_led;
 	}
 
 	if(battery_percent!=prev_battery_percent){
@@ -136,11 +137,11 @@ void update_oled(void){
 			u8g2_DrawStr(&u8g2, 85,7,buf);
 		}
 		u8g2_SendBuffer(&u8g2);
+		prev_battery_percent = battery_percent;
 	}
 
 
-	prev_battery_percent = battery_percent;
-	prev_led = curr_led;
+
 
 
 
@@ -203,8 +204,9 @@ void ble_slave_oled(void){
 			u8g2_DrawStr(&u8g2, 85,7,buf);
 		}
 		u8g2_SendBuffer(&u8g2);
+		prev_battery_percent = battery_percent;
 	}
-	prev_battery_percent = battery_percent;
+
 
 
 }
@@ -224,7 +226,7 @@ void waiting_oled(void){
 	u8g2_SetFont(&u8g2, u8g2_font_5x7_tf );
 	u8g2_DrawStr(&u8g2,0,6,GATTS_TAG);
 
-	if(battery_percent!=prev_battery_percent){
+
 		u8g2_SetFont(&u8g2, u8g2_font_5x7_tf );
 		char buf[sizeof(uint32_t)];
 		snprintf (buf, sizeof(uint32_t), "%d", battery_percent);
@@ -234,12 +236,11 @@ void waiting_oled(void){
 		}else{
 			u8g2_DrawStr(&u8g2, 85,7,buf);
 		}
-	}
 
 	for(int i=0; i<3; i++){
 		u8g2_DrawStr(&u8g2, 0,26,waiting_conn);
 		u8g2_SendBuffer(&u8g2);
-		vTaskDelay(200/portTICK_PERIOD_MS);
+		vTaskDelay(100/portTICK_PERIOD_MS);
 		strcat(waiting_conn,".");
 	}
 

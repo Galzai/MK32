@@ -19,8 +19,12 @@ extern "C" {
 #define R_1 47  //Pull-up resistor [kOhm]
 #define R_2 22 //Pull-down resistor [kOhm]
 
-#define Vin_max 3700 //Full Battery voltage [mV]
-#define Vin_min  2300 //Minimum operating voltage for the esp32 [mV]
+/*These are approximate values,
+ * battery voltage isn't completely linear, it would be better to use a table for specific battery
+ * in the future.
+ */
+#define Vin_max 4200 //Charging Battery voltage [mV]
+#define Vin_min  3400 //Battery discharge Voltage[mV]
 
 #define Vout_max Vin_max*R_2/(R_1+R_2) //Max voltage on analog pin [mV]
 #define Vout_min Vin_min*R_2/(R_1+R_2) //Min voltage on analog pin [mV]

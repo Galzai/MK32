@@ -27,8 +27,9 @@ In order to define your keyboard:
 for additional information: https://github.com/olikraus/u8g2/wiki
 
 ### Battery Monitoring:
+- Battery level indication is by approximate values (you can look at LiPo voltage discharge graphs and adjust using an appropriate voltage-discharge capacity table)
 - You can add battery monitoring by selecting an adc pin and using a voltage divider.
-- See battery_monitor.h for resistor values (You can skip the resistors if you dont care about  draining the battering faster).
+- See battery_monitor.h for resistor values. 
 - I have not tested the accuracy of the battery monitoring as of yet.
 
 

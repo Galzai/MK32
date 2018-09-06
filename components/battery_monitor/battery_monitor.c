@@ -43,7 +43,8 @@ uint32_t get_battery_level(void){
 
     //Convert adc_reading to voltage in mV
     voltage = esp_adc_cal_raw_to_voltage(adc_reading, adc_chars);
-    uint32_t battery_percent = ((voltage-Vout_min)/(Vout_max-Vout_min))*100;
+    uint32_t battery_percent = ((voltage-Vout_min)*100/(Vout_max-Vout_min));
+    printf("Raw: %d\tVoltage: %dmV\tPercent: %d\n", adc_reading, voltage, battery_percent);
     return battery_percent;
 
 }
@@ -53,7 +54,7 @@ uint32_t get_battery_level(void){
 void init_batt_monitor(void){
 
     adc1_config_width(ADC_WIDTH_BIT_12);
-    adc1_config_channel_atten(BATT_PIN ,ADC_ATTEN_DB_2_5);
+    adc1_config_channel_atten(BATT_PIN ,atten);
     adc_chars = calloc(1, sizeof(esp_adc_cal_characteristics_t));
     esp_adc_cal_characterize(unit, atten, ADC_WIDTH_BIT_12, DEFAULT_VREF, adc_chars);
 
