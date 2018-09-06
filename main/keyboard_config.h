@@ -14,9 +14,9 @@
 #define GATTS_TAG "MK32 V1.5" // The device's name
 #define MAX_BT_DEVICENAME_LENGTH 40
 
-//#define MASTER  // undefine if you are not flashing the main controller
-//#define SPLIT_MASTER	 // undefine if keyboard is not split and master
-#define SLAVE	 // undefine if keyboard is master
+#define MASTER  // undefine if you are not flashing the main controller
+#define SPLIT_MASTER	 // undefine if keyboard is not split and master
+//#define SLAVE	 // undefine if keyboard is master
 
 //Define matrix
 #define KEYPADS 2 // intended in order to create a Multiple keypad split boards
@@ -30,8 +30,8 @@
 //#define ROW2COL
 
 //Encoder definitions
-//#define R_ENCODER // undefine if no rotary encoder is used
-#define R_ENCODER_SLAVE // undefine if no rotary encoder is used on slave pad
+#define R_ENCODER // undefine if no rotary encoder is used
+//#define R_ENCODER_SLAVE // undefine if no rotary encoder is used on slave pad
 #define ENCODER_A_PIN GPIO_NUM_32 // encoder phase A pin
 #define ENCODER_B_PIN GPIO_NUM_33// encoder phase B pin
 #define ENCODER_S_PIN GPIO_NUM_27// encoder switch pin
@@ -42,9 +42,9 @@
 #define OLED_SCL_PIN GPIO_NUM_22
 
 //deep sleep parameters, mind that reconnecting after deep sleep might take a minute or two
-#define SLEEP_MINS 5 // undefine if you do not need deep sleep, otherwise define number of minutes for deepsleep
-#define WAKE_PAD TOUCH_PAD_NUM_2 // pin for waking from deep sleep via touch capacitance
-#define TOUCH_THRESHOLD 1200 //Threshold for waking up via touch sensor
+#define SLEEP_MINS 3 // undefine if you do not need deep sleep, otherwise define number of minutes for deepsleep
+#define WAKE_PAD TOUCH_PAD_NUM2 // pin for waking from deep sleep via touch capacitance
+#define TOUCH_THRESHOLD 300 //Threshold for waking up via touch sensor
 
 
 /*

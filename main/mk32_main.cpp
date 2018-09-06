@@ -22,8 +22,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../components/u8g2_OLED/oled_tasks.h"
-#include "../components/u8g2_OLED/oled_tasks.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/event_groups.h"
@@ -35,6 +33,7 @@
 #include "esp_bt.h"
 #include "esp_bt_main.h"
 #include "driver/gpio.h"
+#include "driver/rtc_io.h"
 #include "driver/touch_pad.h"
 #include "esp_timer.h"
 #include "esp_sleep.h"
@@ -51,6 +50,8 @@
 #include "espnow_recieve.h"
 #include "espnow_send.h"
 #include "r_encoder.h"
+#include "oled_tasks.h"
+#include "oled_tasks.h"
 
 #define KEY_REPORT_TAG "KEY_REPORT"
 #define SYSTEM_REPORT_TAG "KEY_REPORT"
@@ -174,11 +175,15 @@ extern "C" void espnow_update_matrix(void *pvParameters){
 	}
 }
 
+//what to do after waking from deep sleep
+extern "C" void esp_wake_deep_sleep(void) {
+    esp_default_wake_deep_sleep();
+    touch_pad_deinit();
+}
 
 /*If no key press has been recieved in SLEEP_MINS amount of minutes, put device into deep sleep
  *  wake up on touch on GPIO pin 2
  *  */
-#ifdef SLEEP_MINS
 extern "C" void deep_sleep(void *pvParameters){
 
 
@@ -200,8 +205,12 @@ extern "C" void deep_sleep(void *pvParameters){
 #ifdef OLED_ENABLE
 				deinit_oled();
 #endif
+				esp_bluedroid_disable();
+				esp_bt_controller_disable();
+				esp_wifi_stop();
 				// wake up esp32 using touch sensor
 				touch_pad_init();
+				touch_pad_set_fsm_mode(TOUCH_FSM_MODE_TIMER);
 				touch_pad_config(TOUCH_PAD_NUM2,TOUCH_THRESHOLD);
 				esp_sleep_enable_touchpad_wakeup();
 				esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_PERIPH,ESP_PD_OPTION_AUTO);
@@ -219,14 +228,13 @@ extern "C" void deep_sleep(void *pvParameters){
 	}
 
 }
-#endif
+
 extern "C" void app_main()
 {
 	//	esp_pm_config_esp32_t pm_config;
 	//	pm_config.max_freq_mhz = 10;
 	//	pm_config.min_freq_mhz = 10;
 	//	esp_pm_configure(&pm_config);
-	touch_pad_deinit();
 	matrix_setup();
 	esp_err_t ret;
 
@@ -303,7 +311,6 @@ extern "C" void app_main()
 #ifdef SLEEP_MINS
 	xTaskCreatePinnedToCore(deep_sleep, "deep sleep task", 4096, NULL, configMAX_PRIORITIES, NULL,1);
 #endif
-
 
 
 }
