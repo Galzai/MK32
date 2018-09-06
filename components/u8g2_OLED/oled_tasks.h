@@ -37,6 +37,7 @@ void ble_slave_oled(void);
  * */
 void update_oled(void);
 
+
 #ifdef __cplusplus
 }
 #endif

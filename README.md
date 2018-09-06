@@ -26,6 +26,11 @@ In order to define your keyboard:
 - The graphics are currently configured for an SSD1306 128x64 OLED but can be modified by changing your display in oled_tasks.c. please refer to the u8g2 wiki
 for additional information: https://github.com/olikraus/u8g2/wiki
 
+### Battery Monitoring:
+- You can add battery monitoring by selecting an adc pin and using a voltage divider.
+- See battery_monitor.h for resistor values (You can skip the resistors if you dont care about  draining the battering faster).
+- I have not tested the accuracy of the battery monitoring as of yet.
+
 
 ### For rotary encoders (for volume knob etc):
 - Define R_ENCODER or (R_ENCODER_SLAVE if on slave pad) and set encoder pins in keyboard_config.h (undefine ENCODER_S_PIN if your encoder does not have a switch).
@@ -44,7 +49,6 @@ for additional information: https://github.com/olikraus/u8g2/wiki
 
 ## To Implement:
 - More than 2 pads (currently supports 2 pads).
-- Battery level indication.
 - Connection switching.
 - Modify keymap via webserver.
 - Security (?).

@@ -17,7 +17,13 @@
  * Copyright 2018 Gal Zaidenstein.
  */
 
-#include "../u8g2_OLED/oled_tasks.h"
+#include <stdlib.h>
+#include <stdint.h>
+#include <time.h>
+#include <string.h>
+#include <assert.h>
+
+#include "oled_tasks.h"
 
 #include <driver/gpio.h>
 #include <driver/spi_master.h>
@@ -31,6 +37,7 @@
 #include "u8g2.h"
 #include "u8g2_esp32_hal.h"
 #include "keyboard_config.h"
+#include "battery_monitor.h"
 
 static const char *TAG = "	OLED";
 
@@ -40,6 +47,9 @@ u8g2_t u8g2; // a structure which will contain all the data for one display
 uint8_t prev_layout = 0;
 uint8_t prev_led = 0;
 
+uint32_t battery_percent = 0;
+uint32_t prev_battery_percent= 0;
+
 #define BT_ICON 0x5e
 #define BATT_ICON 0x5b
 #define LOCK_ICON 0xca
@@ -47,6 +57,9 @@ uint8_t prev_led = 0;
 
 //Function for updating the OLED
 void update_oled(void){
+#ifdef BATT_STAT
+	battery_percent = get_battery_level();
+#endif
 
 	if(current_layout!=prev_layout){
 		u8g2_ClearBuffer(&u8g2);
@@ -109,14 +122,29 @@ void update_oled(void){
 			u8g2_SetFont(&u8g2, u8g2_font_open_iconic_all_1x_t );
 			u8g2_DrawGlyph(&u8g2,88,32,LOCK_ICON);
 		}
-
 		u8g2_SendBuffer(&u8g2);
-		prev_led = curr_led;
-
 	}
 
-}
+	if(battery_percent!=prev_battery_percent){
+		u8g2_SetFont(&u8g2, u8g2_font_5x7_tf );
+		char buf[sizeof(uint32_t)];
+		snprintf (buf, sizeof(uint32_t), "%d", battery_percent);
+		u8g2_DrawStr(&u8g2, 103,7,"%");
+		if(battery_percent<100){
+			u8g2_DrawStr(&u8g2, 90,7,buf);
+		}else{
+			u8g2_DrawStr(&u8g2, 85,7,buf);
+		}
+		u8g2_SendBuffer(&u8g2);
+	}
 
+
+	prev_battery_percent = battery_percent;
+	prev_led = curr_led;
+
+
+
+}
 
 void ble_connected_oled(void){
 
@@ -154,26 +182,59 @@ void ble_connected_oled(void){
 
 //Slave oled display
 void ble_slave_oled(void){
+	battery_percent = get_battery_level();
+
+	if(battery_percent!=prev_battery_percent){
+		u8g2_ClearBuffer(&u8g2);
+		u8g2_SetFont(&u8g2, u8g2_font_5x7_tf );
+		u8g2_DrawStr(&u8g2, 0,6,GATTS_TAG);
+		u8g2_DrawStr(&u8g2, 0,14,"Slave pad 1");
+		u8g2_SetFont(&u8g2, u8g2_font_open_iconic_all_1x_t );
+		u8g2_DrawGlyph(&u8g2, 110,8,BATT_ICON);
+		u8g2_DrawGlyph(&u8g2, 120,8,BT_ICON);
+
+		u8g2_SetFont(&u8g2, u8g2_font_5x7_tf );
+		char buf[sizeof(uint32_t)];
+		snprintf (buf, sizeof(uint32_t), "%d", battery_percent);
+		u8g2_DrawStr(&u8g2, 103,7,"%");
+		if(battery_percent<100){
+			u8g2_DrawStr(&u8g2, 90,7,buf);
+		}else{
+			u8g2_DrawStr(&u8g2, 85,7,buf);
+		}
+		u8g2_SendBuffer(&u8g2);
+	}
+	prev_battery_percent = battery_percent;
 
 
-	u8g2_ClearBuffer(&u8g2);
-	u8g2_SetFont(&u8g2, u8g2_font_5x7_tf );
-	u8g2_DrawStr(&u8g2, 0,6,GATTS_TAG);
-	u8g2_DrawStr(&u8g2, 0,14,"Slave pad 1");
-	u8g2_SetFont(&u8g2, u8g2_font_open_iconic_all_1x_t );
-	u8g2_DrawGlyph(&u8g2, 110,8,BATT_ICON);
-	u8g2_DrawGlyph(&u8g2, 120,8,BT_ICON);
-
-	u8g2_SendBuffer(&u8g2);
 }
 
 //Waiting for connecting animation
 void waiting_oled(void){
 	char waiting_conn[25]="Waiting for connection";
 
+#ifdef BATT_STAT
+	battery_percent = get_battery_level();
+#endif
+
 	u8g2_ClearBuffer(&u8g2);
+	u8g2_SetFont(&u8g2, u8g2_font_open_iconic_all_1x_t );
+	u8g2_DrawGlyph(&u8g2, 110,8,BATT_ICON);
+	u8g2_DrawGlyph(&u8g2, 120,8,BT_ICON);
 	u8g2_SetFont(&u8g2, u8g2_font_5x7_tf );
 	u8g2_DrawStr(&u8g2,0,6,GATTS_TAG);
+
+	if(battery_percent!=prev_battery_percent){
+		u8g2_SetFont(&u8g2, u8g2_font_5x7_tf );
+		char buf[sizeof(uint32_t)];
+		snprintf (buf, sizeof(uint32_t), "%d", battery_percent);
+		u8g2_DrawStr(&u8g2, 103,7,"%");
+		if(battery_percent<100){
+			u8g2_DrawStr(&u8g2, 90,7,buf);
+		}else{
+			u8g2_DrawStr(&u8g2, 85,7,buf);
+		}
+	}
 
 	for(int i=0; i<3; i++){
 		u8g2_DrawStr(&u8g2, 0,26,waiting_conn);

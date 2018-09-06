@@ -20,6 +20,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <string.h>
 
 #include "freertos/FreeRTOS.h"
@@ -52,6 +53,7 @@
 #include "r_encoder.h"
 #include "oled_tasks.h"
 #include "oled_tasks.h"
+#include "battery_monitor.h"
 
 #define KEY_REPORT_TAG "KEY_REPORT"
 #define SYSTEM_REPORT_TAG "KEY_REPORT"
@@ -151,6 +153,10 @@ extern "C" void slave_scan(void *pvParameters){
 	uint8_t PAST_MATRIX[MATRIX_ROWS][MATRIX_COLS]={0};
 
 	while(1){
+
+#ifdef OLED_ENABLE
+	ble_slave_oled();
+#endif
 		scan_matrix();
 		if(memcmp(&PAST_MATRIX, &MATRIX_STATE, sizeof MATRIX_STATE)!=0){
 			DEEP_SLEEP = false;
@@ -231,6 +237,7 @@ extern "C" void deep_sleep(void *pvParameters){
 
 extern "C" void app_main()
 {
+
 	//	esp_pm_config_esp32_t pm_config;
 	//	pm_config.max_freq_mhz = 10;
 	//	pm_config.min_freq_mhz = 10;
@@ -267,6 +274,9 @@ extern "C" void app_main()
 	init_oled();
 #endif
 
+#ifdef BATT_STAT
+	init_batt_monitor();
+#endif
 	//If the device is a slave initialize sending reports to master
 #ifdef SLAVE
 	xTaskCreatePinnedToCore(slave_scan, "Scan matrix changes for slave", 4096, NULL, configMAX_PRIORITIES, NULL,1);
@@ -274,11 +284,6 @@ extern "C" void app_main()
 #ifdef R_ENCODER_SLAVE
 	xTaskCreatePinnedToCore(slave_encoder_report, "Scan encoder changes for slave", 4096, NULL, configMAX_PRIORITIES, NULL,1);
 #endif
-
-#ifdef OLED_ENABLE
-	ble_slave_oled();
-#endif
-
 	espnow_send();
 #endif
 

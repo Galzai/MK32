@@ -7,4 +7,5 @@
 # please read the ESP-IDF documents if you need to do this.
 #
 COMPONENT_ADD_INCLUDEDIRS=.
+
 # include $(IDF_PATH)/make/component_common.mk

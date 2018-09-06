@@ -9,6 +9,7 @@
 #include <inttypes.h>
 #include "driver/gpio.h"
 #include "driver/touch_pad.h"
+#include "driver/adc.h"
 
 #define MODULE_ID "LOLIN 32"
 #define GATTS_TAG "MK32 V1.5" // The device's name
@@ -40,6 +41,14 @@
 #define OLED_ENABLE //undefine if no oled is used
 #define OLED_SDA_PIN GPIO_NUM_23
 #define OLED_SCL_PIN GPIO_NUM_22
+
+/*Battery monitoring
+ * Please read check battery_monitor.h for resistor values before applying
+ * use ADC1 only,  */
+
+#define BATT_STAT //define to enable battery monitoring
+#define BATT_PIN ADC1_CHANNEL_7 //gpio pin 35, refer to the esp32 before modifying
+
 
 //deep sleep parameters, mind that reconnecting after deep sleep might take a minute or two
 #define SLEEP_MINS 3 // undefine if you do not need deep sleep, otherwise define number of minutes for deepsleep
