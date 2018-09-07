@@ -21,9 +21,9 @@ extern "C" {
 
 /*These are approximate values,
  * battery voltage isn't completely linear, it would be better to use a table for specific battery
- * in the future.
+ * For now this is an ok approximation.
  */
-#define Vin_max 4200 //Charging Battery voltage [mV]
+#define Vin_max 4200 //Max Battery voltage [mV]
 #define Vin_min  3400 //Battery discharge Voltage[mV]
 
 #define Vout_max Vin_max*R_2/(R_1+R_2) //Max voltage on analog pin [mV]

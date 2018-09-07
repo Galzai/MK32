@@ -64,6 +64,16 @@ QueueHandle_t espnow_recieve_q;
 bool DEEP_SLEEP = true; // flag to check if we need to go to deep sleep
 bool BLE_SLEEP= true;
 
+#ifdef OLED_ENABLE
+		TaskHandle_t xOledTask;
+#endif
+
+extern "C" void oled_task(void *pvParameters){
+
+	while(1){
+		update_oled();
+	}
+}
 
 extern "C" void key_reports(void *pvParameters)
 {
@@ -86,15 +96,13 @@ extern "C" void key_reports(void *pvParameters)
 		}
 
 #ifdef OLED_ENABLE
-			ble_connected_oled();
+		ble_connected_oled();
+		xTaskCreatePinnedToCore(oled_task, "oled task", 4096, NULL, configMAX_PRIORITIES, &xOledTask,1);
 #endif
 
 		while(HID_kbdmousejoystick_isConnected() != 0) {
 			memcpy(report_state, check_key_state(*layouts[current_layout]), sizeof report_state);
 
-#ifdef OLED_ENABLE
-			update_oled();
-#endif
 			//Do not send anything if queues are uninitialized
 			if(mouse_q == NULL || keyboard_q == NULL || joystick_q == NULL)
 			{
@@ -111,6 +119,9 @@ extern "C" void key_reports(void *pvParameters)
 
 			}
 		}
+#ifdef OLED_ENABLE
+		 vTaskDelete(xOledTask);
+#endif
 		CON_LOG_FLAG = false;
 	}
 
@@ -209,6 +220,7 @@ extern "C" void deep_sleep(void *pvParameters){
 			if(DEEP_SLEEP == true){
 				ESP_LOGE(SYSTEM_REPORT_TAG,"going to sleep!");
 #ifdef OLED_ENABLE
+				vTaskDelay(500);
 				deinit_oled();
 #endif
 				esp_bluedroid_disable();

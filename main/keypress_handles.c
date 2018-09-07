@@ -25,6 +25,7 @@
 #include "keymap.c"
 #include "matrix.c"
 #include "HID_kbdmousejoystick.h"
+#include "oled_tasks.h"
 
 #define KEY_PRESS_TAG "KEY_PRESS"
 
@@ -161,7 +162,10 @@ void layer_adjust( uint16_t keycode ){
 		current_layout++;
 		break;
 	}
-	vTaskDelay(3);
+#ifdef OLED_ENABLE
+		xQueueSend(layer_recieve_q,&current_layout, (TickType_t) 0);
+#endif
+	vTaskDelay(10);
 	ESP_LOGI(KEY_PRESS_TAG,"Layer modified!, Current layer: %d ",current_layout);
 }
 

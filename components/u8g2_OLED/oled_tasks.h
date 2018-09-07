@@ -8,6 +8,11 @@
 #ifndef OLED_TASKS_H_
 #define OLED_TASKS_H_
 
+#include <freertos/FreeRTOS.h>
+#include <freertos/event_groups.h>
+#include <freertos/queue.h>
+#include <esp_log.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -37,6 +42,10 @@ void ble_slave_oled(void);
  * */
 void update_oled(void);
 
+/** @brief Queue for sending mouse reports
+ **/
+extern QueueHandle_t layer_recieve_q;
+extern QueueHandle_t led_recieve_q;
 
 #ifdef __cplusplus
 }

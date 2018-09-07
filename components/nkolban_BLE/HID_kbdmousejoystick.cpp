@@ -43,6 +43,7 @@
 
 #include "sdkconfig.h"
 #include "keyboard_config.h"
+#include "oled_tasks.h"
 
 static char LOG_TAG[] = "HAL_BLE";
 
@@ -271,6 +272,9 @@ class kbdOutputCB : public BLECharacteristicCallbacks {
 	void onWrite(BLECharacteristic* me){
 		uint8_t* value = (uint8_t*)(me->getValue().c_str());
 		curr_led = *value;
+#ifdef OLED_ENABLE
+		xQueueSend(led_recieve_q,&curr_led, (TickType_t) 0);
+#endif
 		ESP_LOGI(LOG_TAG, "special keys: %d", *value);
 	}
 };

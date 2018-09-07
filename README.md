@@ -23,8 +23,8 @@ In order to define your keyboard:
 
 ### OLED Display:
 - You can add an OLED display to your keyboard by defining ENABLE_OLED in keyboard_config.h and setting the correct i2c pins.
-- The graphics are currently configured for an SSD1306 128x64 OLED but can be modified by changing your display in oled_tasks.c. please refer to the u8g2 wiki
-for additional information: https://github.com/olikraus/u8g2/wiki
+- The graphics are currently configured for an SSD1306 128x64 OLED but can be modified by changing your display in oled_tasks.c. please refer to the u8g2 wiki for additional information: https://github.com/olikraus/u8g2/wiki
+- The oled currently responds relativley slowly (probably an issue with i2c over 100khz on the esp32).
 
 ### Battery Monitoring:
 - Battery level indication is by approximate values (you can look at LiPo voltage discharge graphs and adjust using an appropriate voltage-discharge capacity table)
