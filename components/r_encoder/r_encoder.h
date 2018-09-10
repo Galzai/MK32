@@ -20,6 +20,8 @@ void r_encoder_setup(void);
  * */
 uint8_t r_encoder_state(void);
 
+void r_encoder_command(uint8_t command, uint8_t encoder_commands[4]);
+
 #ifdef __cplusplus
 }
 #endif

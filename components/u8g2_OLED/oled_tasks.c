@@ -63,25 +63,26 @@ int DROP_H=0;
 #define LOCK_ICON 0xca
 
 
-//Function for updating the OLED
+//Erasing area from oled
 void erase_area(uint8_t x,uint8_t y,uint8_t w,uint8_t h){
 	u8g2_SetDrawColor(&u8g2,0);
 	u8g2_DrawBox(&u8g2,x,y,w,h);
 	u8g2_SetDrawColor(&u8g2,1);
 }
 
+//Function for updating the OLED
 void update_oled(void){
 #ifdef BATT_STAT
 	battery_percent = get_battery_level();
 #endif
 
-	if(xQueueReceive(layer_recieve_q,&curr_layout,1)){
+	if(xQueueReceive(layer_recieve_q,&curr_layout,(TickType_t) 0)){
 		erase_area(0,7,45,7);
 		u8g2_SetFont(&u8g2, u8g2_font_5x7_tf );
 		u8g2_DrawStr(&u8g2, 0,14,layout_names[curr_layout]);
 		u8g2_SendBuffer(&u8g2);
 	}
-	if(xQueueReceive(led_recieve_q,&current_led,1)){
+	if(xQueueReceive(led_recieve_q,&current_led,(TickType_t) 0)){
 		erase_area(0,24,127,8);
 		if(CHECK_BIT(current_led,0)!=0){
 			u8g2_SetFont(&u8g2, u8g2_font_5x7_tf );
@@ -131,6 +132,7 @@ void update_oled(void){
 	}
 }
 
+//oled on connection
 void ble_connected_oled(void){
 
 
@@ -236,14 +238,11 @@ void waiting_oled(void){
 	u8g2_SetFont(&u8g2, u8g2_font_5x7_tf );
 	u8g2_DrawStr(&u8g2,0,6,GATTS_TAG);
 
-
-	u8g2_SetFont(&u8g2, u8g2_font_5x7_tf );
 	char buf[sizeof(uint32_t)];
 	snprintf (buf, sizeof(uint32_t), "%d", battery_percent);
 	u8g2_DrawStr(&u8g2, 103,7,"%");
 	if((battery_percent<100)&&(battery_percent-prev_battery_percent>=2)){
 		u8g2_DrawStr(&u8g2, 90,7,buf);
-		u8g2_SendBuffer(&u8g2);
 	}
 	if(battery_percent<100){
 		u8g2_DrawStr(&u8g2, 90,7,buf);
@@ -257,6 +256,7 @@ void waiting_oled(void){
 		vTaskDelay(100/portTICK_PERIOD_MS);
 		strcat(waiting_conn,".");
 	}
+
 
 }
 

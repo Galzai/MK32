@@ -60,10 +60,9 @@ extern QueueHandle_t media_q;
 /** @brief Main init function to start HID interface
  * 
  * @param enableKeyboard If != 0, keyboard will be active
+ *  * @param enableMedia If != 0, media will be active
  * @param enableMouse If != 0, mouse will be active
  * @param enableJoystick If != 0, joystick will be active
- * @param testmode If set to 0, HID data is only sent if something is put
- * to the queue. If set != 0, keyboard/mouse/joystick will send test data.
  * @note After init, just use the queues! */
 esp_err_t HID_kbdmousejoystick_init(uint8_t enableKeyboard,uint8_t enableMedia, uint8_t enableMouse, uint8_t enableJoystick, char * name);
 
@@ -74,24 +73,6 @@ esp_err_t HID_kbdmousejoystick_activatePairing(void);
 /** @brief Deactivate pairing, disconnect from paired device
  * */
 esp_err_t HID_kbdmousejoystick_deactivatePairing(void);
-
-/** @brief Directly send a HID keyboard report
- * 
- * @param a Pointer to report buffer
- * @param len Size of report buffer
- * @note Buffer lenght must equal 8 Bytes!
- * @note 1st Byte is modifier, 2nd is empty, 3 to 8 are keycodes
- * */
-esp_err_t HID_kbdmousejoystick_rawKeyboard(uint8_t *a, uint8_t len);
-
-/** @brief Directly send a HID mouse report
- * 
- * @param a Pointer to report buffer
- * @param len Size of report buffer
- * @note Buffer lenght must equal 4 Bytes!
- * @note 1st Byte is button mask, 2nd/3rd are X/Y, 4th is wheel
- * */
-esp_err_t HID_kbdmousejoystick_rawMouse(uint8_t *a, uint8_t len);
 
 /** @brief Is the BLE currently connected?
  * @return 0 if not connected, 1 if connected */  

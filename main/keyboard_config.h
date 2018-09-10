@@ -24,7 +24,7 @@
 #define MATRIX_ROWS 4
 #define MATRIX_COLS 6 // For split keyboards, define columns for one side only.
 
-#define LAYERS 2 // number of layers defined (besides default)
+#define LAYERS 1 // number of layers defined (besides default)
 
 // Select diode direction
 #define COL2ROW
@@ -64,6 +64,10 @@
 #define KEYMAP_COLS MATRIX_COLS*KEYPADS  // used for a symmetrical split keyboard
 #define REPORT_LEN 2+MATRIX_ROWS*KEYMAP_COLS+3 //size of hid reports with NKRO and room for 3 key macro
 #define REPORT_COUNT_BYTES MATRIX_ROWS*KEYMAP_COLS+3
+
+#define MEDIA_ENCODER 0
+#define MOUSE_ENCODER 1
+#define KEY_ENCODER 2
 
 typedef struct config_data {
 	char bt_device_name[MAX_BT_DEVICENAME_LENGTH];

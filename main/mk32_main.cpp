@@ -128,35 +128,40 @@ extern "C" void key_reports(void *pvParameters)
 }
 
 extern "C" void encoder_report(void *pvParameters){
-	uint8_t encoder_state[1]={0};
-	uint8_t past_encoder_state[1]={0};
+	uint8_t encoder_state=0;
+	uint8_t past_encoder_state=0;
 
 	while(1){
-		encoder_state[0]=r_encoder_state();
-		if(encoder_state[0]!=past_encoder_state[0]){
+		encoder_state=r_encoder_state();
+		if(encoder_state!=past_encoder_state){
 			DEEP_SLEEP = false;
-			xQueueSend(media_q,(void*)&encoder_state, (TickType_t) 0);
-			past_encoder_state[0] = encoder_state[0];
+			r_encoder_command(encoder_state, encoder_map[current_layout]);
+			past_encoder_state = encoder_state;
 		}
 
 	}
 }
 
 extern "C" void slave_encoder_report(void *pvParameters){
-	uint8_t encoder_state[1]={0};
-	uint8_t past_encoder_state[1]={0};
+	uint8_t encoder_state=0;
+	uint8_t past_encoder_state=0;
 
 	while(1){
-		encoder_state[0]=r_encoder_state();
-		if(encoder_state[0]!=past_encoder_state[0]){
+		encoder_state=r_encoder_state();
+		if(encoder_state!=past_encoder_state){
 			DEEP_SLEEP = false;
-			xQueueSend(espnow_encoder_send_q,(void*)&encoder_state, (TickType_t) 0);
-			past_encoder_state[0] = encoder_state[0];
+			r_encoder_command(encoder_state, slave_encoder_map[current_layout]);
+			past_encoder_state = encoder_state;
 		}
 
 	}
 }
-
+//Task for updating the slave oled
+extern "C" void ble_slave_oled_task(void *pvParameters){
+	while(1){
+		ble_slave_oled();
+	}
+}
 
 //Function for sending out the modified matrix
 extern "C" void slave_scan(void *pvParameters){
@@ -164,10 +169,6 @@ extern "C" void slave_scan(void *pvParameters){
 	uint8_t PAST_MATRIX[MATRIX_ROWS][MATRIX_COLS]={0};
 
 	while(1){
-
-#ifdef OLED_ENABLE
-	ble_slave_oled();
-#endif
 		scan_matrix();
 		if(memcmp(&PAST_MATRIX, &MATRIX_STATE, sizeof MATRIX_STATE)!=0){
 			DEEP_SLEEP = false;
@@ -220,6 +221,9 @@ extern "C" void deep_sleep(void *pvParameters){
 			if(DEEP_SLEEP == true){
 				ESP_LOGE(SYSTEM_REPORT_TAG,"going to sleep!");
 #ifdef OLED_ENABLE
+#ifdef SLAVE
+				vTaskDelete(xOledTask);
+#endif
 				vTaskDelay(500);
 				deinit_oled();
 #endif
@@ -296,6 +300,10 @@ extern "C" void app_main()
 #ifdef R_ENCODER_SLAVE
 	xTaskCreatePinnedToCore(slave_encoder_report, "Scan encoder changes for slave", 4096, NULL, configMAX_PRIORITIES, NULL,1);
 #endif
+#ifdef OLED_ENABLE
+	xTaskCreatePinnedToCore(ble_slave_oled_task, "oled slave task", 4096, NULL, configMAX_PRIORITIES, &xOledTask,1);
+
+#endif
 	espnow_send();
 #endif
 
@@ -312,7 +320,7 @@ extern "C" void app_main()
 
 #ifdef MASTER
 	//activate keyboard BT stack
-	HID_kbdmousejoystick_init(1,1,0,0,config.bt_device_name);
+	HID_kbdmousejoystick_init(1,1,1,0,config.bt_device_name);
 	ESP_LOGI("HIDD","MAIN finished...");
 	//activate encoder functions
 #ifdef	R_ENCODER

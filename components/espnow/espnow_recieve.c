@@ -72,6 +72,7 @@ static void wifi_initialize_recieve(void){
 	ESP_ERROR_CHECK(esp_wifi_init(&cfg));
 	ESP_ERROR_CHECK(esp_wifi_set_storage(WIFI_STORAGE_RAM));
 	ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA)) ; // For some reason ESP-NOW only works if all devices are in the same mode
+	ESP_ERROR_CHECK(esp_wifi_set_storage(WIFI_STORAGE_RAM));
 	//esp_wifi_set_mac(ESP_IF_WIFI_STA, master_mac_adr);
 	ESP_ERROR_CHECK(esp_wifi_start());
 	esp_wifi_set_channel(channel, WIFI_SECOND_CHAN_NONE); // Make sure we are on the same channel

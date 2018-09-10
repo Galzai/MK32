@@ -35,7 +35,7 @@ In order to define your keyboard:
 
 ### For rotary encoders (for volume knob etc):
 - Define R_ENCODER or (R_ENCODER_SLAVE if on slave pad) and set encoder pins in keyboard_config.h (undefine ENCODER_S_PIN if your encoder does not have a switch).
-- Currently only supports volume +/- and mute, will improve functionality in the future.
+- You can modify encoder actions in keymap.c (set it as a mouse, consumer device, ordinary keyboard keys etc).
 
 ### Power consumption and deep sleep:
 - For better battery usage you can define the number of inactive minutes you would like your device to wait before sleeping in keyboard_config.h. 

@@ -135,44 +135,44 @@ const uint8_t reportMapKeyboard[] = {
 };
 
 
-/** @brief Constant report map for mouse
- * 
+/** @brief Constant report map for media
+ *
  * This report map will be used on init do build a report map according
  * to init functions (with activated interfaces).
- * 
+ *
  * @note Report id is on all reports in offset 7.
  * */
-const uint8_t reportMapMouse[] = {
-		USAGE_PAGE(1), 			0x01,
-		USAGE(1), 				  0x02,
-		COLLECTION(1),			0x01,
-		REPORT_ID(1),       0x02,
-		USAGE(1),				    0x01,
-		COLLECTION(1),			0x00,
-		USAGE_PAGE(1),			0x09,
-		USAGE_MINIMUM(1),		0x1,
-		USAGE_MAXIMUM(1),		0x3,
-		LOGICAL_MINIMUM(1),	0x0,
-		LOGICAL_MAXIMUM(1),	0x1,
-		REPORT_COUNT(1),		0x3,
-		REPORT_SIZE(1),	  	0x1,
-		INPUT(1), 				  0x2,		// (Data, Variable, Absolute), ;8 button bits
-		REPORT_COUNT(1),		0x1,
-		REPORT_SIZE(1),		  0x5,
-		INPUT(1), 				  0x1,		//(Constant), ;5 bit padding
-		USAGE_PAGE(1), 		  0x1,		//(Generic Desktop),
-		USAGE(1),				    0x30,   //X
-		USAGE(1),				    0x31,   //Y
-		USAGE(1),				    0x38,   //wheel
-		LOGICAL_MINIMUM(1),	0x81,
-		LOGICAL_MAXIMUM(1),	0x7f,
-		REPORT_SIZE(1),	  	0x8,
-		REPORT_COUNT(1),		0x03,   //3 bytes: X/Y/wheel
-		INPUT(1), 				  0x6,		//(Data, Variable, Relative), ;3 position bytes (X & Y & wheel)
-		END_COLLECTION(0),
-		END_COLLECTION(0)
-};
+static const uint8_t reportMapMedia[] = {
 
+
+		USAGE_PAGE(1), 0x0c,                    // USAGE_PAGE (Consumer Devices)
+		USAGE(1), 0x01,                    // USAGE (Consumer Control)
+		COLLECTION(1), 0x01,                    // COLLECTION (Application)
+		REPORT_ID(1), 0x02,                    // REPORT_ID (2)
+		LOGICAL_MINIMUM(1), 0x00,                    //   LOGICAL_MINIMUM (0)
+		LOGICAL_MAXIMUM(1), 0x01,                    //   LOGICAL_MAXIMUM (1)
+		REPORT_SIZE(1), 0x01,                    //   REPORT_SIZE (1)
+		// bit 0-3
+		REPORT_COUNT(1), 0x04,                    //   REPORT_COUNT (4)
+		USAGE_MINIMUM(1), 0xb5,                    //   USAGE_MINIMUM (Scan Next Track)
+		USAGE_MAXIMUM(1), 0xb7,                    //   USAGE_MAXIMUM (Stop)
+		USAGE(1), 0xcd,                    //   USAGE (Play/Pause)
+		INPUT(1), 0x02,                    //   INPUT (Data,Var,Abs)
+		// bit 4
+		REPORT_COUNT(1), 0x01,                    //   REPORT_COUNT (1)
+		USAGE(1), 0xe2,                    //   USAGE (Mute)
+		INPUT(1), 0x06,                    //   INPUT (Data,Var,Rel)
+		// bit 5,6
+		REPORT_COUNT(1), 0x02,                    //   REPORT_COUNT (2)
+		USAGE(1), 0xe9,                    //   USAGE (Volume Up)
+		USAGE(1), 0xea,                    //   USAGE (Volume Down)
+		INPUT(1), 0x02,                    //   INPUT (Data,Var,Abs)
+		// bit 7 - padding
+		REPORT_COUNT(1), 0x01,                    //   REPORT_COUNT (1)
+		INPUT(1), 0x03,                    //   INPUT (Cnst,Var,Abs)
+		END_COLLECTION(0)                           // END_COLLECTION
+		// End Collection
+};
 
 /** @brief Constant report map for joystick
  * 
@@ -229,43 +229,43 @@ const uint8_t reportMapJoystick[] = {
 		END_COLLECTION(0)
 };
 
-/** @brief Constant report map for media
+
+/** @brief Constant report map for mouse
  *
  * This report map will be used on init do build a report map according
  * to init functions (with activated interfaces).
  *
  * @note Report id is on all reports in offset 7.
  * */
-static const uint8_t reportMapMedia[] = {
-
-
-		USAGE_PAGE(1), 0x0c,                    // USAGE_PAGE (Consumer Devices)
-		USAGE(1), 0x01,                    // USAGE (Consumer Control)
-		COLLECTION(1), 0x01,                    // COLLECTION (Application)
-		REPORT_ID(1), 0x04,                    // REPORT_ID (2)
-		LOGICAL_MINIMUM(1), 0x00,                    //   LOGICAL_MINIMUM (0)
-		LOGICAL_MAXIMUM(1), 0x01,                    //   LOGICAL_MAXIMUM (1)
-		REPORT_SIZE(1), 0x01,                    //   REPORT_SIZE (1)
-		// bit 0-3
-		REPORT_COUNT(1), 0x04,                    //   REPORT_COUNT (4)
-		USAGE_MINIMUM(1), 0xb5,                    //   USAGE_MINIMUM (Scan Next Track)
-		USAGE_MAXIMUM(1), 0xb7,                    //   USAGE_MAXIMUM (Stop)
-		USAGE(1), 0xcd,                    //   USAGE (Play/Pause)
-		INPUT(1), 0x02,                    //   INPUT (Data,Var,Abs)
-		// bit 4
-		REPORT_COUNT(1), 0x01,                    //   REPORT_COUNT (1)
-		USAGE(1), 0xe2,                    //   USAGE (Mute)
-		INPUT(1), 0x06,                    //   INPUT (Data,Var,Rel)
-		// bit 5,6
-		REPORT_COUNT(1), 0x02,                    //   REPORT_COUNT (2)
-		USAGE(1), 0xe9,                    //   USAGE (Volume Up)
-		USAGE(1), 0xea,                    //   USAGE (Volume Down)
-		INPUT(1), 0x02,                    //   INPUT (Data,Var,Abs)
-		// bit 7 - padding
-		REPORT_COUNT(1), 0x01,                    //   REPORT_COUNT (1)
-		INPUT(1), 0x03,                    //   INPUT (Cnst,Var,Abs)
-		END_COLLECTION(0)                           // END_COLLECTION
-		// End Collection
+const uint8_t reportMapMouse[] = {
+		USAGE_PAGE(1), 			0x01,
+		USAGE(1), 				  0x02,
+		COLLECTION(1),			0x01,
+		REPORT_ID(1),       0x04,
+		USAGE(1),				    0x01,
+		COLLECTION(1),			0x00,
+		USAGE_PAGE(1),			0x09,
+		USAGE_MINIMUM(1),		0x1,
+		USAGE_MAXIMUM(1),		0x3,
+		LOGICAL_MINIMUM(1),	0x0,
+		LOGICAL_MAXIMUM(1),	0x1,
+		REPORT_COUNT(1),		0x3,
+		REPORT_SIZE(1),	  	0x1,
+		INPUT(1), 				  0x2,		// (Data, Variable, Absolute), ;8 button bits
+		REPORT_COUNT(1),		0x1,
+		REPORT_SIZE(1),		  0x5,
+		INPUT(1), 				  0x1,		//(Constant), ;5 bit padding
+		USAGE_PAGE(1), 		  0x1,		//(Generic Desktop),
+		USAGE(1),				    0x30,   //X
+		USAGE(1),				    0x31,   //Y
+		USAGE(1),				    0x38,   //wheel
+		LOGICAL_MINIMUM(1),	0x81,
+		LOGICAL_MAXIMUM(1),	0x7f,
+		REPORT_SIZE(1),	  	0x8,
+		REPORT_COUNT(1),		0x03,   //3 bytes: X/Y/wheel
+		INPUT(1), 				  0x6,		//(Data, Variable, Relative), ;3 position bytes (X & Y & wheel)
+		END_COLLECTION(0),
+		END_COLLECTION(0)
 };
 
 class kbdOutputCB : public BLECharacteristicCallbacks {
@@ -300,18 +300,13 @@ KeyboardTask *kbd; //instance for this task
 class MouseTask : public Task {
 	void run(void*){
 
-		mouse_command_t cmd;
+		uint8_t a[4] = {0,0,0,0};
 		while(1)
 		{
 			//wait for a new mouse command
-			if(xQueueReceive(mouse_q,&cmd,10000))
+			if(xQueueReceive(mouse_q,&a,10000))
 			{
-				ESP_LOGI(LOG_TAG,"Mouse received: %d/%d/%d/%d",cmd.buttons,cmd.x,cmd.y,cmd.wheel);
-				uint8_t a[4] = {0,0,0,0};
-				a[0] = cmd.buttons;
-				a[1] = cmd.x;
-				a[2] = cmd.y;
-				a[3] = cmd.wheel;
+				ESP_LOGI(LOG_TAG,"Mouse received");
 				inputMouse->setValue(a,sizeof(a));
 				inputMouse->notify();
 			}
@@ -346,8 +341,6 @@ class MediaTask : public Task {
 			if(xQueueReceive(media_q,&report,10000))
 			{
 				ESP_LOGI(LOG_TAG,"Media received");
-
-
 				inputMedia->setValue(report,sizeof(report));
 				inputMedia->notify();
 			}
@@ -597,6 +590,23 @@ class BLE_HOG: public Task {
 
 				reportID++; //increase report id for next interface
 			}
+			//copy report map for mouse to allocated full report map, if activated
+			if(activateMedia)
+			{
+				memcpy(reportMapCurrent,reportMapMedia,sizeof(reportMapMedia));
+				reportMapCurrent[7] = reportID;
+				reportMapCurrent += sizeof(reportMapMedia);
+
+				//create in characteristics/reports for mouse
+				inputMedia = hid->inputReport(reportID);
+
+				ESP_LOGI(LOG_TAG,"Media added @report ID %d, current report Map:", reportID);
+				ESP_LOG_BUFFER_HEXDUMP(LOG_TAG,reportMap,(uint16_t)(reportMapCurrent-reportMap),ESP_LOG_INFO);
+
+				reportID++; //increase report id for next interface
+			}
+			if(activateMouse)
+
 			//copy report map for joystick to allocated full report map, if activated
 			if(activateJoystick)
 			{
@@ -612,8 +622,6 @@ class BLE_HOG: public Task {
 
 				reportID++; //increase report id for next interface
 			}
-			//copy report map for mouse to allocated full report map, if activated
-			if(activateMouse)
 			{
 				memcpy(reportMapCurrent,reportMapMouse,sizeof(reportMapMouse));
 				reportMapCurrent[7] = reportID;
@@ -627,21 +635,6 @@ class BLE_HOG: public Task {
 
 				reportID++; //increase report id for next interface
 			}
-			if(activateMedia)
-			{
-				memcpy(reportMapCurrent,reportMapMedia,sizeof(reportMapMedia));
-				reportMapCurrent[7] = reportID;
-				reportMapCurrent += sizeof(reportMapMedia);
-
-				//create in characteristics/reports for mouse
-				inputMedia = hid->inputReport(reportID);
-
-				ESP_LOGI(LOG_TAG,"Media added @report ID %d, current report Map:", reportID);
-				ESP_LOG_BUFFER_HEXDUMP(LOG_TAG,reportMap,(uint16_t)(reportMapCurrent-reportMap),ESP_LOG_INFO);
-
-				reportID++; //increase report id for next interface
-			}
-
 			ESP_LOGI(LOG_TAG,"Final report map size: %d B",reportMapSize);
 
 			/*
@@ -716,13 +709,12 @@ uint8_t HID_kbdmousejoystick_isConnected(void)
  * @note After init, just use the queues! */
 esp_err_t HID_kbdmousejoystick_init(uint8_t enableKeyboard,uint8_t enableMedia, uint8_t enableMouse, uint8_t enableJoystick,  char * name)
 {
-	uint8_t array_sample[REPORT_LEN];
 	//init FreeRTOS queues
 	//initialise queues, even if they might not be used.
-	mouse_q = xQueueCreate(32,sizeof(mouse_command_t));
-	keyboard_q = xQueueCreate(32,sizeof(array_sample));
+	mouse_q = xQueueCreate(32,4*sizeof(uint8_t));
+	keyboard_q = xQueueCreate(32,REPORT_LEN*sizeof(uint8_t));
 	joystick_q = xQueueCreate(32,sizeof(joystick_command_t));
-	media_q = xQueueCreate(32,1);
+	media_q = xQueueCreate(32,sizeof(uint8_t*));
 
 	ESP_LOGI(LOG_TAG,"Queues initialized");
 	strncpy(btname, name, sizeof(btname)-1);

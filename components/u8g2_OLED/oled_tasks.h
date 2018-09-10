@@ -42,9 +42,12 @@ void ble_slave_oled(void);
  * */
 void update_oled(void);
 
-/** @brief Queue for sending mouse reports
+/** @brief Queue for sending layer to oled
  **/
 extern QueueHandle_t layer_recieve_q;
+
+/** @brief Queue for sending led status to oled
+ **/
 extern QueueHandle_t led_recieve_q;
 
 #ifdef __cplusplus

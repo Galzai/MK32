@@ -13,7 +13,7 @@
 enum custom_keycodes {
   QWERTY ,
   NUM,
-  DVORAK,
+//  DVORAK,
 };
 
 #ifdef OLED_ENABLE
@@ -21,7 +21,7 @@ enum custom_keycodes {
 char layout_names[LAYERS+1][8] ={
 		  "QWERTY" ,
 		  "NUM",
-		  "DVORAK",
+//		  "DVORAK",
 };
 #endif
 
@@ -44,6 +44,26 @@ uint16_t macros[MACROS_NUM][3]={
 {KC_LCTRL, KC_LALT,KC_DEL},
 //ALT +F4
 {KC_RALT, KC_LALT, KC_NO}
+};
+
+
+/*Encoder keys for each layer by order, and for each pad
+ * First variable states what usage the encoder has
+ */
+#ifdef R_ENCODER
+uint8_t encoder_map[LAYERS+1][4] ={
+		// |VOL + | VOL - | MUTE |
+		{MEDIA_ENCODER,KC_AUDIO_VOL_UP, KC_AUDIO_VOL_DOWN,KC_AUDIO_MUTE},
+		// |Y+|Y-| LEFT CLICK|
+		{MOUSE_ENCODER,KC_MS_UP ,KC_MS_DOWN,KC_MS_BTN1}
+};
+#endif
+
+uint8_t slave_encoder_map[LAYERS+1][4] ={
+		// |VOL + | VOL - | MUTE |
+		{MEDIA_ENCODER,KC_AUDIO_VOL_UP, KC_AUDIO_VOL_DOWN,KC_AUDIO_MUTE},
+		// |Y+|Y-| LEFT CLICK|
+		{MOUSE_ENCODER,KC_MS_RIGHT ,KC_MS_LEFT,KC_MS_BTN1}
 };
 
 // Fillers to make layering more clear
@@ -93,32 +113,32 @@ uint16_t macros[MACROS_NUM][3]={
 
 	};
 
-	 uint16_t _DVORAK[MATRIX_ROWS][KEYMAP_COLS]={
-
-			/* Dvorak
-			 * ,------------------------------------------------------------------------------------.
-			 * | Tab   |   '  |   ,  |   .  |   P  |   Y  |   F  |   G  |   C  |   R  |   L  | Bksp |
-			 * |------+-------+------+------+------+-------------+------+------+------+------+------|
-			 * | Esc   |   A  |   O  |   E  |   U  |   I  |   D  |   H  |   T  |   N  |   S  |  /   |
-			 * |------+-------+------+------+------+------|------+------+------+------+------+------|
-			 * | Shift |   ;  |   Q  |   J  |   K  |   X  |   B  |   M  |   W  |   V  |   Z  |Enter |
-			 * |------+-------+------+------+------+------+------+------+------+------+------+------|
-			 * |Defaukt| Ctrl | Alt  | GUI  |Lower |Space |Space |Raise | Left | Down |  Up  |Right |
-			 * `------------------------------------------------------------------------------------'
-			 */
-
-			  {KC_TAB,  KC_QUOT, KC_COMM, KC_DOT,  KC_P,    KC_Y,    KC_F,    KC_G,    KC_C,    KC_R,    KC_L,    KC_BSPC },
-			  {KC_ESC,  KC_A,    KC_O,    KC_E,    KC_U,    KC_I,    KC_D,    KC_H,    KC_T,    KC_N,    KC_S,    KC_SLSH },
-			  {KC_LSFT, KC_SCLN, KC_Q,    KC_J,    KC_K,    KC_X,    KC_B,    KC_M,    KC_W,    KC_V,    KC_Z,    KC_ENT  } ,
-			  {DEFAULT,  KC_LCTL, KC_LALT, KC_LGUI, LOWER,   KC_SPC,  KC_SPC,  RAISE,   KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT }
-
-	};
+//	 uint16_t _DVORAK[MATRIX_ROWS][KEYMAP_COLS]={
+//
+//			/* Dvorak
+//			 * ,------------------------------------------------------------------------------------.
+//			 * | Tab   |   '  |   ,  |   .  |   P  |   Y  |   F  |   G  |   C  |   R  |   L  | Bksp |
+//			 * |------+-------+------+------+------+-------------+------+------+------+------+------|
+//			 * | Esc   |   A  |   O  |   E  |   U  |   I  |   D  |   H  |   T  |   N  |   S  |  /   |
+//			 * |------+-------+------+------+------+------|------+------+------+------+------+------|
+//			 * | Shift |   ;  |   Q  |   J  |   K  |   X  |   B  |   M  |   W  |   V  |   Z  |Enter |
+//			 * |------+-------+------+------+------+------+------+------+------+------+------+------|
+//			 * |Defaukt| Ctrl | Alt  | GUI  |Lower |Space |Space |Raise | Left | Down |  Up  |Right |
+//			 * `------------------------------------------------------------------------------------'
+//			 */
+//
+//			  {KC_TAB,  KC_QUOT, KC_COMM, KC_DOT,  KC_P,    KC_Y,    KC_F,    KC_G,    KC_C,    KC_R,    KC_L,    KC_BSPC },
+//			  {KC_ESC,  KC_A,    KC_O,    KC_E,    KC_U,    KC_I,    KC_D,    KC_H,    KC_T,    KC_N,    KC_S,    KC_SLSH },
+//			  {KC_LSFT, KC_SCLN, KC_Q,    KC_J,    KC_K,    KC_X,    KC_B,    KC_M,    KC_W,    KC_V,    KC_Z,    KC_ENT  } ,
+//			  {DEFAULT,  KC_LCTL, KC_LALT, KC_LGUI, LOWER,   KC_SPC,  KC_SPC,  RAISE,   KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT }
+//
+//	};
 // Create an array that points to the various keymaps
 
 	 uint16_t (*layouts[])[MATRIX_ROWS][KEYMAP_COLS]={
 			 &_QWERTY,
 			 &_NUM,
-			 &_DVORAK
+//			 &_DVORAK
 	 };
 
 	 uint8_t current_layout =0;

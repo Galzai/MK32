@@ -18,17 +18,121 @@
  */
 
 #include "esp_system.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 #include "driver/gpio.h"
 #include "key_definitions.h"
 #include "keyboard_config.h"
+#include "key_definitions.h"
 #include "driver/pcnt.h"
+#include "HID_kbdmousejoystick.h"
 
-
-
-
+#define CHECK_BIT(var,pos) ((var) & (1<<(pos)))
 
 int PastEncoderCount=0;
 
+//How to process encoder activity
+void r_encoder_command(uint8_t command, uint8_t encoder_commands[4]){
+	uint8_t type = encoder_commands[0];
+	uint8_t media_state[1]={0};
+	uint8_t mouse_state[4]={0};
+	uint8_t key_state[REPORT_LEN];
+
+	switch(type){
+	case MEDIA_ENCODER:
+		if(command>=4){
+			command=3;
+		}
+
+		switch(encoder_commands[command]){
+		case  KC_MEDIA_NEXT_TRACK:
+			media_state[0]=0x01;
+			break;
+
+		case KC_MEDIA_PREV_TRACK:
+			media_state[0]=0x02;
+			break;
+
+		case KC_MEDIA_STOP:
+			media_state[0]=0x04;
+			break;
+
+		case KC_MEDIA_PLAY_PAUSE:
+			media_state[0]=0x08;
+			break;
+
+		case KC_AUDIO_MUTE:
+			media_state[0]=0x10;
+			break;
+
+		case KC_AUDIO_VOL_UP:
+			media_state[0]=0x20;
+			break;
+
+		case KC_AUDIO_VOL_DOWN:
+			media_state[0]=0x40;
+			break;
+		}
+		xQueueSend(media_q,(void*)&media_state, (TickType_t) 0);
+		break;
+
+		case MOUSE_ENCODER:
+			mouse_state[0]=0;
+			mouse_state[1]=0;
+			mouse_state[2]=0;
+			mouse_state[3]=0;
+			for(uint8_t i=0;i<3;i++){
+				if((CHECK_BIT(command,i)) != 0){
+					if(command>=4){
+						command=3;
+					}
+					switch(encoder_commands[command]){
+					case KC_MS_UP :
+						mouse_state[2]=15;
+						break;
+
+					case KC_MS_DOWN:
+						mouse_state[2]=-15;
+						break;
+
+					case KC_MS_LEFT:
+						mouse_state[1]=-15;
+						break;
+
+					case KC_MS_RIGHT:
+						mouse_state[1]=15;
+						break;
+
+					case KC_MS_BTN1:
+						mouse_state[0]=1;
+						break;
+
+					case KC_MS_BTN2:
+						mouse_state[0]=2;
+						break;
+
+					case KC_MS_WH_UP:
+						mouse_state[3]=20;
+						break;
+					case KC_MS_WH_DOWN:
+						mouse_state[3]=-20;
+						break;
+					}
+				}
+			}
+			xQueueSend(mouse_q,(void*)&mouse_state, (TickType_t) 0);
+			break;
+
+		case KEY_ENCODER:
+			if(command>=4){
+				command=3;
+			}
+			key_state[2]=encoder_commands[command];
+			xQueueSend(keyboard_q,(void*)&key_state, (TickType_t) 0);
+			break;
+	}
+	vTaskDelay(3);
+}
 //Setting Pulse counter and encoder button
 void r_encoder_setup(void){
 
@@ -69,8 +173,8 @@ void r_encoder_setup(void){
 	//Encoder Button
 #ifdef ENCODER_S_PIN
 	gpio_pad_select_gpio(ENCODER_S_PIN);
-	gpio_set_direction(ENCODER_S_PIN, GPIO_MODE_INPUT_OUTPUT);
-	gpio_set_level(ENCODER_S_PIN,0);
+	gpio_set_direction(ENCODER_S_PIN, GPIO_MODE_INPUT);
+	gpio_set_pull_mode(ENCODER_S_PIN,GPIO_PULLDOWN_ONLY);
 #endif
 
 }
@@ -81,14 +185,14 @@ uint8_t r_encoder_state(void){
 	int16_t EncoderCount;
 	pcnt_get_counter_value(PCNT_UNIT_0, &EncoderCount);
 	if(EncoderCount>PastEncoderCount){
-		EncoderState = 0x20;
+		EncoderState = 1;
 	}
 	if(EncoderCount<PastEncoderCount){
-		EncoderState = 0x40;
+		EncoderState = 2;
 	}
 #ifdef ENCODER_S_PIN
 	if(gpio_get_level(ENCODER_S_PIN)==1){
-		EncoderState+= 0x10;
+		EncoderState+= 4;
 	}
 #endif
 	PastEncoderCount=EncoderCount;
