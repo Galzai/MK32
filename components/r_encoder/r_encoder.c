@@ -36,7 +36,7 @@ void r_encoder_command(uint8_t command, uint8_t encoder_commands[4]){
 	uint8_t type = encoder_commands[0];
 	uint8_t media_state[1]={0};
 	uint8_t mouse_state[4]={0};
-	uint8_t key_state[REPORT_LEN];
+	uint8_t key_state[REPORT_LEN]={0};
 
 	switch(type){
 	case MEDIA_ENCODER:

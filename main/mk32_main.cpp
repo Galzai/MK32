@@ -120,7 +120,8 @@ extern "C" void key_reports(void *pvParameters)
 			}
 		}
 #ifdef OLED_ENABLE
-		 vTaskDelete(xOledTask);
+		vTaskSuspend(xOledTask);
+		vTaskDelay(200);
 #endif
 		CON_LOG_FLAG = false;
 	}
@@ -221,10 +222,8 @@ extern "C" void deep_sleep(void *pvParameters){
 			if(DEEP_SLEEP == true){
 				ESP_LOGE(SYSTEM_REPORT_TAG,"going to sleep!");
 #ifdef OLED_ENABLE
-#ifdef SLAVE
-				vTaskDelete(xOledTask);
-#endif
-				vTaskDelay(500);
+				vTaskSuspend(xOledTask);
+				vTaskDelay(200);
 				deinit_oled();
 #endif
 				esp_bluedroid_disable();
