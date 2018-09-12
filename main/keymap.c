@@ -50,14 +50,14 @@ uint16_t macros[MACROS_NUM][3]={
 /*Encoder keys for each layer by order, and for each pad
  * First variable states what usage the encoder has
  */
-#ifdef R_ENCODER
+
 uint8_t encoder_map[LAYERS+1][4] ={
 		// |VOL + | VOL - | MUTE |
 		{MEDIA_ENCODER,KC_AUDIO_VOL_UP, KC_AUDIO_VOL_DOWN,KC_AUDIO_MUTE},
 		// |Y+|Y-| LEFT CLICK|
 		{MOUSE_ENCODER,KC_MS_UP ,KC_MS_DOWN,KC_MS_BTN1}
 };
-#endif
+
 
 uint8_t slave_encoder_map[LAYERS+1][4] ={
 		// |VOL + | VOL - | MUTE |

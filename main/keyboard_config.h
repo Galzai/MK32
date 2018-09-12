@@ -51,7 +51,7 @@
 
 
 //deep sleep parameters, mind that reconnecting after deep sleep might take a minute or two
-#define SLEEP_MINS 3 // undefine if you do not need deep sleep, otherwise define number of minutes for deepsleep
+#define SLEEP_MINS 5 // undefine if you do not need deep sleep, otherwise define number of minutes for deepsleep
 #define WAKE_PAD TOUCH_PAD_NUM2 // pin for waking from deep sleep via touch capacitance
 #define TOUCH_THRESHOLD 300 //Threshold for waking up via touch sensor
 
@@ -85,8 +85,12 @@ typedef struct joystick_data {
 	int16_t hat;
 } joystick_data_t;
 
+
 extern uint8_t current_layout;
 extern uint8_t curr_led;
+
+extern uint8_t encoder_map[LAYERS+1][4];
+extern uint8_t slave_encoder_map[LAYERS+1][4];
 
 #ifdef OLED_ENABLE
 // array to hold names of layouts for oled

@@ -111,7 +111,7 @@ void update_oled(void){
 		char buf[sizeof(uint32_t)];
 		snprintf (buf, sizeof(uint32_t), "%d", battery_percent);
 		u8g2_DrawStr(&u8g2, 103,7,"%");
-		if((battery_percent<100)&&(battery_percent-prev_battery_percent>=2)){
+		if((battery_percent<100)&&(abs(battery_percent-prev_battery_percent)>=2)){
 			erase_area(85,0,15,7);
 			u8g2_DrawStr(&u8g2, 90,7,buf);
 			u8g2_SendBuffer(&u8g2);
@@ -262,18 +262,14 @@ void waiting_oled(void){
 
 //shut down OLED
 void deinit_oled(void) {
-
 	u8g2_ClearBuffer(&u8g2);
 	u8g2_SetFont(&u8g2, u8g2_font_5x7_tf );
 	u8g2_DrawStr(&u8g2,0,6,GATTS_TAG);
 	u8g2_DrawStr(&u8g2, 0,26,"Going to sleep!");
 	u8g2_SendBuffer(&u8g2);
 	vTaskDelay(1000/portTICK_PERIOD_MS);
-
-
 	u8g2_ClearDisplay(&u8g2);
 	u8g2_SetPowerSave(&u8g2, 1);
-
 }
 
 //initialize oled

@@ -63,6 +63,7 @@ QueueHandle_t espnow_recieve_q;
 
 bool DEEP_SLEEP = true; // flag to check if we need to go to deep sleep
 bool BLE_SLEEP= true;
+bool OLED_SLEEP = false;
 
 #ifdef OLED_ENABLE
 		TaskHandle_t xOledTask;
@@ -71,7 +72,9 @@ bool BLE_SLEEP= true;
 extern "C" void oled_task(void *pvParameters){
 
 	while(1){
+		if(OLED_SLEEP==false){
 		update_oled();
+		}
 	}
 }
 
@@ -89,7 +92,8 @@ extern "C" void key_reports(void *pvParameters)
 				ESP_LOGI(KEY_REPORT_TAG,"Not connected, waiting for connection ");
 			}
 #ifdef OLED_ENABLE
-			waiting_oled();
+				waiting_oled();
+
 #endif
 			DEEP_SLEEP = false;
 			CON_LOG_FLAG = true;
@@ -114,14 +118,11 @@ extern "C" void key_reports(void *pvParameters)
 					memcpy(past_report,report_state, sizeof past_report );
 					xQueueSend(keyboard_q,(void*)&report_state, (TickType_t) 0);
 					vTaskDelay(3);
-
 				}
-
 			}
 		}
 #ifdef OLED_ENABLE
-		vTaskSuspend(xOledTask);
-		vTaskDelay(200);
+		vTaskDelete(xOledTask);
 #endif
 		CON_LOG_FLAG = false;
 	}
@@ -151,7 +152,7 @@ extern "C" void slave_encoder_report(void *pvParameters){
 		encoder_state=r_encoder_state();
 		if(encoder_state!=past_encoder_state){
 			DEEP_SLEEP = false;
-			r_encoder_command(encoder_state, slave_encoder_map[current_layout]);
+			xQueueSend(espnow_encoder_send_q,(void*)&encoder_state, (TickType_t) 0);
 			past_encoder_state = encoder_state;
 		}
 
@@ -222,13 +223,13 @@ extern "C" void deep_sleep(void *pvParameters){
 			if(DEEP_SLEEP == true){
 				ESP_LOGE(SYSTEM_REPORT_TAG,"going to sleep!");
 #ifdef OLED_ENABLE
-				vTaskSuspend(xOledTask);
-				vTaskDelay(200);
+				OLED_SLEEP=true;
 				deinit_oled();
 #endif
 				esp_bluedroid_disable();
 				esp_bt_controller_disable();
 				esp_wifi_stop();
+
 				// wake up esp32 using touch sensor
 				touch_pad_init();
 				touch_pad_set_fsm_mode(TOUCH_FSM_MODE_TIMER);

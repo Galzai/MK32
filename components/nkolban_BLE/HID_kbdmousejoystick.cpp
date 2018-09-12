@@ -671,7 +671,7 @@ class BLE_HOG: public Task {
 		pSecurity->setCapability(ESP_IO_CAP_NONE);
 		//		pSecurity->setCapability(ESP_IO_CAP_OUT);
 		//pSecurity->setCapability(ESP_IO_CAP_KBDISP);
-//		pSecurity->setInitEncryptionKey(ESP_BLE_ENC_KEY_MASK | ESP_BLE_ID_KEY_MASK);
+		pSecurity->setInitEncryptionKey(ESP_BLE_ENC_KEY_MASK | ESP_BLE_ID_KEY_MASK);
 
 		ESP_LOGI(LOG_TAG, "Advertising started!");
 		while(1) { delay(1000000); }

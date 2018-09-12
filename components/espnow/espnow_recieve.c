@@ -38,6 +38,8 @@
 #include "HID_kbdmousejoystick.h"
 #include "espnow_recieve.h"
 #include "keyboard_config.h"
+#include "r_encoder.h"
+
 //ESP-now tag for reports
 #define ESP_NOW_TAG "ESP-NOW"
 
@@ -103,7 +105,9 @@ static void espnow_recv_cb(const uint8_t *mac_addr, const uint8_t *data, int dat
 	// currently for encoder reports
 	if(data_len==1){
 		memcpy(CURRENT_ENCODER, data, sizeof(CURRENT_ENCODER) );
+		r_encoder_command(CURRENT_ENCODER[0], slave_encoder_map[current_layout]);
 		xQueueSend(media_q,(void*)&CURRENT_ENCODER, (TickType_t) 0);
+
 	}
 
 }
