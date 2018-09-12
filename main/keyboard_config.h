@@ -60,6 +60,8 @@
  *----- Everything below here should not be modified for standard usage----
  *
  * */
+#define CHECK_BIT(var,pos) ((var) & (1<<(pos)))
+#define SET_BIT(var,pos) (var |= 1UL << pos);
 
 #define KEYMAP_COLS MATRIX_COLS*KEYPADS  // used for a symmetrical split keyboard
 #define REPORT_LEN 2+MATRIX_ROWS*KEYMAP_COLS+3 //size of hid reports with NKRO and room for 3 key macro

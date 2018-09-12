@@ -39,8 +39,9 @@ In order to define your keyboard:
 
 ### Power consumption and deep sleep:
 - For better battery usage you can define the number of inactive minutes you would like your device to wait before sleeping in keyboard_config.h. 
-- The controller is defined to wake up when the capacity on GPIO pin 2 is modified ("touch sensor"), if you do not want to enable deep sleep simply undefine SLEEP_MINS.
-- Notice that on windows reconnection after waking from deep sleep might take a couple of minutes, no problem on linux.
+- Notice that waking from deep sleep on keypress is only possible on keys which connect rtc gpio pins (so make sure to have at least 1 rtc row pin, and 1 rtc col pins 
+  wake up keys of your choice), if you do not want to enable deep sleep simply undefine SLEEP_MINS.
+- Notice that on windows reconnection after waking from deep sleep might take a couple of minutes, no problem on linux and android.
  (on windows you can rescan for bluetooth devices and it should recconect without waiting).
 - Tested current (hopefully will improve in future): 
  40 mA for BLE (without split functionality). 

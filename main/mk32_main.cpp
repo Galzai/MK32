@@ -62,13 +62,13 @@ static config_data_t config;
 QueueHandle_t espnow_recieve_q;
 
 bool DEEP_SLEEP = true; // flag to check if we need to go to deep sleep
-bool BLE_SLEEP= true;
-bool OLED_SLEEP = false;
+bool OLED_SLEEP = false; // flag to stop oled when going to deep sleep (otherwise I2C occasionally crashes)
 
 #ifdef OLED_ENABLE
 		TaskHandle_t xOledTask;
 #endif
 
+//Task for continually updating the OLED
 extern "C" void oled_task(void *pvParameters){
 
 	while(1){
@@ -78,6 +78,7 @@ extern "C" void oled_task(void *pvParameters){
 	}
 }
 
+//How to handle key reports
 extern "C" void key_reports(void *pvParameters)
 {
 	// Arrays for holding the report at various stages
@@ -129,6 +130,7 @@ extern "C" void key_reports(void *pvParameters)
 
 }
 
+//Handling rotary encoder
 extern "C" void encoder_report(void *pvParameters){
 	uint8_t encoder_state=0;
 	uint8_t past_encoder_state=0;
@@ -144,6 +146,7 @@ extern "C" void encoder_report(void *pvParameters){
 	}
 }
 
+//Handling rotary encoder for slave pad
 extern "C" void slave_encoder_report(void *pvParameters){
 	uint8_t encoder_state=0;
 	uint8_t past_encoder_state=0;
@@ -194,19 +197,16 @@ extern "C" void espnow_update_matrix(void *pvParameters){
 		}
 	}
 }
-
-//what to do after waking from deep sleep
-extern "C" void esp_wake_deep_sleep(void) {
-    esp_default_wake_deep_sleep();
-    touch_pad_deinit();
-}
+//what to do after waking from deep sleep, doesn't seem to work after updating esp-idf
+//extern "C" void RTC_IRAM_ATTR esp_wake_deep_sleep(void) {
+//    rtc_matrix_deinit();;
+//    SLEEP_WAKE=true;
+//}
 
 /*If no key press has been recieved in SLEEP_MINS amount of minutes, put device into deep sleep
  *  wake up on touch on GPIO pin 2
  *  */
 extern "C" void deep_sleep(void *pvParameters){
-
-
 	uint64_t initial_time = esp_timer_get_time(); // notice that timer returns time passed in microseconds!
 	uint64_t current_time_passed = 0;
 	while(1){
@@ -218,7 +218,7 @@ extern "C" void deep_sleep(void *pvParameters){
 			initial_time = esp_timer_get_time();
 			DEEP_SLEEP= true;
 		}
-		//
+
 		if(current_time_passed>=1000000*60*SLEEP_MINS){
 			if(DEEP_SLEEP == true){
 				ESP_LOGE(SYSTEM_REPORT_TAG,"going to sleep!");
@@ -230,12 +230,10 @@ extern "C" void deep_sleep(void *pvParameters){
 				esp_bt_controller_disable();
 				esp_wifi_stop();
 
-				// wake up esp32 using touch sensor
-				touch_pad_init();
-				touch_pad_set_fsm_mode(TOUCH_FSM_MODE_TIMER);
-				touch_pad_config(TOUCH_PAD_NUM2,TOUCH_THRESHOLD);
+				// wake up esp32 using rtc gpio
+				rtc_matrix_setup(); // doesnt work
 				esp_sleep_enable_touchpad_wakeup();
-				esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_PERIPH,ESP_PD_OPTION_AUTO);
+				esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_PERIPH,ESP_PD_OPTION_ON);
 				esp_deep_sleep_start();
 
 			}
@@ -253,7 +251,10 @@ extern "C" void deep_sleep(void *pvParameters){
 
 extern "C" void app_main()
 {
+	//Reset the rtc GPIOS
+	rtc_matrix_deinit();
 
+	//Underclocking for better current draw (not really effective)
 	//	esp_pm_config_esp32_t pm_config;
 	//	pm_config.max_freq_mhz = 10;
 	//	pm_config.min_freq_mhz = 10;

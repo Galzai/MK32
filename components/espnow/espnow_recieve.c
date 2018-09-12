@@ -106,7 +106,6 @@ static void espnow_recv_cb(const uint8_t *mac_addr, const uint8_t *data, int dat
 	if(data_len==1){
 		memcpy(CURRENT_ENCODER, data, sizeof(CURRENT_ENCODER) );
 		r_encoder_command(CURRENT_ENCODER[0], slave_encoder_map[current_layout]);
-		xQueueSend(media_q,(void*)&CURRENT_ENCODER, (TickType_t) 0);
 
 	}
 

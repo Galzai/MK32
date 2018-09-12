@@ -27,8 +27,6 @@
 #include "driver/pcnt.h"
 #include "HID_kbdmousejoystick.h"
 
-#define CHECK_BIT(var,pos) ((var) & (1<<(pos)))
-
 int PastEncoderCount=0;
 
 //How to process encoder activity
