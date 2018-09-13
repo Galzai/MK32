@@ -118,7 +118,7 @@ extern "C" void key_reports(void *pvParameters)
 					DEEP_SLEEP = false;
 					memcpy(past_report,report_state, sizeof past_report );
 					xQueueSend(keyboard_q,(void*)&report_state, (TickType_t) 0);
-					vTaskDelay(3);
+					vTaskDelay(3*portTICK_PERIOD_MS);
 				}
 			}
 		}
@@ -312,9 +312,7 @@ extern "C" void app_main()
 
 	//If the device is a master for split board initialize receiving reports from slave
 #ifdef SPLIT_MASTER
-
-	uint8_t array_sample[REPORT_LEN];
-	espnow_recieve_q = xQueueCreate(32,sizeof(array_sample));
+	espnow_recieve_q = xQueueCreate(32,REPORT_LEN*sizeof(uint8_t));
 	espnow_recieve();
 	xTaskCreatePinnedToCore(espnow_update_matrix, "ESP-NOW slave matrix state", 4096, NULL, configMAX_PRIORITIES, NULL,1);
 #endif

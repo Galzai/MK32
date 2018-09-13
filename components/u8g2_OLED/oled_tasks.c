@@ -41,8 +41,6 @@
 
 static const char *TAG = "	OLED";
 
-#define CHECK_BIT(var,pos) ((var) & (1<<(pos)))
-
 u8g2_t u8g2; // a structure which will contain all the data for one display
 uint8_t prev_led = 0;
 
@@ -134,7 +132,6 @@ void update_oled(void){
 
 //oled on connection
 void ble_connected_oled(void){
-
 
 	u8g2_ClearBuffer(&u8g2);
 	u8g2_SetFont(&u8g2, u8g2_font_5x7_tf );

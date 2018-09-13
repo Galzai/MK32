@@ -6,7 +6,7 @@
 # lib(subdirectory_name).a in the build directory. This behaviour is entirely configurable,
 # please read the ESP-IDF documents if you need to do this.
 #
-
+COMPONENT_SRCDIRS +=../components/nvs_funcs
 COMPONENT_SRCDIRS +=../components/battery_monitor
 COMPONENT_SRCDIRS +=../components/u8g2_OLED
 COMPONENT_SRCDIRS +=../components/r_encoder
@@ -14,6 +14,7 @@ COMPONENT_SRCDIRS +=../components/espnow
 COMPONENT_SRCDIRS +=../components/nkolban_BLE
 
 COMPONENT_ADD_INCLUDEDIRS=.
+COMPONENT_ADD_INCLUDEDIRS +=../components/nvs_funcs
 COMPONENT_ADD_INCLUDEDIRS +=../components/battery_monitor
 COMPONENT_ADD_INCLUDEDIRS +=../components/u8g2_OLED
 COMPONENT_ADD_INCLUDEDIRS +=../components/r_encoder

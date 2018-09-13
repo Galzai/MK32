@@ -129,7 +129,7 @@ void r_encoder_command(uint8_t command, uint8_t encoder_commands[4]){
 			xQueueSend(keyboard_q,(void*)&key_state, (TickType_t) 0);
 			break;
 	}
-	vTaskDelay(3);
+	vTaskDelay(3*portTICK_PERIOD_MS);
 }
 //Setting Pulse counter and encoder button
 void r_encoder_setup(void){

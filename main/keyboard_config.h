@@ -52,12 +52,9 @@
 
 //deep sleep parameters, mind that reconnecting after deep sleep might take a minute or two
 #define SLEEP_MINS 5 // undefine if you do not need deep sleep, otherwise define number of minutes for deepsleep
-#define WAKE_PAD TOUCH_PAD_NUM2 // pin for waking from deep sleep via touch capacitance
-#define TOUCH_THRESHOLD 300 //Threshold for waking up via touch sensor
-
 
 /*
- *----- Everything below here should not be modified for standard usage----
+ *---------------------------- Everything below here should not be modified for standard usage----------------------
  *
  * */
 #define CHECK_BIT(var,pos) ((var) & (1<<(pos)))

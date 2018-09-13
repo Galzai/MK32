@@ -7,6 +7,9 @@ Any tips for improvments would be greatly appriciated.
 - Neil Kolban for his great contributions to the ESP32 SW (in particular the Bluetooth support): https://github.com/nkolban
 - QMK for their layouts and inspiration for this project: https://github.com/qmk/qmk_firmware/
 
+### General Notes:
+- For information regarding flashing ESP32 Firmware please visit: https://docs.espressif.com/projects/esp-idf/en/latest/get-started/index.html
+- In menuconfig make sure that : Components->FreeRTOS->TickRate is set to 1000Hz
 
 ## Defining your keyboard
 In order to wire your desired keyboard (if handwired) I reccomend checking out:
@@ -39,8 +42,8 @@ In order to define your keyboard:
 
 ### Power consumption and deep sleep:
 - For better battery usage you can define the number of inactive minutes you would like your device to wait before sleeping in keyboard_config.h. 
-- Notice that waking from deep sleep on keypress is only possible on keys which connect rtc gpio pins (so make sure to have at least 1 rtc row pin, and 1 rtc col pins 
-  wake up keys of your choice), if you do not want to enable deep sleep simply undefine SLEEP_MINS.
+- Notice that waking from deep sleep on keypress is only possible on keys which connect rtc gpio pins (so make sure to have at least 1 rtc row pin, and 1 rtc col pin 
+  for wake up keys of your choice), if you do not want to enable deep sleep simply undefine SLEEP_MINS.
 - Notice that on windows reconnection after waking from deep sleep might take a couple of minutes, no problem on linux and android.
  (on windows you can rescan for bluetooth devices and it should recconect without waiting).
 - Tested current (hopefully will improve in future): 
@@ -50,6 +53,7 @@ In order to define your keyboard:
 
 
 ## To Implement:
+- Proper debouncing (Temporerly using delays).
 - More than 2 pads (currently supports 2 pads).
 - Connection switching.
 - Modify keymap via webserver.
