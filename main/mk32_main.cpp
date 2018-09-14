@@ -118,7 +118,7 @@ extern "C" void key_reports(void *pvParameters)
 					DEEP_SLEEP = false;
 					memcpy(past_report,report_state, sizeof past_report );
 					xQueueSend(keyboard_q,(void*)&report_state, (TickType_t) 0);
-					vTaskDelay(3*portTICK_PERIOD_MS);
+					vTaskDelay(3/portTICK_PERIOD_MS);
 				}
 			}
 		}

@@ -444,7 +444,7 @@ class CB_Security: public BLESecurityCallbacks {
 	// Request a pass key to be typed in on the host
 	uint32_t onPassKeyRequest(){
 		ESP_LOGE(LOG_TAG, "The passkey request %d", passKey);
-		vTaskDelay(25000*portTICK_PERIOD_MS);
+		vTaskDelay(25000/portTICK_PERIOD_MS);
 		return passKey;
 	}
 

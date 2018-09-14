@@ -89,43 +89,43 @@ void media_control_send(uint16_t keycode ){
 	case  KC_MEDIA_NEXT_TRACK:
 		media_state[0]=0x01;
 		xQueueSend(media_q,(void*)&media_state, (TickType_t) 0);
-		vTaskDelay(3*portTICK_PERIOD_MS);
+		vTaskDelay(3/portTICK_PERIOD_MS);
 		break;
 
 	case KC_MEDIA_PREV_TRACK:
 		media_state[0]=0x02;
 		xQueueSend(media_q,(void*)&media_state, (TickType_t) 0);
-		vTaskDelay(3*portTICK_PERIOD_MS);
+		vTaskDelay(3/portTICK_PERIOD_MS);
 		break;
 
 	case KC_MEDIA_STOP:
 		media_state[0]=0x04;
 		xQueueSend(media_q,(void*)&media_state, (TickType_t) 0);
-		vTaskDelay(3*portTICK_PERIOD_MS);
+		vTaskDelay(3/portTICK_PERIOD_MS);
 		break;
 
 	case KC_MEDIA_PLAY_PAUSE:
 		media_state[0]=0x08;
 		xQueueSend(media_q,(void*)&media_state, (TickType_t) 0);
-		vTaskDelay(3*portTICK_PERIOD_MS);
+		vTaskDelay(3/portTICK_PERIOD_MS);
 		break;
 
 	case KC_AUDIO_MUTE:
 		media_state[0]=0x10;
 		xQueueSend(media_q,(void*)&media_state, (TickType_t) 0);
-		vTaskDelay(3*portTICK_PERIOD_MS);
+		vTaskDelay(3/portTICK_PERIOD_MS);
 		break;
 
 	case KC_AUDIO_VOL_UP:
 		media_state[0]=0x20;
 		xQueueSend(media_q,(void*)&media_state, (TickType_t) 0);
-		vTaskDelay(3*portTICK_PERIOD_MS);
+		vTaskDelay(3/portTICK_PERIOD_MS);
 		break;
 
 	case KC_AUDIO_VOL_DOWN:
 		media_state[0]=0x40;
 		xQueueSend(media_q,(void*)&media_state, (TickType_t) 0);
-		vTaskDelay(3*portTICK_PERIOD_MS);
+		vTaskDelay(3/portTICK_PERIOD_MS);
 		break;
 	}
 }
@@ -133,7 +133,7 @@ void media_control_send(uint16_t keycode ){
 void media_control_release(uint16_t keycode ){
 	uint8_t media_state[1]={0};
 	xQueueSend(media_q,(void*)&media_state, (TickType_t) 0);
-	vTaskDelay(3*portTICK_PERIOD_MS);
+	vTaskDelay(3/portTICK_PERIOD_MS);
 }
 
 
@@ -165,7 +165,7 @@ void layer_adjust( uint16_t keycode ){
 #ifdef OLED_ENABLE
 		xQueueSend(layer_recieve_q,&current_layout, (TickType_t) 0);
 #endif
-	vTaskDelay(115*portTICK_PERIOD_MS);
+	vTaskDelay(125/portTICK_PERIOD_MS);
 	ESP_LOGI(KEY_PRESS_TAG,"Layer modified!, Current layer: %d ",current_layout);
 }
 

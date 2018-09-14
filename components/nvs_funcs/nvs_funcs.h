@@ -8,11 +8,4 @@
 #ifndef NVS_FUNCS_H_
 #define NVS_FUNCS_H_
 
-class KeyboardConfig
-{
-	public:
-	KeyboardConfig();
-	private:
-};
-
 #endif /* NVS_FUNCS_H_ */
