@@ -39,4 +39,4 @@ void init_batt_monitor(void);
 }
 #endif
 
-#endif /* COMPONENTS_BATTERY_MONITOR_BATTERY_MONITOR_H_ */
+#endif /* BATTERY_MONITOR_BATTERY_MONITOR_H_ */
