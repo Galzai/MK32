@@ -45,9 +45,6 @@ uint8_t current_report[REPORT_LEN] = {0};
 // Array to send when releasing macros
 uint8_t macro_release[3] = {0};
 
-// Array hold correct command for sending media keys
-uint8_t media_arr[8] = {0x10,0x20};
-
 // checking if a modifier key was pressed
 uint16_t check_modifier( uint16_t key ){
 
