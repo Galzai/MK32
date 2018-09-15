@@ -18,7 +18,7 @@ enum custom_keycodes {
 
 #ifdef OLED_ENABLE
 // array to hold names of layouts for oled
-char layout_names[LAYERS+1][8] ={
+char layout_names[LAYERS][MAX_LAYOUT_NAME_LENGTH] ={
 		  "QWERTY" ,
 		  "NUM",
 //		  "DVORAK",
@@ -27,19 +27,19 @@ char layout_names[LAYERS+1][8] ={
 
 
 /* select a keycode for your macro
- * important - first macro must be initialized as 0x103
+ * important - first macro must be initialized as MACRO_BASE_VAL
  * */
 
 #define MACROS_NUM 2
 enum custom_macros {
-  KC_CTRL_ALT_DELETE = 0x103 ,
+  KC_CTRL_ALT_DELETE = MACRO_BASE_VAL ,
   KC_ALT_F4,
 };
 
 /*define what the macros do
  * important- make sure you you put the macros in the same order as the their enumeration
  */
-uint16_t macros[MACROS_NUM][3]={
+uint16_t macros[MACROS_NUM][MACRO_LEN]={
 // CTRL+ALT+DEL
 {KC_LCTRL, KC_LALT,KC_DEL},
 //ALT +F4
@@ -51,7 +51,7 @@ uint16_t macros[MACROS_NUM][3]={
  * First variable states what usage the encoder has
  */
 
-uint8_t encoder_map[LAYERS+1][4] ={
+uint8_t encoder_map[LAYERS][4] ={
 		// |VOL + | VOL - | MUTE |
 		{MEDIA_ENCODER,KC_AUDIO_VOL_UP, KC_AUDIO_VOL_DOWN,KC_AUDIO_MUTE},
 		// |Y+|Y-| LEFT CLICK|
@@ -59,11 +59,11 @@ uint8_t encoder_map[LAYERS+1][4] ={
 };
 
 
-uint8_t slave_encoder_map[LAYERS+1][4] ={
+uint8_t slave_encoder_map[LAYERS][4] ={
 		// |VOL + | VOL - | MUTE |
 		{MEDIA_ENCODER,KC_AUDIO_VOL_UP, KC_AUDIO_VOL_DOWN,KC_AUDIO_MUTE},
 		// |Y+|Y-| LEFT CLICK|
-		{MOUSE_ENCODER,KC_MS_RIGHT ,KC_MS_LEFT,KC_MS_BTN1}
+		{MOUSE_ENCODER,KC_MS_RIGHT ,KC_MS_LEFT,KC_MS_BTN2}
 };
 
 // Fillers to make layering more clear

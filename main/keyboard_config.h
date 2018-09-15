@@ -24,7 +24,7 @@
 #define MATRIX_ROWS 4
 #define MATRIX_COLS 6 // For split keyboards, define columns for one side only.
 
-#define LAYERS 1 // number of layers defined (besides default)
+#define LAYERS 2 // number of layers defined
 
 // Select diode direction
 #define COL2ROW
@@ -60,9 +60,15 @@
 #define CHECK_BIT(var,pos) ((var) & (1<<(pos)))
 #define SET_BIT(var,pos) (var |= 1UL << pos);
 
+#define MAX_LAYER (LAYERS-1)
+#define MOD_LED_BYTES 2 //bytes for led status and modifiers
+#define MACRO_LEN 3 //keys for macros
 #define KEYMAP_COLS MATRIX_COLS*KEYPADS  // used for a symmetrical split keyboard
-#define REPORT_LEN 2+MATRIX_ROWS*KEYMAP_COLS+3 //size of hid reports with NKRO and room for 3 key macro
-#define REPORT_COUNT_BYTES MATRIX_ROWS*KEYMAP_COLS+3
+#define REPORT_LEN (MOD_LED_BYTES+MACRO_LEN+MATRIX_ROWS*KEYMAP_COLS) //size of hid reports with NKRO and room for 3 key macro
+#define REPORT_COUNT_BYTES (MATRIX_ROWS*KEYMAP_COLS+MACRO_LEN)
+
+#define MACRO_BASE_VAL 0x103
+#define LAYERS_BASE_VAL 0xFF
 
 #define MEDIA_ENCODER 0
 #define MOUSE_ENCODER 1
@@ -88,12 +94,13 @@ typedef struct joystick_data {
 extern uint8_t current_layout;
 extern uint8_t curr_led;
 
-extern uint8_t encoder_map[LAYERS+1][4];
-extern uint8_t slave_encoder_map[LAYERS+1][4];
+extern uint8_t encoder_map[LAYERS][4];
+extern uint8_t slave_encoder_map[LAYERS][4];
 
 #ifdef OLED_ENABLE
+#define MAX_LAYOUT_NAME_LENGTH 8
 // array to hold names of layouts for oled
-extern char layout_names[LAYERS+1][8];
+extern char layout_names[LAYERS][MAX_LAYOUT_NAME_LENGTH];
 #endif
 
 #endif

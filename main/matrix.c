@@ -35,8 +35,14 @@
 const gpio_num_t MATRIX_ROWS_PINS[]={GPIO_NUM_0,GPIO_NUM_4,GPIO_NUM_5,GPIO_NUM_12};
 const gpio_num_t MATRIX_COLS_PINS[]={GPIO_NUM_13,GPIO_NUM_14,GPIO_NUM_15,GPIO_NUM_16,GPIO_NUM_17,GPIO_NUM_18};
 
-// matrix state
+// matrix states
 uint8_t MATRIX_STATE[MATRIX_ROWS][MATRIX_COLS]={0};
+uint8_t SLAVE_MATRIX_STATE[MATRIX_ROWS][MATRIX_COLS]={0};
+
+uint8_t (*matrix_states[])[MATRIX_ROWS][MATRIX_COLS]={
+		 &MATRIX_STATE,
+		 &SLAVE_MATRIX_STATE,
+};
 
 // deinitializing rtc matrix pins on  deep sleep wake up
 void rtc_matrix_deinit(void){

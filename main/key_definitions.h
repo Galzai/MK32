@@ -412,13 +412,14 @@ enum internal_special_keycodes {
     KC_SYSTEM_WAKE,
 
     /* Media Control */
-    KC_AUDIO_MUTE,
-    KC_AUDIO_VOL_UP,
-    KC_AUDIO_VOL_DOWN,
+
     KC_MEDIA_NEXT_TRACK,
     KC_MEDIA_PREV_TRACK,
     KC_MEDIA_STOP,
     KC_MEDIA_PLAY_PAUSE,
+    KC_AUDIO_MUTE,
+    KC_AUDIO_VOL_UP,
+    KC_AUDIO_VOL_DOWN,
     KC_MEDIA_SELECT,
     KC_MEDIA_EJECT,
     KC_MAIL,

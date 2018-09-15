@@ -41,18 +41,20 @@ uint16_t keycode=0;
 
 // Sizing the report for N-key rollover
 uint8_t current_report[REPORT_LEN] = {0};
-uint8_t SLAVE_MATRIX_STATE[MATRIX_ROWS][MATRIX_COLS]={0};
 
 // Array to send when releasing macros
 uint8_t macro_release[3] = {0};
+
+// Array hold correct command for sending media keys
+uint8_t media_arr[8] = {0x10,0x20};
 
 // checking if a modifier key was pressed
 uint16_t check_modifier( uint16_t key ){
 
 	uint8_t cur_mod = 0;
 	// these are the modifier keys
-	if(( 0xE0 <= key )&&( key <= 0xE7 )){
-		cur_mod = (1 << (key-0xE0));
+	if(( KC_LCTRL <= key )&&( key <= KC_RGUI )){
+		cur_mod = (1 << (key-KC_LCTRL));
 		return cur_mod;
 	}
 	return 0;
@@ -65,15 +67,12 @@ uint16_t check_led_status( uint16_t key ){
 	switch(key){
 	case KC_NLCK:
 		return 1;
-		break;
 
 	case KC_CAPS:
 		return 2;
-		break;
 
 	case KC_SLCK:
 		return 3;
-		break;
 
 	}
 	return 0;
@@ -83,51 +82,9 @@ uint16_t check_led_status( uint16_t key ){
 void media_control_send(uint16_t keycode ){
 
 	uint8_t media_state[1]={0};
-
-	switch(keycode){
-
-	case  KC_MEDIA_NEXT_TRACK:
-		media_state[0]=0x01;
-		xQueueSend(media_q,(void*)&media_state, (TickType_t) 0);
-		vTaskDelay(3/portTICK_PERIOD_MS);
-		break;
-
-	case KC_MEDIA_PREV_TRACK:
-		media_state[0]=0x02;
-		xQueueSend(media_q,(void*)&media_state, (TickType_t) 0);
-		vTaskDelay(3/portTICK_PERIOD_MS);
-		break;
-
-	case KC_MEDIA_STOP:
-		media_state[0]=0x04;
-		xQueueSend(media_q,(void*)&media_state, (TickType_t) 0);
-		vTaskDelay(3/portTICK_PERIOD_MS);
-		break;
-
-	case KC_MEDIA_PLAY_PAUSE:
-		media_state[0]=0x08;
-		xQueueSend(media_q,(void*)&media_state, (TickType_t) 0);
-		vTaskDelay(3/portTICK_PERIOD_MS);
-		break;
-
-	case KC_AUDIO_MUTE:
-		media_state[0]=0x10;
-		xQueueSend(media_q,(void*)&media_state, (TickType_t) 0);
-		vTaskDelay(3/portTICK_PERIOD_MS);
-		break;
-
-	case KC_AUDIO_VOL_UP:
-		media_state[0]=0x20;
-		xQueueSend(media_q,(void*)&media_state, (TickType_t) 0);
-		vTaskDelay(3/portTICK_PERIOD_MS);
-		break;
-
-	case KC_AUDIO_VOL_DOWN:
-		media_state[0]=0x40;
-		xQueueSend(media_q,(void*)&media_state, (TickType_t) 0);
-		vTaskDelay(3/portTICK_PERIOD_MS);
-		break;
-	}
+	SET_BIT(media_state[0],(keycode-KC_MEDIA_NEXT_TRACK));
+	xQueueSend(media_q,(void*)&media_state, (TickType_t) 0);
+	vTaskDelay(3/portTICK_PERIOD_MS);
 }
 
 void media_control_release(uint16_t keycode ){
@@ -148,14 +105,14 @@ void layer_adjust( uint16_t keycode ){
 
 	case LOWER:
 		if(current_layout==0){
-			current_layout=LAYERS;
+			current_layout=MAX_LAYER;
 			break;
 		}
 		current_layout--;
 		break;
 
 	case RAISE:
-		if(current_layout==LAYERS){
+		if(current_layout==MAX_LAYER){
 			current_layout=0;
 			break;
 		}
@@ -171,178 +128,93 @@ void layer_adjust( uint16_t keycode ){
 
 
 // checking the state of each key in the matrix
-uint8_t *check_key_state( uint16_t keymap[MATRIX_ROWS][KEYMAP_COLS] ){
+uint8_t *check_key_state( uint16_t keymap[MATRIX_ROWS][KEYMAP_COLS]){
 
 	scan_matrix();
-	for(uint8_t col=0; col < MATRIX_COLS; col++){
-		for(uint8_t row=0; row <MATRIX_ROWS; row++){
-			uint16_t report_index=2+col+row*KEYMAP_COLS;
-			keycode=keymap[row][col];
-			led_status=check_led_status(keycode);
+	for(uint8_t pad = 0; pad < KEYPADS; pad++){
 
-			if(MATRIX_STATE[row][col]==1){
+		uint8_t matrix_state[MATRIX_ROWS][MATRIX_COLS]={0};
+		memcpy(matrix_state,matrix_states[pad], sizeof(matrix_state) );
 
-				// checking for layer adjust keycodes
-				if((keycode>0xFF)&&(keycode<0x103)){
-					layer_adjust(keycode);
-					continue;
-				}
+		for(uint8_t col=(MATRIX_COLS*pad); col < ((pad+1)*(MATRIX_COLS)); col++){
+			for(uint8_t row=0; row <MATRIX_ROWS; row++){
 
-				// checking for macros
-				if(keycode>0x102){
-					for(uint8_t i=0; i < 3; i++){
-						uint16_t key=macros[0x103-keycode][i];
-						current_report[REPORT_LEN-1-i]=key;
-						modifier|=check_modifier(key);
-						printf("\nmodifier:%d",modifier);
-					}
-					continue;
-				}
+				uint16_t report_index=(2+col+row*KEYMAP_COLS);
+				keycode=keymap[row][col];
+				led_status=check_led_status(keycode);
+				if(matrix_state[row][col-MATRIX_COLS*pad]==1){
 
-				// checking for media control keycodes
-				if((keycode>=0xA5)&&(keycode<=0xAE)){
-					media_control_send(keycode);
-				}
-
-				// checking for system control keycodes
-				//				if((keycode>=0XA8)&&(keycode<=0XA7)){
-				//					system_control(keycode);
-				//					continue;
-				//				}
-
-				if(current_report[report_index]==0){
-					modifier|=check_modifier(keycode);
-					current_report[report_index]=keycode;
-				}
-			}
-			if(MATRIX_STATE[row][col]==0){
-
-				//checking if macro was released
-				if(keycode>0x102){
-					for(uint8_t i=0; i < 3; i++){
-						uint16_t key=macros[0x103-keycode][i];
-						current_report[REPORT_LEN-1-i]=0;
-						modifier&=~check_modifier(key);
-					}
-				}
-
-				if(current_report[report_index]!=0){
-					if(led_status!=0){
-						led_status=0;
+					// checking for layer adjust keycodes
+					if((keycode>=LAYERS_BASE_VAL)&&(keycode<MACRO_BASE_VAL)){
+						layer_adjust(keycode);
+						continue;
 					}
 
-					modifier&=~check_modifier(keycode);
-					current_report[KEY_STATE[row][col]]=0;
-					current_report[report_index]=0;
-
-					// checking for media control keycodes
-					if((keycode>=0xA5)&&(keycode<=0xAE)){
-						media_control_release(keycode);
-					}
-
-
-				}
-
-				// checking for system control keycodes
-				//				if((keycode>=0XA8)&&(keycode<=0XA7)){
-				//					system_control_release(keycode);
-				//					continue;
-				//				}
-
-
-			}
-		}
-	}
-
-
-
-#ifdef SPLIT_MASTER
-
-	for(uint8_t col=MATRIX_COLS; col < KEYMAP_COLS; col++){
-		for(uint8_t row=0; row <MATRIX_ROWS; row++){
-			uint16_t report_index=2+col+row*KEYMAP_COLS;
-			keycode=keymap[row][col];
-			led_status=check_led_status(keycode);
-
-			if(SLAVE_MATRIX_STATE[row][col-MATRIX_COLS]==1){
-
-				//checking for layer adjust
-				if(keycode>0xFF){
-					printf("\nkeycode:%d",keycode);
-					layer_adjust(keycode);
-					continue;
-				}
-
-				// checking for macros
-				if(keycode>0x102){
-					for(uint8_t i=0; i < 3; i++){
-						uint16_t key=macros[0x103-keycode][i];
-						current_report[REPORT_LEN-1-i]=key;
-						modifier|=check_modifier(key);
-						printf("\nmodifier:%d",modifier);
-					}
-					continue;
-				}
-
-				// checking for media control keycodes
-				if((keycode>=0xA5)&&(keycode<=0xAE)){
-					media_control_send(keycode);
-					continue;
-				}
-
-				// checking for system control keycodes
-				//				if((keycode>=0XA8)&&(keycode<=0XA7)){
-				//					system_control(keycode);
-				//					continue;
-				//				}
-
-
-				if(current_report[report_index]==0){
-					modifier|=check_modifier(keycode);
-					current_report[report_index]=keycode;
-				}
-			}
-
-			if(SLAVE_MATRIX_STATE[row][col-MATRIX_COLS]==0){
-
-				//checking if macro was released
-				if(keycode>0x102){
-					for(uint8_t i=0; i < 3; i++){
-						uint16_t key=macros[0x103-keycode][i];
-						current_report[REPORT_LEN-1-i]=0;
-						modifier&=~check_modifier(key);
-					}
-				}
-
-				if(current_report[report_index]!=0){
-					if(led_status!=0){
-						led_status=0;
+					// checking for macros
+					if(keycode>=MACRO_BASE_VAL){
+						for(uint8_t i=0; i < 3; i++){
+							uint16_t key=macros[MACRO_BASE_VAL-keycode][i];
+							current_report[REPORT_LEN-1-i]=key;
+							modifier|=check_modifier(key);
+							printf("\nmodifier:%d",modifier);
+						}
+						continue;
 					}
 
 					// checking for media control keycodes
-					if((keycode>=0xA5)&&(keycode<=0xAE)){
-						media_control_release(keycode);
+					if((keycode>=KC_MEDIA_NEXT_TRACK)&&(keycode<=KC_AUDIO_VOL_DOWN)){
+						media_control_send(keycode);
 					}
+
+					// checking for system control keycodes
+					//				if((keycode>=0XA8)&&(keycode<=0XA7)){
+					//					system_control(keycode);
+					//					continue;
+					//				}
+
+					if(current_report[report_index]==0){
+						modifier|=check_modifier(keycode);
+						current_report[report_index]=keycode;
+
+					}
+				}
+				if(matrix_state[row][col-MATRIX_COLS*pad]==0){
+
+					//checking if macro was released
+					if(keycode>=MACRO_BASE_VAL){
+						for(uint8_t i=0; i < 3; i++){
+							uint16_t key=macros[MACRO_BASE_VAL-keycode][i];
+							current_report[REPORT_LEN-1-i]=0;
+							modifier&=~check_modifier(key);
+						}
+					}
+
+					if(current_report[report_index]!=0){
+						if(led_status!=0){
+							led_status=0;
+						}
+
+						modifier&=~check_modifier(keycode);
+						current_report[KEY_STATE[row][col]]=0;
+						current_report[report_index]=0;
+
+						// checking for media control keycodes
+						if((keycode>=KC_MEDIA_NEXT_TRACK)&&(keycode<=KC_AUDIO_VOL_DOWN)){
+							media_control_release(keycode);
+						}
+					}
+
+					// checking for system control keycodes
+					//				if((keycode>=0XA8)&&(keycode<=0XA7)){
+					//					system_control_release(keycode);
+					//					continue;
+					//				}
 
 
 				}
-
-				// checking for system control keycodes
-				//				if((keycode>=0XA8)&&(keycode<=0XA7)){
-				//					system_control_release(keycode);
-				//					continue;
-				//				}
-
-
-				modifier&=~check_modifier(keycode);
-				current_report[KEY_STATE[row][col]]=0;
-				current_report[report_index]=0;
 			}
 		}
 	}
-
-
-#endif
 	current_report[0]=modifier;
 	current_report[1]=led_status;
 	return current_report;
