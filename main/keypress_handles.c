@@ -81,13 +81,13 @@ void media_control_send(uint16_t keycode ){
 	uint8_t media_state[1]={0};
 	SET_BIT(media_state[0],(keycode-KC_MEDIA_NEXT_TRACK));
 	xQueueSend(media_q,(void*)&media_state, (TickType_t) 0);
-	vTaskDelay(3/portTICK_PERIOD_MS);
+	vTaskDelay(5/portTICK_PERIOD_MS);
 }
 
 void media_control_release(uint16_t keycode ){
 	uint8_t media_state[1]={0};
 	xQueueSend(media_q,(void*)&media_state, (TickType_t) 0);
-	vTaskDelay(3/portTICK_PERIOD_MS);
+	vTaskDelay(5/portTICK_PERIOD_MS);
 }
 
 

@@ -16,14 +16,14 @@ enum custom_keycodes {
 //  DVORAK,
 };
 
-#ifdef OLED_ENABLE
+
 // array to hold names of layouts for oled
 char layout_names[LAYERS][MAX_LAYOUT_NAME_LENGTH] ={
 		  "QWERTY" ,
 		  "NUM",
 //		  "DVORAK",
 };
-#endif
+
 
 
 /* select a keycode for your macro

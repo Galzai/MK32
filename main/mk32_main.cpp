@@ -54,6 +54,7 @@
 #include "oled_tasks.h"
 #include "oled_tasks.h"
 #include "battery_monitor.h"
+#include "nvs_funcs.h"
 
 #define KEY_REPORT_TAG "KEY_REPORT"
 #define SYSTEM_REPORT_TAG "KEY_REPORT"
@@ -120,7 +121,7 @@ extern "C" void key_reports(void *pvParameters)
 				DEEP_SLEEP = false;
 				memcpy(past_report,report_state, sizeof past_report );
 				xQueueSend(keyboard_q,(void*)&report_state, (TickType_t) 0);
-				vTaskDelay(3/portTICK_PERIOD_MS);
+				vTaskDelay(5/portTICK_PERIOD_MS);
 			}
 
 		}
@@ -182,6 +183,7 @@ extern "C" void slave_scan(void *pvParameters){
 			memcpy(&PAST_MATRIX, &MATRIX_STATE, sizeof MATRIX_STATE );
 
 			xQueueSend(espnow_matrix_send_q,(void*)&MATRIX_STATE, (TickType_t) 0);
+			vTaskDelay(5/portTICK_PERIOD_MS);
 		}
 	}
 }
@@ -287,6 +289,13 @@ extern "C" void app_main()
 	} else ESP_LOGI("MAIN","bt device name is: %s",config.bt_device_name);
 
 	esp_log_level_set("*", ESP_LOG_INFO);
+
+//	nvs_write_keymap_cfg(LAYERS,layout_names);
+//	nvs_read_keymap_cfg();
+//	nvs_write_layout(_QWERTY, "Test1");
+//	nvs_write_layout(_QWERTY, "Test 2");
+//	nvs_write_layout(_QWERTY, "Test 3");
+
 
 	//activate oled
 #ifdef	OLED_ENABLE

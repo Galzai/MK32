@@ -97,11 +97,11 @@ extern uint8_t curr_led;
 extern uint8_t encoder_map[LAYERS][4];
 extern uint8_t slave_encoder_map[LAYERS][4];
 
-#ifdef OLED_ENABLE
-#define MAX_LAYOUT_NAME_LENGTH 8
+
+#define MAX_LAYOUT_NAME_LENGTH 15
 // array to hold names of layouts for oled
 extern char layout_names[LAYERS][MAX_LAYOUT_NAME_LENGTH];
-#endif
+
 
 #endif
 //

@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
-#include <config_structs.h>
+#include <keyboard_config.h>
 
 #ifndef NVS_FUNCS_H_
 #define NVS_FUNCS_H_
@@ -20,22 +20,27 @@
 extern "C" {
 #endif
 
+/*
+ * @add a layout to nvs flash or overwrite existing one
+ */
+void nvs_write_layout(uint16_t layout[MATRIX_ROWS][KEYMAP_COLS],const char* layout_name);
 
 /*
  * @brief read keyboard configuration from nvs flash
  */
-keymap_cfg_t read_nvs_keymap_cfg(void);
+void nvs_read_keymap_cfg(void);
 
 /*
- * @brief set new keyboard configuration in nvs flash
+ * @brief write keyboard configuration to nvs flash
  */
-void set_nvs_keymap_cfg(keymap_cfg_t keymap_cfg);
+void nvs_write_keymap_cfg(uint8_t layers, char (*layer_names)[MAX_LAYOUT_NAME_LENGTH]);
+
 
 /*
  * @brief check if there is a saved keyboard configuration in nvs flash
  * if no configuration is found load default configuration
   */
-uint8_t check_nvs_keymap_cfg(void);
+uint8_t nvs_check_keymap_cfg(void);
 
 #ifdef __cplusplus
 }
