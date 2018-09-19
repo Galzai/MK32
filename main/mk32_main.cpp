@@ -290,13 +290,13 @@ extern "C" void app_main()
 
 	esp_log_level_set("*", ESP_LOG_INFO);
 
-	nvs_write_keymap_cfg(LAYERS,layout_names);
-	nvs_read_keymap_cfg();
-	nvs_write_layout(_QWERTY, "Test1");
-	nvs_write_layout(_NUM, "Test 2");
-	nvs_write_layout(_QWERTY, "Test1");
-	nvs_read_layout("Test1");
-	nvs_read_layout("Test 2");
+//	nvs_write_keymap_cfg(LAYERS,layout_names);
+//	nvs_read_keymap_cfg();
+//	nvs_write_layout(_QWERTY, "Test1");
+//	nvs_write_layout(_NUM, "Test 2");
+//	nvs_write_layout(_QWERTY, "Test1");
+//	nvs_read_layout("Test1");
+//	nvs_read_layout("Test 2");
 
 
 	//activate oled
