@@ -19,25 +19,29 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+/*
+ * @read a layout from nvs
+ */
+void nvs_read_layout(const char* layout_name);
 
 /*
- * @add a layout to nvs flash or overwrite existing one
+ * @add a layout to nvs or overwrite existing one
  */
 void nvs_write_layout(uint16_t layout[MATRIX_ROWS][KEYMAP_COLS],const char* layout_name);
 
 /*
- * @brief read keyboard configuration from nvs flash
+ * @brief read keyboard configuration from nvs
  */
 void nvs_read_keymap_cfg(void);
 
 /*
- * @brief write keyboard configuration to nvs flash
+ * @brief write keyboard configuration to nvs (without keymaps)
  */
 void nvs_write_keymap_cfg(uint8_t layers, char (*layer_names)[MAX_LAYOUT_NAME_LENGTH]);
 
 
 /*
- * @brief check if there is a saved keyboard configuration in nvs flash
+ * @brief check if there is a saved keyboard configuration in nvs
  * if no configuration is found load default configuration
   */
 uint8_t nvs_check_keymap_cfg(void);

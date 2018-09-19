@@ -42,7 +42,59 @@ nvs_handle keymap_handle;
 char **layer_names_arr;
 uint8_t layers_num=0;
 
-//add or overwrite a keymap to the nvs flash
+//read a layout from nvs
+void nvs_read_layout(const char* layout_name){
+	ESP_LOGI(NVS_TAG,"Opening NVS handle");
+	err = nvs_open(NAMESPACE, NVS_READWRITE, &keymap_handle);
+	if (err != ESP_OK) {
+		ESP_LOGE(NVS_TAG,"Error (%s) opening NVS handle!\n", esp_err_to_name(err));
+	} else {
+		ESP_LOGI(NVS_TAG,"NVS Handle opened successfully");
+	}
+	uint16_t layout_arr[MATRIX_ROWS*KEYMAP_COLS] = {0};
+	size_t arr_size;
+	//get string array size
+	err = nvs_get_blob(keymap_handle, layout_name, NULL, &arr_size);
+	err = nvs_get_blob(keymap_handle,layout_name,layout_arr,&arr_size);
+	if (err != ESP_OK) {
+		ESP_LOGE(NVS_TAG, "Error getting layout: %s", esp_err_to_name(err));
+
+	}
+	else{
+		uint16_t layout[MATRIX_ROWS][KEYMAP_COLS] = {0};
+		ESP_LOGI(NVS_TAG, "Success getting layout");
+		 blob_to_key_mat(layout_arr,layout);
+		}
+	nvs_close(keymap_handle);
+
+
+}
+
+//add or overwrite a keymap to the nvs
+void nvs_write_layout_matrix(uint16_t layout[MATRIX_ROWS][KEYMAP_COLS], const char* layout_name){
+
+	ESP_LOGI(NVS_TAG,"Opening NVS handle");
+	err = nvs_open(NAMESPACE, NVS_READWRITE, &keymap_handle);
+	if (err != ESP_OK) {
+		ESP_LOGE(NVS_TAG,"Error (%s) opening NVS handle!\n", esp_err_to_name(err));
+	} else {
+		ESP_LOGI(NVS_TAG,"NVS Handle opened successfully");
+	}
+	uint16_t layout_arr[MATRIX_ROWS*KEYMAP_COLS] = {0};
+	key_mat_to_blob(layout,layout_arr);
+
+	err = nvs_set_blob(keymap_handle,layout_name, layout_arr,sizeof(layout_arr));
+	if (err != ESP_OK) {
+		ESP_LOGE(NVS_TAG, "Error writing layout: %s", esp_err_to_name(err));
+	}
+	else{
+		ESP_LOGI(NVS_TAG, "Success writing layout");
+	}
+
+	nvs_close(keymap_handle);
+}
+
+//add or overwrite a keymap to the nvs
 void nvs_write_layout(uint16_t layout[MATRIX_ROWS][KEYMAP_COLS], const char* layout_name){
 
 	ESP_LOGI(NVS_TAG,"Adding/Modifying Layout");
@@ -70,15 +122,17 @@ void nvs_write_layout(uint16_t layout[MATRIX_ROWS][KEYMAP_COLS], const char* lay
 		char (*curr_array)[MAX_LAYOUT_NAME_LENGTH];
 		curr_array = malloc(MAX_LAYOUT_NAME_LENGTH*cur_layers_num*sizeof(char));
 		for(uint8_t i=0;i<layers_num;i++){
-//			curr_array[i] = malloc(MAX_LAYOUT_NAME_LENGTH*sizeof(char));
 			strcpy(curr_array[i],layer_names_arr[i]);
 		}
 		strcpy(curr_array[layers_num],layout_name);
 		nvs_write_keymap_cfg(cur_layers_num,curr_array);
+		nvs_write_layout_matrix(layout,layout_name);
 	}
+
 	free(layer_names_arr);
 }
-//read the what layouts are in the nvs flash
+
+//read the what layouts are in the nvs
 void nvs_read_keymap_cfg(void){
 	ESP_LOGI(NVS_TAG,"Opening NVS handle");
 	err = nvs_open(NAMESPACE, NVS_READWRITE, &keymap_handle);
@@ -117,11 +171,12 @@ void nvs_read_keymap_cfg(void){
 			ESP_LOGI(NVS_TAG,"\nLayer %d:  %s",i,layer_names_arr[i]);
 		}
 	}
+	nvs_close(keymap_handle);
 
 
 }
 
-//write layout names to nvs flash
+//write layout names to nvs
 void nvs_write_keymap_cfg(uint8_t layers, char (*layer_names_arr)[MAX_LAYOUT_NAME_LENGTH]){
 
 	char *layer_names;
