@@ -125,7 +125,7 @@ void layer_adjust( uint16_t keycode ){
 
 
 // checking the state of each key in the matrix
-uint8_t *check_key_state( uint16_t keymap[MATRIX_ROWS][KEYMAP_COLS]){
+uint8_t *check_key_state( uint16_t **keymap){
 
 	scan_matrix();
 	for(uint8_t pad = 0; pad < KEYPADS; pad++){

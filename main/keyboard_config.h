@@ -12,7 +12,7 @@
 #include "driver/adc.h"
 
 #define MODULE_ID "LOLIN 32"
-#define GATTS_TAG "MK32 V1.5" // The device's name
+#define GATTS_TAG "MK32 V2.0" // The device's name
 #define MAX_BT_DEVICENAME_LENGTH 40
 
 #define MASTER  // undefine if you are not flashing the main controller
@@ -100,7 +100,7 @@ extern uint8_t slave_encoder_map[LAYERS][4];
 
 #define MAX_LAYOUT_NAME_LENGTH 15
 // array to hold names of layouts for oled
-extern char layout_names[LAYERS][MAX_LAYOUT_NAME_LENGTH];
+extern char default_layout_names[LAYERS][MAX_LAYOUT_NAME_LENGTH];
 
 
 #endif

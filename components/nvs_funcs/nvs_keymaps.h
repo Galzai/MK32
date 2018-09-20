@@ -10,7 +10,7 @@
 #include <keyboard_config.h>
 
 //array for for holding the keymaps
-extern uint8_t (*layouts[])[MATRIX_ROWS][KEYMAP_COLS];
+extern uint16_t ***layouts;
 
 //array for keymap names
 extern char **layer_names_arr;

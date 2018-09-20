@@ -3,6 +3,7 @@
 
 #include "key_definitions.h"
 #include "keyboard_config.h"
+#include "keymap.h"
 
 // A bit different from QMK, default return you to the first layer, LOWER and raise increase/lower layer by order.
 #define DEFAULT 0x100
@@ -18,7 +19,7 @@ enum custom_keycodes {
 
 
 // array to hold names of layouts for oled
-char layout_names[LAYERS][MAX_LAYOUT_NAME_LENGTH] ={
+char default_layout_names[LAYERS][MAX_LAYOUT_NAME_LENGTH] ={
 		  "QWERTY" ,
 		  "NUM",
 //		  "DVORAK",
@@ -135,7 +136,7 @@ uint8_t slave_encoder_map[LAYERS][4] ={
 //	};
 // Create an array that points to the various keymaps
 
-	 uint16_t (*layouts[])[MATRIX_ROWS][KEYMAP_COLS]={
+	 uint16_t (*default_layouts[])[MATRIX_ROWS][KEYMAP_COLS]={
 			 &_QWERTY,
 			 &_NUM,
 //			 &_DVORAK

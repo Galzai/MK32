@@ -28,11 +28,12 @@
 #include "nvs_flash.h"
 #include "nvs.h"
 # include "nvs_funcs.h"
+# include "keymap.h"
 #include <arr_conv.h>
 
 
 #define NVS_TAG "NVS Storage"
-#define NAMESPACE "config"
+#define KEYMAP_NAMESPACE "keymap_config"
 esp_err_t err;
 
 nvs_handle keymap_handle;
@@ -41,11 +42,13 @@ nvs_handle keymap_handle;
 
 char **layer_names_arr;
 uint8_t layers_num=0;
+uint16_t ***layouts;
 
 //read a layout from nvs
-void nvs_read_layout(const char* layout_name){
+void nvs_read_layout(const char* layout_name,uint16_t buffer[MATRIX_ROWS][KEYMAP_COLS]){
 	ESP_LOGI(NVS_TAG,"Opening NVS handle");
-	err = nvs_open(NAMESPACE, NVS_READWRITE, &keymap_handle);
+	uint16_t layout[MATRIX_ROWS][KEYMAP_COLS] = {0};
+	err = nvs_open(KEYMAP_NAMESPACE, NVS_READWRITE, &keymap_handle);
 	if (err != ESP_OK) {
 		ESP_LOGE(NVS_TAG,"Error (%s) opening NVS handle!\n", esp_err_to_name(err));
 	} else {
@@ -61,11 +64,14 @@ void nvs_read_layout(const char* layout_name){
 
 	}
 	else{
-		uint16_t layout[MATRIX_ROWS][KEYMAP_COLS] = {0};
 		ESP_LOGI(NVS_TAG, "Success getting layout");
 		 blob_to_key_mat(layout_arr,layout);
 		}
+	memcpy(buffer, layout, sizeof(layout) );
+	ESP_LOGI(NVS_TAG, "Layout copied to buffer");
 	nvs_close(keymap_handle);
+
+
 
 
 }
@@ -74,7 +80,7 @@ void nvs_read_layout(const char* layout_name){
 void nvs_write_layout_matrix(uint16_t layout[MATRIX_ROWS][KEYMAP_COLS], const char* layout_name){
 
 	ESP_LOGI(NVS_TAG,"Opening NVS handle");
-	err = nvs_open(NAMESPACE, NVS_READWRITE, &keymap_handle);
+	err = nvs_open(KEYMAP_NAMESPACE, NVS_READWRITE, &keymap_handle);
 	if (err != ESP_OK) {
 		ESP_LOGE(NVS_TAG,"Error (%s) opening NVS handle!\n", esp_err_to_name(err));
 	} else {
@@ -134,8 +140,9 @@ void nvs_write_layout(uint16_t layout[MATRIX_ROWS][KEYMAP_COLS], const char* lay
 
 //read the what layouts are in the nvs
 void nvs_read_keymap_cfg(void){
+	free(layer_names_arr);
 	ESP_LOGI(NVS_TAG,"Opening NVS handle");
-	err = nvs_open(NAMESPACE, NVS_READWRITE, &keymap_handle);
+	err = nvs_open(KEYMAP_NAMESPACE, NVS_READWRITE, &keymap_handle);
 	if (err != ESP_OK) {
 		ESP_LOGE(NVS_TAG,"Error (%s) opening NVS handle!\n", esp_err_to_name(err));
 	} else {
@@ -183,7 +190,7 @@ void nvs_write_keymap_cfg(uint8_t layers, char (*layer_names_arr)[MAX_LAYOUT_NAM
 	str_arr_to_str(layer_names_arr,layers,&layer_names);
 
 	ESP_LOGI(NVS_TAG,"Opening NVS handle");
-	err = nvs_open(NAMESPACE, NVS_READWRITE, &keymap_handle);
+	err = nvs_open(KEYMAP_NAMESPACE, NVS_READWRITE, &keymap_handle);
 	if (err != ESP_OK) {
 		ESP_LOGE(NVS_TAG,"Error (%s) opening NVS handle!\n", esp_err_to_name(err));
 	} else {
@@ -208,4 +215,45 @@ void nvs_write_keymap_cfg(uint8_t layers, char (*layer_names_arr)[MAX_LAYOUT_NAM
 	nvs_commit(keymap_handle);
 	nvs_close(keymap_handle);
 	free(layer_names);
+}
+
+//load the layouts from nvs
+void nvs_load_layouts(void){
+
+	ESP_LOGI(NVS_TAG,"Loading layouts");
+	nvs_read_keymap_cfg();
+
+	if(layers_num!=0){
+	ESP_LOGI(NVS_TAG,"Layouts found on NVS, loading layouts");
+	layouts = malloc(layers_num*sizeof(uint16_t**));
+	for(uint8_t i = 0;i < layers_num; i++){
+		uint16_t layout_buff[MATRIX_ROWS][KEYMAP_COLS] = {0};
+		nvs_read_layout(layer_names_arr[i],layout_buff);
+		layouts[i] = malloc(sizeof(layout_buff));
+		ESP_LOGI(NVS_TAG,"malloc");
+		for(uint8_t row=0; row<MATRIX_ROWS;row++){
+			layouts[i][row] = malloc(sizeof(layout_buff[row]));
+			for(uint8_t col=0; col<KEYMAP_COLS;col++){
+				layouts[i][row][col] = layout_buff[row][col];
+			}
+		}
+	}
+	}else{
+		ESP_LOGI(NVS_TAG,"Layouts not found on NVS, loading default layouts");
+		free(layer_names_arr);
+		layouts = malloc(LAYERS*sizeof(uint16_t**));
+		layer_names_arr = malloc(sizeof(default_layout_names));
+		for(uint8_t i = 0;i < LAYERS; i++){
+			layouts[i] = malloc(sizeof( (*default_layouts)[i]));
+			layer_names_arr[i] = malloc(sizeof(default_layout_names[i]));
+			strcpy(layer_names_arr[i],default_layout_names[i]);
+			for(uint8_t row=0; row<MATRIX_ROWS;row++){
+				layouts[i][row] = malloc(sizeof( (*default_layouts[i])[row]));
+				for(uint8_t col=0; col<KEYMAP_COLS;col++){
+					layouts[i][row][col] = (*default_layouts[i])[row][col];
+				}
+			}
+		}
+	}
+
 }

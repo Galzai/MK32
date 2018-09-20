@@ -19,10 +19,16 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/*
+ * @load the layouts from nvs
+ */
+void nvs_load_layouts(void);
+
 /*
  * @read a layout from nvs
  */
-void nvs_read_layout(const char* layout_name);
+void nvs_read_layout(const char* layout_name,uint16_t buffer[MATRIX_ROWS][KEYMAP_COLS]);
 
 /*
  * @add a layout to nvs or overwrite existing one

@@ -55,7 +55,7 @@
 #include "oled_tasks.h"
 #include "battery_monitor.h"
 #include "nvs_funcs.h"
-
+#include "nvs_keymaps.h"
 #define KEY_REPORT_TAG "KEY_REPORT"
 #define SYSTEM_REPORT_TAG "KEY_REPORT"
 
@@ -107,7 +107,7 @@ extern "C" void key_reports(void *pvParameters)
 #endif
 
 		while(HID_kbdmousejoystick_isConnected() != 0) {
-			memcpy(report_state, check_key_state(*layouts[current_layout]), sizeof report_state);
+			memcpy(report_state, check_key_state(layouts[current_layout]), sizeof report_state);
 
 			//Do not send anything if queues are uninitialized
 			if(mouse_q == NULL || keyboard_q == NULL || joystick_q == NULL)
@@ -290,15 +290,10 @@ extern "C" void app_main()
 
 	esp_log_level_set("*", ESP_LOG_INFO);
 
-//	nvs_write_keymap_cfg(LAYERS,layout_names);
-//	nvs_read_keymap_cfg();
-//	nvs_write_layout(_QWERTY, "Test1");
-//	nvs_write_layout(_NUM, "Test 2");
-//	nvs_write_layout(_QWERTY, "Test1");
-//	nvs_read_layout("Test1");
-//	nvs_read_layout("Test 2");
-
-
+	//Loading layouts from nvs (if found)
+#ifdef MASTER
+	nvs_load_layouts();
+#endif
 	//activate oled
 #ifdef	OLED_ENABLE
 	init_oled();
@@ -330,7 +325,7 @@ extern "C" void app_main()
 	xTaskCreatePinnedToCore(espnow_update_matrix, "ESP-NOW slave matrix state", 4096, NULL, configMAX_PRIORITIES, NULL,1);
 #endif
 
-#ifdef MASTER
+
 	//activate keyboard BT stack
 	HID_kbdmousejoystick_init(1,1,1,0,config.bt_device_name);
 	ESP_LOGI("HIDD","MAIN finished...");
