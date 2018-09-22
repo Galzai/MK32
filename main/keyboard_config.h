@@ -31,7 +31,7 @@
 //#define ROW2COL
 
 //Encoder definitions
-//#define R_ENCODER // undefine if no rotary encoder is used
+#define R_ENCODER // undefine if no rotary encoder is used
 //#define R_ENCODER_SLAVE // undefine if no rotary encoder is used on slave pad
 #define ENCODER_A_PIN GPIO_NUM_32 // encoder phase A pin
 #define ENCODER_B_PIN GPIO_NUM_33// encoder phase B pin
@@ -70,9 +70,11 @@
 #define MACRO_BASE_VAL 0x103
 #define LAYERS_BASE_VAL 0xFF
 
+#define ENCODER_SIZE 4
 #define MEDIA_ENCODER 0
 #define MOUSE_ENCODER 1
 #define KEY_ENCODER 2
+
 
 typedef struct config_data {
 	char bt_device_name[MAX_BT_DEVICENAME_LENGTH];
@@ -94,8 +96,8 @@ typedef struct joystick_data {
 extern uint8_t current_layout;
 extern uint8_t curr_led;
 
-extern uint8_t encoder_map[LAYERS][4];
-extern uint8_t slave_encoder_map[LAYERS][4];
+extern uint16_t default_encoder_map[LAYERS][ENCODER_SIZE];
+extern uint16_t default_slave_encoder_map[LAYERS][ENCODER_SIZE];
 
 
 #define MAX_LAYOUT_NAME_LENGTH 15

@@ -39,6 +39,7 @@
 #include "espnow_recieve.h"
 #include "keyboard_config.h"
 #include "r_encoder.h"
+#include "nvs_keymaps.h"
 
 //ESP-now tag for reports
 #define ESP_NOW_TAG "ESP-NOW"

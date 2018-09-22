@@ -15,6 +15,10 @@ extern uint16_t ***layouts;
 //array for keymap names
 extern char **layer_names_arr;
 
+extern uint16_t **encoder_map;
+
+extern uint16_t **slave_encoder_map;
+
 //amount of arrays
 extern uint8_t layers_num;
 

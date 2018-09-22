@@ -52,7 +52,7 @@ uint16_t macros[MACROS_NUM][MACRO_LEN]={
  * First variable states what usage the encoder has
  */
 
-uint8_t encoder_map[LAYERS][4] ={
+uint16_t default_encoder_map[LAYERS][ENCODER_SIZE] ={
 		// |VOL + | VOL - | MUTE |
 		{MEDIA_ENCODER,KC_AUDIO_VOL_UP, KC_AUDIO_VOL_DOWN,KC_AUDIO_MUTE},
 		// |Y+|Y-| LEFT CLICK|
@@ -60,7 +60,7 @@ uint8_t encoder_map[LAYERS][4] ={
 };
 
 
-uint8_t slave_encoder_map[LAYERS][4] ={
+uint16_t default_slave_encoder_map[LAYERS][ENCODER_SIZE] ={
 		// |VOL + | VOL - | MUTE |
 		{MEDIA_ENCODER,KC_AUDIO_VOL_UP, KC_AUDIO_VOL_DOWN,KC_AUDIO_MUTE},
 		// |Y+|Y-| LEFT CLICK|

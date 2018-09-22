@@ -30,7 +30,7 @@
 int PastEncoderCount=0;
 
 //How to process encoder activity
-void r_encoder_command(uint8_t command, uint8_t encoder_commands[4]){
+void r_encoder_command(uint8_t command, uint16_t encoder_commands[4]){
 	uint8_t type = encoder_commands[0];
 	uint8_t media_state[1]={0};
 	uint8_t mouse_state[4]={0};

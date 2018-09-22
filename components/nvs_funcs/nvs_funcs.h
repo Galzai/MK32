@@ -46,11 +46,6 @@ void nvs_read_keymap_cfg(void);
 void nvs_write_keymap_cfg(uint8_t layers, char (*layer_names)[MAX_LAYOUT_NAME_LENGTH]);
 
 
-/*
- * @brief check if there is a saved keyboard configuration in nvs
- * if no configuration is found load default configuration
-  */
-uint8_t nvs_check_keymap_cfg(void);
 
 #ifdef __cplusplus
 }

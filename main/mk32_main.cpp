@@ -337,6 +337,7 @@ extern "C" void app_main()
 
 	// Start the keyboard Tasks
 	// Create the key scanning task on core 1 (otherwise it will crash)
+#ifdef MASTER
 	xTaskCreatePinnedToCore(key_reports, "key report task", 4096, NULL, configMAX_PRIORITIES, NULL,1);
 #endif
 
