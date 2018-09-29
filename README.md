@@ -17,9 +17,9 @@ Please refer to the [MK32 Wiki page](https://github.com/Galzai/MK32/wiki) for in
 - Power Management
 
 ## To-do:
-- Plugin support.
+- Plugin support (in progress).
 - Proper debouncing (Temporerly using delays).
 - More than 2 pads (currently supports 2 pads).
 - Connection switching.
-- Modify keymap via webserver.
+- Modify keymap via webserver (in progress) .
 - Security (?)

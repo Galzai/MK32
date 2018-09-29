@@ -31,8 +31,8 @@
 # include "keymap.h"
 #include <arr_conv.h>
 
-
 #define NVS_TAG "NVS Storage"
+
 #define KEYMAP_NAMESPACE "keymap_config"
 #define ENCODER_NAMESPACE "encoder_config"
 #define SLAVE_ENCODER_NAMESPACE "slave_encoder_config"
