@@ -228,6 +228,8 @@ extern "C" void deep_sleep(void *pvParameters){
 				ESP_LOGE(SYSTEM_REPORT_TAG,"going to sleep!");
 #ifdef OLED_ENABLE
 				OLED_SLEEP=true;
+				vTaskDelay(20/portTICK_PERIOD_MS);
+				vTaskSuspend(xOledTask);
 				deinit_oled();
 #endif
 				esp_bluedroid_disable();
@@ -323,12 +325,12 @@ extern "C" void app_main()
 	espnow_recieve_q = xQueueCreate(32,REPORT_LEN*sizeof(uint8_t));
 	espnow_recieve();
 	xTaskCreatePinnedToCore(espnow_update_matrix, "ESP-NOW slave matrix state", 4096, NULL, configMAX_PRIORITIES, NULL,1);
-#endif
-
-
 	//activate keyboard BT stack
 	HID_kbdmousejoystick_init(1,1,1,0,config.bt_device_name);
 	ESP_LOGI("HIDD","MAIN finished...");
+#endif
+
+
 	//activate encoder functions
 #ifdef	R_ENCODER
 	r_encoder_setup();

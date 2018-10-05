@@ -268,6 +268,7 @@ void deinit_oled(void) {
 	vTaskDelay(1000/portTICK_PERIOD_MS);
 	u8g2_ClearDisplay(&u8g2);
 	u8g2_SetPowerSave(&u8g2, 1);
+	i2c_driver_delete(I2C_NUM_0);
 }
 
 //initialize oled

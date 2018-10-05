@@ -57,7 +57,7 @@ void wifi_availble_ap(void);
  uint8_t wifi_retrieve_ap(uint8_t ssid[MAX_AP_SSID_LEN],wifi_sta_config_t *ap_config);
 
 /**
- * @remove
+ * @brief remove ap from nvs
  */
 void wifi_del_ap(uint8_t ssid[MAX_AP_SSID_LEN]);
 
