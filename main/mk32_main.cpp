@@ -295,6 +295,9 @@ extern "C" void app_main()
 	//Loading layouts from nvs (if found)
 #ifdef MASTER
 	nvs_load_layouts();
+	//activate keyboard BT stack
+	HID_kbdmousejoystick_init(1,1,1,0,config.bt_device_name);
+	ESP_LOGI("HIDD","MAIN finished...");
 #endif
 	//activate oled
 #ifdef	OLED_ENABLE
@@ -325,9 +328,7 @@ extern "C" void app_main()
 	espnow_recieve_q = xQueueCreate(32,REPORT_LEN*sizeof(uint8_t));
 	espnow_recieve();
 	xTaskCreatePinnedToCore(espnow_update_matrix, "ESP-NOW slave matrix state", 4096, NULL, configMAX_PRIORITIES, NULL,1);
-	//activate keyboard BT stack
-	HID_kbdmousejoystick_init(1,1,1,0,config.bt_device_name);
-	ESP_LOGI("HIDD","MAIN finished...");
+
 #endif
 
 
