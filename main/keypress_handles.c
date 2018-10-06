@@ -23,7 +23,7 @@
 #include "freertos/task.h"
 #include "esp_log.h"
 #include "keymap.c"
-#include "matrix.c"
+#include "matrix.h"
 #include "HID_kbdmousejoystick.h"
 #include "oled_tasks.h"
 

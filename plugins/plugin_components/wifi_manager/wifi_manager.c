@@ -1,4 +1,8 @@
 #include "wifi_manager.h"
+#include "esp_system.h"
+#include "nvs_flash.h"
+#include "esp_log.h"
+#include "nvs.h"
 
 nvs_handle wifi_nvs_handle;
 #define WIFI_NAMESPACE "wifi"
@@ -11,7 +15,7 @@ esp_err_t err;
 void wifi_store_ap(wifi_sta_config_t ap_config){
 
 	ESP_LOGI(NVS_TAG,"Opening NVS handle");
-	err = nvs_open(WIFI_NAMESPACE,NVS_READWRITE, wifi_nvs_handle);
+	err = nvs_open(WIFI_NAMESPACE,NVS_READWRITE, &wifi_nvs_handle);
 	if (err != ESP_OK) {
 		ESP_LOGE(NVS_TAG,"Error (%s) opening NVS handle!\n", esp_err_to_name(err));
 	} else {
@@ -28,17 +32,17 @@ void wifi_store_ap(wifi_sta_config_t ap_config){
 	char config_threshold[MAX_AP_KEY_LEN] = AP_THRESHOLD;
 
 	//we then append the ssid to each retrival name
-	strcat(config_password, ap_config.ssid);
-	strcat(config_scan_method, ap_config.ssid);
-	strcat(config_bssid_set, ap_config.ssid);
-	strcat(config_bssid, ap_config.ssid);
-	strcat(config_channel, ap_config.ssid);
-	strcat(config_listen_interval, ap_config.ssid); //this one needs to be stored as uint16_t
-	strcat(config_sort_method, ap_config.ssid);
-	strcat(config_threshold, ap_config.ssid);
+	strcat(config_password, (char *) ap_config.ssid);
+	strcat(config_scan_method,(char *) ap_config.ssid);
+	strcat(config_bssid_set,(char *) ap_config.ssid);
+	strcat(config_bssid, (char *)ap_config.ssid);
+	strcat(config_channel, (char *)ap_config.ssid);
+	strcat(config_listen_interval,(char *) ap_config.ssid); //this one needs to be stored as uint16_t
+	strcat(config_sort_method,(char *) ap_config.ssid);
+	strcat(config_threshold, (char *)ap_config.ssid);
 
 	//setting ssid to nvs
-	err =nvs_set_blob(wifi_nvs_handle, ap_config.ssid, ap_config.ssid,sizeof(ap_config.ssid));
+	err =nvs_set_blob(wifi_nvs_handle, (char *)ap_config.ssid, ap_config.ssid,sizeof(ap_config.ssid));
 	if (err != ESP_OK) {
 		ESP_LOGE(NVS_TAG, "Error setting %s: %s","SSID", esp_err_to_name(err));
 	}
@@ -74,7 +78,7 @@ void wifi_store_ap(wifi_sta_config_t ap_config){
 	}
 
 	//setting bssid to nvs
-	err =nvs_set_u8(wifi_nvs_handle, config_bssid,ap_config.bssid,sizeof(ap_config.bssid));
+	err =nvs_set_blob(wifi_nvs_handle, config_bssid,ap_config.bssid,sizeof(ap_config.bssid));
 	if (err != ESP_OK) {
 		ESP_LOGE(NVS_TAG, "Error setting %s: %s",AP_BSSID, esp_err_to_name(err));
 	}
@@ -108,15 +112,15 @@ void wifi_store_ap(wifi_sta_config_t ap_config){
 	else{
 		ESP_LOGI(NVS_TAG, "Success setting %s ",AP_SORT_METHOD);
 	}
-
-	//setting threshold to nvs
-	err =nvs_set_u8(wifi_nvs_handle, config_threshold,ap_config.threshold);
-	if (err != ESP_OK) {
-		ESP_LOGE(NVS_TAG, "Error setting %s: %s",AP_THRESHOLD, esp_err_to_name(err));
-	}
-	else{
-		ESP_LOGI(NVS_TAG, "Success setting %s ",AP_THRESHOLD);
-	}
+	//
+	//	//setting threshold to nvs
+	//	err =nvs_set_u8(wifi_nvs_handle, config_threshold,ap_config.threshold);
+	//	if (err != ESP_OK) {
+	//		ESP_LOGE(NVS_TAG, "Error setting %s: %s",AP_THRESHOLD, esp_err_to_name(err));
+	//	}
+	//	else{
+	//		ESP_LOGI(NVS_TAG, "Success setting %s ",AP_THRESHOLD);
+	//	}
 
 	nvs_commit(wifi_nvs_handle);
 	nvs_close(wifi_nvs_handle);
@@ -129,7 +133,7 @@ void wifi_store_ap(wifi_sta_config_t ap_config){
 uint8_t wifi_retrieve_ap(uint8_t ssid[MAX_AP_SSID_LEN] ,wifi_sta_config_t *ap_config){
 
 	ESP_LOGI(NVS_TAG,"Opening NVS handle");
-	err = nvs_open(WIFI_NAMESPACE,NVS_READONLY, wifi_nvs_handle);
+	err = nvs_open(WIFI_NAMESPACE,NVS_READONLY, &wifi_nvs_handle);
 	if (err != ESP_OK) {
 		ESP_LOGE(NVS_TAG,"Error (%s) opening NVS handle!\n", esp_err_to_name(err));
 	} else {
@@ -147,17 +151,17 @@ uint8_t wifi_retrieve_ap(uint8_t ssid[MAX_AP_SSID_LEN] ,wifi_sta_config_t *ap_co
 	char config_threshold[MAX_AP_KEY_LEN] = AP_THRESHOLD;
 
 	//we then append the ssid to each retrival name
-	strcat(config_password, ssid);
-	strcat(config_scan_method,ssid);
-	strcat(config_bssid_set,ssid);
-	strcat(config_bssid, ssid);
-	strcat(config_channel, ssid);
-	strcat(config_listen_interval, ssid); //this one needs to be stored as uint16_t
-	strcat(config_sort_method, ssid);
-	strcat(config_threshold, ssid);
+	strcat(config_password, (char *)ssid);
+	strcat(config_scan_method,(char *)ssid);
+	strcat(config_bssid_set,(char *)ssid);
+	strcat(config_bssid, (char *)ssid);
+	strcat(config_channel, (char *)ssid);
+	strcat(config_listen_interval, (char *)ssid); //this one needs to be stored as uint16_t
+	strcat(config_sort_method, (char *)ssid);
+	strcat(config_threshold, (char *)ssid);
 
-
-	err =nvs_get_blob(wifi_nvs_handle, ssid, ap_config->ssid,sizeof(ap_config->ssid));
+	size_t ap_config_ssid_size =sizeof(ap_config->ssid);
+	err =nvs_get_blob(wifi_nvs_handle, (char *)ssid, ap_config->ssid,&ap_config_ssid_size);
 	if (err != ESP_OK) {
 		ESP_LOGE(NVS_TAG, "Error setting %s: %s","SSID", esp_err_to_name(err));
 
@@ -168,7 +172,8 @@ uint8_t wifi_retrieve_ap(uint8_t ssid[MAX_AP_SSID_LEN] ,wifi_sta_config_t *ap_co
 	}
 
 	//getting password from nvs
-	err =nvs_get_blob(wifi_nvs_handle, config_password, ap_config->password,sizeof(ap_config->password));
+	size_t ap_config_pass_size = sizeof(ap_config->password);
+	err =nvs_get_blob(wifi_nvs_handle, config_password, ap_config->password,&ap_config_pass_size);
 	if (err != ESP_OK) {
 		ESP_LOGE(NVS_TAG, "Error getting %s: %s",AP_PASSWORD, esp_err_to_name(err));
 	}
@@ -177,7 +182,7 @@ uint8_t wifi_retrieve_ap(uint8_t ssid[MAX_AP_SSID_LEN] ,wifi_sta_config_t *ap_co
 	}
 
 	//getting scan method from nvs
-	err =nvs_get_u8(wifi_nvs_handle,  config_scan_method,ap_config->scan_method);
+	err =nvs_get_u8(wifi_nvs_handle,  config_scan_method,(uint8_t*)ap_config->scan_method);
 	if (err != ESP_OK) {
 		ESP_LOGE(NVS_TAG, "Error getting %s: %s",AP_SCAN_METHOD, esp_err_to_name(err));
 	}
@@ -186,7 +191,7 @@ uint8_t wifi_retrieve_ap(uint8_t ssid[MAX_AP_SSID_LEN] ,wifi_sta_config_t *ap_co
 	}
 
 	//getting bssid_set from nvs
-	err =nvs_get_u8(wifi_nvs_handle,  config_bssid_set,ap_config->bssid_set);
+	err =nvs_get_u8(wifi_nvs_handle,  config_bssid_set,(uint8_t*)ap_config->bssid_set);
 	if (err != ESP_OK) {
 		ESP_LOGE(NVS_TAG, "Error getting %s: %s",AP_BSSID_SET, esp_err_to_name(err));
 	}
@@ -195,7 +200,8 @@ uint8_t wifi_retrieve_ap(uint8_t ssid[MAX_AP_SSID_LEN] ,wifi_sta_config_t *ap_co
 	}
 
 	//getting bssid from nvs
-	err =nvs_get_u8(wifi_nvs_handle, config_bssid,ap_config->bssid,sizeof(ap_config->bssid));
+	size_t ap_config_bssid_size = sizeof(ap_config->bssid);
+	err =nvs_get_blob(wifi_nvs_handle, config_bssid,ap_config->bssid,&ap_config_bssid_size);
 	if (err != ESP_OK) {
 		ESP_LOGE(NVS_TAG, "Error getting %s: %s",AP_BSSID, esp_err_to_name(err));
 	}
@@ -204,7 +210,7 @@ uint8_t wifi_retrieve_ap(uint8_t ssid[MAX_AP_SSID_LEN] ,wifi_sta_config_t *ap_co
 	}
 
 	//getting channel from nvs
-	err =nvs_get_u8(wifi_nvs_handle, config_channel,ap_config->channel);
+	err =nvs_get_u8(wifi_nvs_handle, config_channel,&ap_config->channel);
 	if (err != ESP_OK) {
 		ESP_LOGE(NVS_TAG, "Error getting %s: %s",AP_CHANNEL, esp_err_to_name(err));
 	}
@@ -213,7 +219,7 @@ uint8_t wifi_retrieve_ap(uint8_t ssid[MAX_AP_SSID_LEN] ,wifi_sta_config_t *ap_co
 	}
 
 	//getting listen interval from nvs
-	err =nvs_get_u16(wifi_nvs_handle, config_listen_interval,ap_config->listen_interval);
+	err =nvs_get_u16(wifi_nvs_handle, config_listen_interval,&ap_config->listen_interval);
 	if (err != ESP_OK) {
 		ESP_LOGE(NVS_TAG, "Error getting %s: %s",AP_LISTEN_INTERVAL, esp_err_to_name(err));
 	}
@@ -222,7 +228,7 @@ uint8_t wifi_retrieve_ap(uint8_t ssid[MAX_AP_SSID_LEN] ,wifi_sta_config_t *ap_co
 	}
 
 	//getting sort method interval from nvs
-	err =nvs_get_u8(wifi_nvs_handle, config_sort_method,ap_config->sort_method);
+	err =nvs_get_u8(wifi_nvs_handle, config_sort_method,(uint8_t*)ap_config->sort_method);
 	if (err != ESP_OK) {
 		ESP_LOGE(NVS_TAG, "Error getting %s: %s",AP_SORT_METHOD, esp_err_to_name(err));
 	}
@@ -231,13 +237,13 @@ uint8_t wifi_retrieve_ap(uint8_t ssid[MAX_AP_SSID_LEN] ,wifi_sta_config_t *ap_co
 	}
 
 	//getting threshold from nvs
-	err =nvs_get_u8(wifi_nvs_handle, config_threshold,ap_config->threshold);
-	if (err != ESP_OK) {
-		ESP_LOGE(NVS_TAG, "Error getting %s: %s",AP_THRESHOLD, esp_err_to_name(err));
-	}
-	else{
-		ESP_LOGI(NVS_TAG, "Success getting %s ",AP_THRESHOLD);
-	}
+	//	err =nvs_get_u8(wifi_nvs_handle, config_threshold,ap_config->threshold);
+	//	if (err != ESP_OK) {
+	//		ESP_LOGE(NVS_TAG, "Error getting %s: %s",AP_THRESHOLD, esp_err_to_name(err));
+	//	}
+	//	else{
+	//		ESP_LOGI(NVS_TAG, "Success getting %s ",AP_THRESHOLD);
+	//	}
 
 	nvs_close(wifi_nvs_handle);
 	return SSID_FOUND;
@@ -247,7 +253,7 @@ uint8_t wifi_retrieve_ap(uint8_t ssid[MAX_AP_SSID_LEN] ,wifi_sta_config_t *ap_co
 void wifi_del_ap(uint8_t ssid[MAX_AP_SSID_LEN]){
 
 	ESP_LOGI(NVS_TAG,"Opening NVS handle");
-	err = nvs_open(WIFI_NAMESPACE,NVS_READWRITE, wifi_nvs_handle);
+	err = nvs_open(WIFI_NAMESPACE,NVS_READWRITE, &wifi_nvs_handle);
 	if (err != ESP_OK) {
 		ESP_LOGE(NVS_TAG,"Error (%s) opening NVS handle!\n", esp_err_to_name(err));
 	} else {
@@ -264,17 +270,17 @@ void wifi_del_ap(uint8_t ssid[MAX_AP_SSID_LEN]){
 	char config_threshold[MAX_AP_KEY_LEN] = AP_THRESHOLD;
 
 	//we then append the ssid to each retrival name
-	strcat(config_password, ssid);
-	strcat(config_scan_method, ssid);
-	strcat(config_bssid_set, ssid);
-	strcat(config_bssid, ssid);
-	strcat(config_channel, ssid);
-	strcat(config_listen_interval, ssid); //this one needs to be stored as uint16_t
-	strcat(config_sort_method, ssid);
-	strcat(config_threshold, ssid);
+	strcat(config_password,(char*) ssid);
+	strcat(config_scan_method,(char*) ssid);
+	strcat(config_bssid_set,(char*) ssid);
+	strcat(config_bssid,(char*) ssid);
+	strcat(config_channel,(char*) ssid);
+	strcat(config_listen_interval,(char*) ssid); //this one needs to be stored as uint16_t
+	strcat(config_sort_method,(char*) ssid);
+	strcat(config_threshold,(char*) ssid);
 
 	//erasing ssid from nvs
-	err =nvs_erase_key(wifi_nvs_handle,ssid);
+	err =nvs_erase_key(wifi_nvs_handle,(char*)ssid);
 	if (err != ESP_OK) {
 		ESP_LOGE(NVS_TAG, "Error setting %s: %s","SSID", esp_err_to_name(err));
 	}
@@ -363,7 +369,7 @@ void wifi_del_ap(uint8_t ssid[MAX_AP_SSID_LEN]){
 void wifi_connection_init(void){
 
 	uint16_t num_records = 0;
-	wifi_ap_record_t ap_records;
+	wifi_ap_record_t* ap_records;
 	wifi_sta_config_t ap_config;
 
 	// if the keyboards does not use esp now we need to init wifi
@@ -379,42 +385,53 @@ void wifi_connection_init(void){
 	ESP_ERROR_CHECK(esp_wifi_start());
 #endif
 	// start scanning for available aps
-	err = esp_wifi_scan_start();
+	wifi_scan_config_t scan_config = {0};
+	err = esp_wifi_scan_start(&scan_config, 1);
+
 	if(err != ESP_OK){
+
 		ESP_LOGE(WIFI_TAG, "Error scanning for AP : %s", esp_err_to_name(err));
 	}else{
+
 		ESP_LOGE(WIFI_TAG, "Success scanning for AP");
-
-
-		err = esp_wifi_scan_get_ap_records(&num_records, &ap_records);
+		err = esp_wifi_scan_get_ap_num(&num_records);
 		if(err != ESP_OK){
-			ESP_LOGE(WIFI_TAG, "Error scanning for AP : %s", esp_err_to_name(err));
-		}else{
-			ESP_LOGE(WIFI_TAG, "Success scanning for AP");
-			// check if one of the APs exists in flash and try to connect to it,
-			// if it does exist but cannot be connected to continue to try other APs in flash
-			for(uint8_t ap_record = 0; ap_record < num_records; ap_record++){
 
-				err = wifi_retrive_ap(ap_records[ap_record].ssid, &ap_config);
-				if(err == SSID_FOUND){
-					err = esp_wifi_set_config(WIFI_MODE_STA,ap_config);
-					if(err != ESP_OK){
-						ESP_LOGE(WIFI_TAG, "Error setting AP %s config: %s", ap_config.ssid, esp_err_to_name(err));
-					}else{
-						ESP_LOGE(WIFI_TAG, "Success setting AP %s config: ",ap_config.ssid);
-						err = esp_wifi_connect();
+			ESP_LOGE(WIFI_TAG, "Error scanning for AP records number : %s", esp_err_to_name(err));
+
+
+		}else{
+
+			ESP_LOGE(WIFI_TAG, "Success scanning for AP records number");
+			ap_records = malloc(num_records*sizeof(wifi_ap_record_t));
+			err = esp_wifi_scan_get_ap_records(&num_records, ap_records);
+
+			if(err != ESP_OK){
+				ESP_LOGE(WIFI_TAG, "Error scanning for AP : %s", esp_err_to_name(err));
+			}else{
+				ESP_LOGE(WIFI_TAG, "Success scanning for AP");
+				// check if one of the APs exists in flash and try to connect to it,
+				// if it does exist but cannot be connected to continue to try other APs in flash
+				for(uint8_t ap_record = 0; ap_record < num_records; ap_record++){
+
+					err = wifi_retrieve_ap(ap_records[ap_record].ssid, &ap_config);
+					if(err == SSID_FOUND){
+						err = esp_wifi_set_config(ESP_IF_WIFI_STA,&ap_config);
 						if(err != ESP_OK){
-							ESP_LOGE(WIFI_TAG, "Error connecting to %s AP: %s", ap_config.ssid, esp_err_to_name(err));
+							ESP_LOGE(WIFI_TAG, "Error setting AP %s config: %s", ap_config.ssid, esp_err_to_name(err));
 						}else{
-							ESP_LOGE(WIFI_TAG, "Success connecting to %s AP config",ap_config.ssid);
-							break;
+							ESP_LOGE(WIFI_TAG, "Success setting AP %s config: ",ap_config.ssid);
+							err = esp_wifi_connect();
+							if(err != ESP_OK){
+								ESP_LOGE(WIFI_TAG, "Error connecting to %s AP: %s", ap_config.ssid, esp_err_to_name(err));
+							}else{
+								ESP_LOGE(WIFI_TAG, "Success connecting to %s AP config",ap_config.ssid);
+								break;
+							}
 						}
 					}
-
 				}
 			}
-
 		}
 	}
-
 }

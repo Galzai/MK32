@@ -27,8 +27,8 @@
 #include "esp_system.h"
 #include "nvs_flash.h"
 #include "nvs.h"
-# include "nvs_funcs.h"
-# include "keymap.h"
+#include "nvs_funcs.h"
+#include "keymap.h"
 #include <arr_conv.h>
 
 #define NVS_TAG "NVS Storage"

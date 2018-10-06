@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
-#include <keyboard_config.h>
+#include "keyboard_config.h"
 
 #ifndef ARR_CONV_H_
 #define ARR_CONV_H_

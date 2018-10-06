@@ -10,9 +10,12 @@
 #include "driver/gpio.h"
 #include "driver/touch_pad.h"
 #include "driver/adc.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "freertos/event_groups.h"
 
 #define MODULE_ID "LOLIN 32"
-#define GATTS_TAG "MK32 V2.0" // The device's name
+#define GATTS_TAG "MK32 V2.1" // The device's name
 #define MAX_BT_DEVICENAME_LENGTH 40
 
 #define MASTER  // undefine if you are not flashing the main controller
@@ -99,11 +102,11 @@ extern uint8_t curr_led;
 extern uint16_t default_encoder_map[LAYERS][ENCODER_SIZE];
 extern uint16_t default_slave_encoder_map[LAYERS][ENCODER_SIZE];
 
-
 #define MAX_LAYOUT_NAME_LENGTH 15
 // array to hold names of layouts for oled
 extern char default_layout_names[LAYERS][MAX_LAYOUT_NAME_LENGTH];
 
+extern TaskHandle_t xKeyreportTask;
 
 #endif
 //

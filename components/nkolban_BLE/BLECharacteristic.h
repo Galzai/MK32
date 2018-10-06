@@ -65,6 +65,7 @@ public:
 	//size_t         getLength();
 	BLEUUID        getUUID();
 	std::string    getValue();
+	uint8_t*       getData();
 
 	void indicate();
 	void notify();
@@ -85,7 +86,6 @@ public:
 	std::string toString();
 	uint16_t getHandle();
 	void setAccessPermissions(esp_gatt_perm_t perm);
-        void                 executeCreate(BLEService* pService);
 
 	static const uint32_t PROPERTY_READ      = 1<<0;
 	static const uint32_t PROPERTY_WRITE     = 1<<1;
@@ -115,7 +115,7 @@ private:
 			esp_gatt_if_t             gatts_if,
 			esp_ble_gatts_cb_param_t* param);
 
-	
+	void                 executeCreate(BLEService* pService);
 	esp_gatt_char_prop_t getProperties();
 	BLEService*          getService();
 	void                 setHandle(uint16_t handle);

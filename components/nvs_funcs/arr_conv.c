@@ -22,7 +22,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "esp_system.h"
-#include <keyboard_config.h>
+#include "keyboard_config.h"
 #include <arr_conv.h>
 
 //convert blob to keymap matrix

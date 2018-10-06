@@ -16,6 +16,7 @@
 #include "BLEDescriptor.h"
 #include "BLE2902.h"
 #include "HIDTypes.h"
+#include "BLEServer.h"
 
 #define GENERIC_HID		960
 #define HID_KEYBOARD	961

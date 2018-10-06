@@ -45,7 +45,7 @@
 #include "HID_kbdmousejoystick.h"
 
 //MK32 functions
-#include "matrix.c"
+#include "matrix.h"
 #include "keypress_handles.c"
 #include "keyboard_config.h"
 #include "espnow_recieve.h"
@@ -68,6 +68,7 @@ bool OLED_SLEEP = false; // flag to stop oled when going to deep sleep (otherwis
 #ifdef OLED_ENABLE
 		TaskHandle_t xOledTask;
 #endif
+TaskHandle_t xKeyreportTask;
 
 //Task for continually updating the OLED
 extern "C" void oled_task(void *pvParameters){
@@ -309,7 +310,7 @@ extern "C" void app_main()
 #endif
 	//If the device is a slave initialize sending reports to master
 #ifdef SLAVE
-	xTaskCreatePinnedToCore(slave_scan, "Scan matrix changes for slave", 4096, NULL, configMAX_PRIORITIES, NULL,1);
+	xTaskCreatePinnedToCore(slave_scan, "Scan matrix changes for slave", 4096, xKeyreportTask, configMAX_PRIORITIES, NULL,1);
 
 #ifdef R_ENCODER_SLAVE
 	xTaskCreatePinnedToCore(slave_encoder_report, "Scan encoder changes for slave", 4096, NULL, configMAX_PRIORITIES, NULL,1);
@@ -341,7 +342,7 @@ extern "C" void app_main()
 	// Start the keyboard Tasks
 	// Create the key scanning task on core 1 (otherwise it will crash)
 #ifdef MASTER
-	xTaskCreatePinnedToCore(key_reports, "key report task", 4096, NULL, configMAX_PRIORITIES, NULL,1);
+	xTaskCreatePinnedToCore(key_reports, "key report task", 4096, xKeyreportTask, configMAX_PRIORITIES, NULL,1);
 #endif
 
 #ifdef SLEEP_MINS

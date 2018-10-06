@@ -58,7 +58,7 @@ public:
 	 * return Return true if we accept this peer device request
 	 */
 
-	virtual bool onSecurityRequest() = 0;
+	virtual bool onSecurityRequest() = 0 ;
 	/**
 	 * Provide us information when authentication process is completed
 	 */
