@@ -138,6 +138,16 @@ uint8_t *check_key_state( uint16_t **keymap){
 
 				uint16_t report_index=(2+col+row*KEYMAP_COLS);
 				keycode=keymap[row][col];
+
+				//checking if the keycode is transparent
+				if(keycode==KC_TRNS){
+					if(current_layout==0){
+					keycode=*default_layouts[MAX_LAYER][row][col];
+					}else{
+					keycode=*default_layouts[current_layout-1][row][col];
+					}
+				}
+
 				led_status=check_led_status(keycode);
 				if(matrix_state[row][col-MATRIX_COLS*pad]==1){
 
