@@ -365,6 +365,19 @@ void wifi_del_ap(uint8_t ssid[MAX_AP_SSID_LEN]){
 
 }
 
+// To my understanding the you need to assign a handler for the WiFi loop in order to start the function.
+static esp_err_t example_event_handler(void *ctx, system_event_t *event)
+{
+	switch(event->event_id) {
+	case SYSTEM_EVENT_STA_START:;
+	ESP_LOGI(WIFI_TAG,"WiFi Initialized");
+	break;
+	default:
+		break;
+	}
+	return ESP_OK;
+}
+
 // connect to a wifi AP
 void wifi_connection_init(void){
 

@@ -211,6 +211,7 @@ extern "C" void espnow_update_matrix(void *pvParameters){
 /*If no key press has been recieved in SLEEP_MINS amount of minutes, put device into deep sleep
  *  wake up on touch on GPIO pin 2
  *  */
+#ifdef SLEEP_MINS
 extern "C" void deep_sleep(void *pvParameters){
 	uint64_t initial_time = esp_timer_get_time(); // notice that timer returns time passed in microseconds!
 	uint64_t current_time_passed = 0;
@@ -255,6 +256,7 @@ extern "C" void deep_sleep(void *pvParameters){
 	}
 
 }
+#endif
 
 extern "C" void app_main()
 {
