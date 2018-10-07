@@ -150,24 +150,25 @@ uint16_t BLEServer::getGattsIf() {
 void BLEServer::handleGAPEvent(
 		esp_gap_ble_cb_event_t  event,
 		esp_ble_gap_cb_param_t* param) {
+
 	ESP_LOGD(LOG_TAG, "BLEServer ... handling GAP event!");
 	switch(event) {
 		case ESP_GAP_BLE_ADV_DATA_SET_COMPLETE_EVT: {
-			/*
-			esp_ble_adv_params_t adv_params;
-			adv_params.adv_int_min       = 0x20;
-			adv_params.adv_int_max       = 0x40;
-			adv_params.adv_type          = ADV_TYPE_IND;
-			adv_params.own_addr_type     = BLE_ADDR_TYPE_PUBLIC;
-			adv_params.channel_map       = ADV_CHNL_ALL;
-			adv_params.adv_filter_policy = ADV_FILTER_ALLOW_SCAN_ANY_CON_ANY;
-			ESP_LOGD(tag, "Starting advertising");
-			esp_err_t errRc = ::esp_ble_gap_start_advertising(&adv_params);
-			if (errRc != ESP_OK) {
-				ESP_LOGE(tag, "esp_ble_gap_start_advertising: rc=%d %s", errRc, espToString(errRc));
-				return;
-			}
-			*/
+
+//			esp_ble_adv_params_t adv_params;
+//			adv_params.adv_int_min       = 0x20;
+//			adv_params.adv_int_max       = 0x30;
+//			adv_params.adv_type          = ADV_TYPE_IND;
+//			adv_params.own_addr_type     = BLE_ADDR_TYPE_PUBLIC;
+//			adv_params.channel_map       = ADV_CHNL_ALL;
+//			adv_params.adv_filter_policy = ADV_FILTER_ALLOW_SCAN_ANY_CON_ANY;
+//			ESP_LOGD(LOG_TAG, "Starting advertising");
+//			esp_err_t errRc = ::esp_ble_gap_start_advertising(&adv_params);
+//			if (errRc != ESP_OK) {
+//				ESP_LOGE(LOG_TAG, "esp_ble_gap_start_advertising: rc=%d %s", errRc, esp_err_to_name(errRc));
+//				return;
+//			}
+
 			break;
 		}
 

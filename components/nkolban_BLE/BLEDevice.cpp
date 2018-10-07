@@ -184,7 +184,6 @@ BLEAdvertising* BLEDevice::m_bleAdvertising = nullptr;
 	BLEUtils::dumpGapEvent(event, param);
 
 	switch(event) {
-
 		 case ESP_GAP_BLE_OOB_REQ_EVT:                                /* OOB request event */
 			 ESP_LOGI(LOG_TAG, "ESP_GAP_BLE_OOB_REQ_EVT");
 			 break;

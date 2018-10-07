@@ -53,6 +53,7 @@ public:
 	void setAppearance(uint16_t appearance);
 	void setMaxInterval(uint16_t maxinterval);
 	void setMinInterval(uint16_t mininterval);
+	void setFlag(uint16_t flag);
 	void setAdvertisementData(BLEAdvertisementData& advertisementData);
 	void setScanFilter(bool scanRequertWhitelistOnly, bool connectWhitelistOnly);
 	void setScanResponseData(BLEAdvertisementData& advertisementData);

@@ -63,7 +63,6 @@ static config_data_t config;
 QueueHandle_t espnow_recieve_q;
 
 bool DEEP_SLEEP = true; // flag to check if we need to go to deep sleep
-bool OLED_SLEEP = false; // flag to stop oled when going to deep sleep (otherwise I2C occasionally crashes)
 
 #ifdef OLED_ENABLE
 		TaskHandle_t xOledTask;
@@ -72,10 +71,24 @@ TaskHandle_t xKeyreportTask;
 
 //Task for continually updating the OLED
 extern "C" void oled_task(void *pvParameters){
-
+	bool CON_LOG_FLAG = false; // Just because I don't want it to keep logging the same thing a billion times
 	while(1){
-		if(OLED_SLEEP==false){
+		if(HID_kbdmousejoystick_isConnected() == 0) {
+			if (CON_LOG_FLAG == false){
+				ESP_LOGI(KEY_REPORT_TAG,"Not connected, waiting for connection ");
+			}
+#ifdef OLED_ENABLE
+				waiting_oled();
+
+#endif
+			DEEP_SLEEP = false;
+			CON_LOG_FLAG = true;
+		}else{
+			if(CON_LOG_FLAG==true){
+		ble_connected_oled();
+			}
 		update_oled();
+		CON_LOG_FLAG = false;
 		}
 	}
 }
@@ -87,29 +100,10 @@ extern "C" void key_reports(void *pvParameters)
 	uint8_t past_report[REPORT_LEN]={0};
 	uint8_t report_state[REPORT_LEN];
 
-	bool CON_LOG_FLAG = false; // Just because I don't want it to keep logging the same thing a billion times
 
 	while(1){
-		while(HID_kbdmousejoystick_isConnected() == 0) {
-			if (CON_LOG_FLAG == false){
-				ESP_LOGI(KEY_REPORT_TAG,"Not connected, waiting for connection ");
-			}
-#ifdef OLED_ENABLE
-				waiting_oled();
-
-#endif
-			DEEP_SLEEP = false;
-			CON_LOG_FLAG = true;
-		}
-
-#ifdef OLED_ENABLE
-		ble_connected_oled();
-		xTaskCreatePinnedToCore(oled_task, "oled task", 4096, NULL, configMAX_PRIORITIES, &xOledTask,1);
-#endif
-
-		while(HID_kbdmousejoystick_isConnected() != 0) {
 			memcpy(report_state, check_key_state(layouts[current_layout]), sizeof report_state);
-
+//			ESP_LOGE(KEY_REPORT_TAG,"test1");
 			//Do not send anything if queues are uninitialized
 			if(mouse_q == NULL || keyboard_q == NULL || joystick_q == NULL)
 			{
@@ -125,11 +119,6 @@ extern "C" void key_reports(void *pvParameters)
 				vTaskDelay(5/portTICK_PERIOD_MS);
 			}
 
-		}
-#ifdef OLED_ENABLE
-		vTaskDelete(xOledTask);
-#endif
-		CON_LOG_FLAG = false;
 	}
 
 }
@@ -229,17 +218,12 @@ extern "C" void deep_sleep(void *pvParameters){
 			if(DEEP_SLEEP == true){
 				ESP_LOGE(SYSTEM_REPORT_TAG,"going to sleep!");
 #ifdef OLED_ENABLE
-				OLED_SLEEP=true;
 				vTaskDelay(20/portTICK_PERIOD_MS);
 				vTaskSuspend(xOledTask);
 				deinit_oled();
 #endif
-				esp_bluedroid_disable();
-				esp_bt_controller_disable();
-				esp_wifi_stop();
-
 				// wake up esp32 using rtc gpio
-				rtc_matrix_setup(); // doesnt work
+				rtc_matrix_setup();
 				esp_sleep_enable_touchpad_wakeup();
 				esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_PERIPH,ESP_PD_OPTION_ON);
 				esp_deep_sleep_start();
@@ -302,14 +286,7 @@ extern "C" void app_main()
 	HID_kbdmousejoystick_init(1,1,1,0,config.bt_device_name);
 	ESP_LOGI("HIDD","MAIN finished...");
 #endif
-	//activate oled
-#ifdef	OLED_ENABLE
-	init_oled();
-#endif
 
-#ifdef BATT_STAT
-	init_batt_monitor();
-#endif
 	//If the device is a slave initialize sending reports to master
 #ifdef SLAVE
 	xTaskCreatePinnedToCore(slave_scan, "Scan matrix changes for slave", 4096, xKeyreportTask, configMAX_PRIORITIES, NULL,1);
@@ -345,6 +322,16 @@ extern "C" void app_main()
 	// Create the key scanning task on core 1 (otherwise it will crash)
 #ifdef MASTER
 	xTaskCreatePinnedToCore(key_reports, "key report task", 4096, xKeyreportTask, configMAX_PRIORITIES, NULL,1);
+#endif
+	//activate oled
+#ifdef	OLED_ENABLE
+	init_oled();
+		ble_connected_oled();
+		xTaskCreatePinnedToCore(oled_task, "oled task", 4096, NULL, configMAX_PRIORITIES, &xOledTask,1);
+#endif
+
+#ifdef BATT_STAT
+	init_batt_monitor();
 #endif
 
 #ifdef SLEEP_MINS

@@ -101,6 +101,10 @@ void BLEAdvertising::setMaxInterval(uint16_t maxinterval) {
 	m_advParams.adv_int_max = maxinterval;
 } // setMaxInterval
 
+void BLEAdvertising::setFlag(uint16_t flag) {
+	m_advData.flag =flag;
+} // setMaxInterval
+
 
 /**
  * @brief Set the filtering for the scan filter.
