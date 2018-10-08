@@ -71,16 +71,15 @@ TaskHandle_t xKeyreportTask;
 
 //Task for continually updating the OLED
 extern "C" void oled_task(void *pvParameters){
+#ifdef MASTER6
+	ble_connected_oled();
 	bool CON_LOG_FLAG = false; // Just because I don't want it to keep logging the same thing a billion times
 	while(1){
 		if(HID_kbdmousejoystick_isConnected() == 0) {
 			if (CON_LOG_FLAG == false){
 				ESP_LOGI(KEY_REPORT_TAG,"Not connected, waiting for connection ");
 			}
-#ifdef OLED_ENABLE
 				waiting_oled();
-
-#endif
 			DEEP_SLEEP = false;
 			CON_LOG_FLAG = true;
 		}else{
@@ -91,6 +90,12 @@ extern "C" void oled_task(void *pvParameters){
 		CON_LOG_FLAG = false;
 		}
 	}
+#endif
+#ifdef SLAVE
+				while(1){
+					ble_slave_oled();
+				}
+#endif
 }
 
 //How to handle key reports
@@ -152,12 +157,6 @@ extern "C" void slave_encoder_report(void *pvParameters){
 			past_encoder_state = encoder_state;
 		}
 
-	}
-}
-//Task for updating the slave oled
-extern "C" void ble_slave_oled_task(void *pvParameters){
-	while(1){
-		ble_slave_oled();
 	}
 }
 
@@ -290,13 +289,8 @@ extern "C" void app_main()
 	//If the device is a slave initialize sending reports to master
 #ifdef SLAVE
 	xTaskCreatePinnedToCore(slave_scan, "Scan matrix changes for slave", 4096, xKeyreportTask, configMAX_PRIORITIES, NULL,1);
-
 #ifdef R_ENCODER_SLAVE
 	xTaskCreatePinnedToCore(slave_encoder_report, "Scan encoder changes for slave", 4096, NULL, configMAX_PRIORITIES, NULL,1);
-#endif
-#ifdef OLED_ENABLE
-	xTaskCreatePinnedToCore(ble_slave_oled_task, "oled slave task", 4096, NULL, configMAX_PRIORITIES, &xOledTask,1);
-
 #endif
 	espnow_send();
 #endif
@@ -326,8 +320,7 @@ extern "C" void app_main()
 	//activate oled
 #ifdef	OLED_ENABLE
 	init_oled();
-		ble_connected_oled();
-		xTaskCreatePinnedToCore(oled_task, "oled task", 4096, NULL, configMAX_PRIORITIES, &xOledTask,1);
+	xTaskCreatePinnedToCore(oled_task, "oled task", 4096, NULL, configMAX_PRIORITIES, &xOledTask,1);
 #endif
 
 #ifdef BATT_STAT
