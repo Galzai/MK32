@@ -71,7 +71,7 @@ TaskHandle_t xKeyreportTask;
 
 //Task for continually updating the OLED
 extern "C" void oled_task(void *pvParameters){
-#ifdef MASTER6
+#ifdef MASTER
 	ble_connected_oled();
 	bool CON_LOG_FLAG = false; // Just because I don't want it to keep logging the same thing a billion times
 	while(1){
