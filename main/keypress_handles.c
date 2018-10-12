@@ -101,32 +101,32 @@ void media_control_release(uint16_t keycode ){
 void layer_adjust( uint16_t keycode ){
 
 	if(layer_hold_flag == 0){
-	switch(keycode){
-	case DEFAULT:
-		current_layout=0;
-		break;
-
-	case LOWER:
-		if(current_layout==0){
-			current_layout=MAX_LAYER;
-			break;
-		}
-		current_layout--;
-		break;
-
-	case RAISE:
-		if(current_layout==MAX_LAYER){
+		switch(keycode){
+		case DEFAULT:
 			current_layout=0;
 			break;
+
+		case LOWER:
+			if(current_layout==0){
+				current_layout=MAX_LAYER;
+				break;
+			}
+			current_layout--;
+			break;
+
+		case RAISE:
+			if(current_layout==MAX_LAYER){
+				current_layout=0;
+				break;
+			}
+			current_layout++;
+			break;
 		}
-		current_layout++;
-		break;
-	}
 #ifdef OLED_ENABLE
 		xQueueSend(layer_recieve_q,&current_layout, (TickType_t) 0);
 #endif
-	vTaskDelay(125/portTICK_PERIOD_MS);
-	ESP_LOGI(KEY_PRESS_TAG,"Layer modified!, Current layer: %d ",current_layout);
+		vTaskDelay(125/portTICK_PERIOD_MS);
+		ESP_LOGI(KEY_PRESS_TAG,"Layer modified!, Current layer: %d ",current_layout);
 	}
 }
 
@@ -149,9 +149,9 @@ uint8_t *check_key_state( uint16_t **keymap){
 				//checking if the keycode is transparent
 				if(keycode==KC_TRNS){
 					if(current_layout==0){
-					keycode=*default_layouts[MAX_LAYER][row][col];
+						keycode=*default_layouts[MAX_LAYER][row][col];
 					}else{
-					keycode=*default_layouts[current_layout-1][row][col];
+						keycode=*default_layouts[current_layout-1][row][col];
 					}
 				}
 
@@ -159,10 +159,14 @@ uint8_t *check_key_state( uint16_t **keymap){
 				if(matrix_state[row][col-MATRIX_COLS*pad]==1){
 
 					//checking for layer hold
-					if((keycode >=LAYER_HOLD_BASE_VAL)&&(keycode <= LAYER_HOLD_MAX_VAL)){
+					if((keycode >=LAYER_HOLD_BASE_VAL)&&(keycode <= LAYER_HOLD_MAX_VAL)&&(layer_hold_flag == 0)){
 						prev_layout = current_layout;
 						current_layout = (keycode-LAYER_HOLD_BASE_VAL);
 						layer_hold_flag = 1;
+#ifdef OLED_ENABLE
+						xQueueSend(layer_recieve_q,&current_layout, (TickType_t) 0);
+#endif
+						ESP_LOGI(KEY_PRESS_TAG,"Layer modified!, Current layer: %d ",current_layout);
 						continue;
 
 					}
@@ -204,9 +208,13 @@ uint8_t *check_key_state( uint16_t **keymap){
 				if(matrix_state[row][col-MATRIX_COLS*pad]==0){
 
 					//checking for layer hold release
-					if((layouts[prev_layout][row][col] >=LAYER_HOLD_BASE_VAL)&&(keycode <= LAYER_HOLD_MAX_VAL)){
+					if((layouts[prev_layout][row][col] >=LAYER_HOLD_BASE_VAL)&&(keycode <= LAYER_HOLD_MAX_VAL)&&(layer_hold_flag == 1)){
 						current_layout = 0;
 						layer_hold_flag = 0;
+#ifdef OLED_ENABLE
+						xQueueSend(layer_recieve_q,&current_layout, (TickType_t) 0);
+#endif
+						ESP_LOGI(KEY_PRESS_TAG,"Layer modified!, Current layer: %d ",current_layout);
 					}
 
 					//checking if macro was released
