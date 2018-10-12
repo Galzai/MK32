@@ -26,6 +26,7 @@
 #include "matrix.h"
 #include "HID_kbdmousejoystick.h"
 #include "oled_tasks.h"
+#include "nvs_keymaps.h"
 
 #define KEY_PRESS_TAG "KEY_PRESS"
 
@@ -44,6 +45,10 @@ uint8_t current_report[REPORT_LEN] = {0};
 
 // Array to send when releasing macros
 uint8_t macro_release[3] = {0};
+
+// Flag in order to know when to ignore layer change on layer hold
+uint8_t layer_hold_flag = 0;
+uint8_t prev_layout = 0;
 
 // checking if a modifier key was pressed
 uint16_t check_modifier( uint16_t key ){
@@ -95,6 +100,7 @@ void media_control_release(uint16_t keycode ){
 // adjust current layer
 void layer_adjust( uint16_t keycode ){
 
+	if(layer_hold_flag == 0){
 	switch(keycode){
 	case DEFAULT:
 		current_layout=0;
@@ -121,6 +127,7 @@ void layer_adjust( uint16_t keycode ){
 #endif
 	vTaskDelay(125/portTICK_PERIOD_MS);
 	ESP_LOGI(KEY_PRESS_TAG,"Layer modified!, Current layer: %d ",current_layout);
+	}
 }
 
 
@@ -151,6 +158,15 @@ uint8_t *check_key_state( uint16_t **keymap){
 				led_status=check_led_status(keycode);
 				if(matrix_state[row][col-MATRIX_COLS*pad]==1){
 
+					//checking for layer hold
+					if((keycode >=LAYER_HOLD_BASE_VAL)&&(keycode <= LAYER_HOLD_MAX_VAL)){
+						prev_layout = current_layout;
+						current_layout = (keycode-LAYER_HOLD_BASE_VAL);
+						layer_hold_flag = 1;
+						continue;
+
+					}
+
 					// checking for layer adjust keycodes
 					if((keycode>=LAYERS_BASE_VAL)&&(keycode<MACRO_BASE_VAL)){
 						layer_adjust(keycode);
@@ -158,7 +174,7 @@ uint8_t *check_key_state( uint16_t **keymap){
 					}
 
 					// checking for macros
-					if(keycode>=MACRO_BASE_VAL){
+					if((keycode>=MACRO_BASE_VAL)&&(keycode<=LAYER_HOLD_BASE_VAL)){
 						for(uint8_t i=0; i < 3; i++){
 							uint16_t key=macros[MACRO_BASE_VAL-keycode][i];
 							current_report[REPORT_LEN-1-i]=key;
@@ -187,8 +203,14 @@ uint8_t *check_key_state( uint16_t **keymap){
 				}
 				if(matrix_state[row][col-MATRIX_COLS*pad]==0){
 
+					//checking for layer hold release
+					if((layouts[prev_layout][row][col] >=LAYER_HOLD_BASE_VAL)&&(keycode <= LAYER_HOLD_MAX_VAL)){
+						current_layout = 0;
+						layer_hold_flag = 0;
+					}
+
 					//checking if macro was released
-					if(keycode>=MACRO_BASE_VAL){
+					if((keycode>=MACRO_BASE_VAL)&&(keycode<=LAYER_HOLD_BASE_VAL)){
 						for(uint8_t i=0; i < 3; i++){
 							uint16_t key=macros[MACRO_BASE_VAL-keycode][i];
 							current_report[REPORT_LEN-1-i]=0;

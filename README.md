@@ -23,4 +23,3 @@ Please refer to the [MK32 Wiki page](https://github.com/Galzai/MK32/wiki) for in
 - Connection switching.
 - Modify keymap via webserver (in progress) .
 - Security (?)
-- layer hold

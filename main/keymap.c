@@ -17,6 +17,12 @@ enum custom_keycodes {
 //  DVORAK,
 };
 
+//Set these for each layer and use when layers are needed in a hold-to use layer
+enum layer_holds {
+  QWERTY_H = LAYER_HOLD_BASE_VAL ,
+  NUM_H,
+};
+
 
 // array to hold names of layouts for oled
 char default_layout_names[LAYERS][MAX_LAYOUT_NAME_LENGTH] ={
@@ -89,7 +95,7 @@ uint16_t default_slave_encoder_map[LAYERS][ENCODER_SIZE] ={
 			  {KC_ESC,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_BSPC },
 			  {KC_TAB,  KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT },
 			  {KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_ENT } ,
-			  {KC_LCTRL,KC_LGUI, KC_LALT, DEFAULT,  LOWER,   KC_SPC,  KC_SPC,  RAISE,   KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT }
+			  {KC_LCTRL,KC_LGUI, KC_LALT, DEFAULT, NUM_H,   KC_SPC,  KC_SPC,  RAISE,   KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT }
 
 	};
 

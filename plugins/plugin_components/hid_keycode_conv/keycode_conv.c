@@ -12,7 +12,6 @@
 // Sizing the report for N-key rollover
 uint8_t current_report[REPORT_LEN] = {0};
 
-
 void enable_key_to_char(void){
 	vTaskSuspend(xKeyreportTask);
 	ESP_LOGI(TAG,"Suspending hid reports");
