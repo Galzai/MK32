@@ -123,7 +123,7 @@ extern "C" void key_reports(void *pvParameters)
 				DEEP_SLEEP = false;
 				memcpy(past_report,report_state, sizeof past_report );
 				xQueueSend(keyboard_q,(void*)&report_state, (TickType_t) 0);
-				vTaskDelay(15/portTICK_PERIOD_MS);
+				//vTaskDelay(5/portTICK_PERIOD_MS);
 			}
 
 	}
@@ -174,7 +174,7 @@ extern "C" void slave_scan(void *pvParameters){
 			memcpy(&PAST_MATRIX, &MATRIX_STATE, sizeof MATRIX_STATE );
 
 			xQueueSend(espnow_matrix_send_q,(void*)&MATRIX_STATE, (TickType_t) 0);
-			vTaskDelay(15/portTICK_PERIOD_MS);
+			//vTaskDelay(5/portTICK_PERIOD_MS);
 		}
 	}
 }

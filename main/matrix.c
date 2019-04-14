@@ -37,12 +37,21 @@ const gpio_num_t MATRIX_COLS_PINS[]={GPIO_NUM_13,GPIO_NUM_14,GPIO_NUM_15,GPIO_NU
 
 // matrix states
 uint8_t MATRIX_STATE[MATRIX_ROWS][MATRIX_COLS]={0};
+uint8_t PREV_MATRIX_STATE[MATRIX_ROWS][MATRIX_COLS]={0};
 uint8_t SLAVE_MATRIX_STATE[MATRIX_ROWS][MATRIX_COLS]={0};
+
+
+uint32_t lastDebounceTime = 0;
 
 uint8_t (*matrix_states[])[MATRIX_ROWS][MATRIX_COLS]={
 		 &MATRIX_STATE,
 		 &SLAVE_MATRIX_STATE,
 };
+
+//used for debouncing
+static uint32_t millis() {
+    return esp_timer_get_time() / 1000;
+}
 
 // deinitializing rtc matrix pins on  deep sleep wake up
 void rtc_matrix_deinit(void){
@@ -147,7 +156,8 @@ void matrix_setup(void){
 #endif
 }
 
-
+uint8_t curState = 0;
+uint32_t DEBOUNCE_MATRIX[MATRIX_ROWS][MATRIX_COLS]={0};
 // Scanning the matrix for input
 void scan_matrix(void){
 #ifdef COL2ROW
@@ -156,11 +166,20 @@ void scan_matrix(void){
 		gpio_set_level(MATRIX_COLS_PINS[col], 1);
 		for(uint8_t row=0; row <MATRIX_ROWS; row++){
 
-			MATRIX_STATE[row][col]=gpio_get_level(MATRIX_ROWS_PINS[row]) ;
+			curState = gpio_get_level(MATRIX_ROWS_PINS[row]) ;
+			if( PREV_MATRIX_STATE[row][col] != curState){
+				DEBOUNCE_MATRIX[row][col] = millis();
+			}
+			PREV_MATRIX_STATE[row][col] = curState;
+			if( (millis() - DEBOUNCE_MATRIX[row][col])  > DEBOUNCE){
+
+				if( MATRIX_STATE[row][col] != curState){
+					MATRIX_STATE[row][col] = curState ;
+				}
+
+			}
 		}
 		gpio_set_level(MATRIX_COLS_PINS[col], 0);
-
-
 	}
 
 
@@ -171,11 +190,24 @@ void scan_matrix(void){
 		gpio_set_level(MATRIX_ROWS_PINS[row], 0);
 
 		for(uint8_t col=0; col <MATRIX_COLS; col++){
-			MATRIX_STATE[row][col]=gpio_get_level(MATRIX_COLS_PINS[col]) ;
+
+			curState = gpio_get_level(MATRIX_ROWS_PINS[row]) ;
+			if( PREV_MATRIX_STATE[row][col] != curState){
+				DEBOUNCE_MATRIX[row][col] = millis();
+			}
+			PREV_MATRIX_STATE[row][col] = curState;
+			if( (millis() - DEBOUNCE_MATRIX[row][col])  > DEBOUNCE){
+
+				if( MATRIX_STATE[row][col] != curState){
+					MATRIX_STATE[row][col] = curState ;
+				}
+
+			}
 		}
 		gpio_set_level(MATRIX_ROWS_PINS[row], 0);
 	}
 #endif
+
 
 
 }

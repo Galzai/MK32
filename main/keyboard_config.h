@@ -22,6 +22,8 @@
 #define SPLIT_MASTER	 // undefine if keyboard is not split and master
 //#define SLAVE	 // undefine if keyboard is master
 
+#define DEBOUNCE 5 //debounce time in ms
+
 //Define matrix
 #define KEYPADS 2 // intended in order to create a Multiple keypad split boards
 #define MATRIX_ROWS 4
