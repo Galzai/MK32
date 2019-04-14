@@ -33,6 +33,7 @@
 #include "esp_log.h"
 #include "esp_system.h"
 #include "esp_now.h"
+#include "hal_ble.h"
 
 #include "espnow_send.h"
 #include "keyboard_config.h"

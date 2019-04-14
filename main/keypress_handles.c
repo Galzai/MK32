@@ -24,7 +24,7 @@
 #include "esp_log.h"
 #include "keymap.c"
 #include "matrix.h"
-#include "HID_kbdmousejoystick.h"
+#include "hal_ble.h"
 #include "oled_tasks.h"
 #include "nvs_keymaps.h"
 
@@ -125,7 +125,7 @@ void layer_adjust( uint16_t keycode ){
 #ifdef OLED_ENABLE
 		xQueueSend(layer_recieve_q,&current_layout, (TickType_t) 0);
 #endif
-		vTaskDelay(125/portTICK_PERIOD_MS);
+		vTaskDelay(300/portTICK_PERIOD_MS);
 		ESP_LOGI(KEY_PRESS_TAG,"Layer modified!, Current layer: %d ",current_layout);
 	}
 }

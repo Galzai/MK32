@@ -35,7 +35,6 @@
 #include "esp_system.h"
 #include "esp_now.h"
 
-#include "HID_kbdmousejoystick.h"
 #include "espnow_recieve.h"
 #include "keyboard_config.h"
 #include "r_encoder.h"

@@ -25,15 +25,15 @@
 #include "keyboard_config.h"
 #include "key_definitions.h"
 #include "driver/pcnt.h"
-#include "HID_kbdmousejoystick.h"
+#include "hal_ble.h"
 
 int PastEncoderCount=0;
 
 //How to process encoder activity
 void r_encoder_command(uint8_t command, uint16_t encoder_commands[4]){
 	uint8_t type = encoder_commands[0];
-	uint8_t media_state[1]={0};
-	uint8_t mouse_state[4]={0};
+	uint8_t media_state[2]={0};
+	uint8_t mouse_state[5]={0};
 	uint8_t key_state[REPORT_LEN]={0};
 
 	switch(type){
@@ -41,7 +41,27 @@ void r_encoder_command(uint8_t command, uint16_t encoder_commands[4]){
 		if(command>=4){
 			command=3;
 		}
-		SET_BIT(media_state[0],(encoder_commands[command]-KC_MEDIA_NEXT_TRACK));
+		if(encoder_commands[command] ==  KC_MEDIA_NEXT_TRACK){
+			media_state[1] = 10;
+		}
+		if(encoder_commands[command] == KC_MEDIA_PREV_TRACK  ){
+			media_state[1] = 111;
+		}
+		if(encoder_commands[command] == KC_MEDIA_STOP){
+			media_state[1] = 12;
+		}
+		if(encoder_commands[command] == KC_MEDIA_PLAY_PAUSE){
+			media_state[1] = 5;
+		}
+		if(encoder_commands[command] == KC_AUDIO_MUTE){
+			media_state[1] = 1;
+		}
+		if(encoder_commands[command] == KC_AUDIO_VOL_UP){
+			SET_BIT(media_state[0],6);
+		}
+		if(encoder_commands[command] == KC_AUDIO_VOL_DOWN){
+			SET_BIT(media_state[0],7);
+		}
 		xQueueSend(media_q,(void*)&media_state, (TickType_t) 0);
 		break;
 

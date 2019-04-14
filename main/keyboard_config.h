@@ -15,7 +15,7 @@
 #include "freertos/event_groups.h"
 
 #define MODULE_ID "LOLIN 32"
-#define GATTS_TAG "MK32 V2.1" // The device's name
+#define GATTS_TAG "MK32 V3.0" // The device's name
 #define MAX_BT_DEVICENAME_LENGTH 40
 
 #define MASTER  // undefine if you are not flashing the main controller

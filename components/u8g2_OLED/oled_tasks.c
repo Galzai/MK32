@@ -142,25 +142,25 @@ void ble_connected_oled(void){
 	u8g2_DrawGlyph(&u8g2, 110,8,BATT_ICON);
 	u8g2_DrawGlyph(&u8g2, 120,8,BT_ICON);
 
-	if(CHECK_BIT(curr_led,0)!=0){
-		u8g2_SetFont(&u8g2, u8g2_font_5x7_tf );
-		u8g2_DrawStr(&u8g2, 0,31,"NUM");
-		u8g2_SetFont(&u8g2, u8g2_font_open_iconic_all_1x_t );
-		u8g2_DrawGlyph(&u8g2, 16,32,LOCK_ICON);
-	}
-
-	if(CHECK_BIT(curr_led,1)!=0){
-		u8g2_SetFont(&u8g2, u8g2_font_5x7_tf );
-		u8g2_DrawStr(&u8g2, 27,31,"CAPS");
-		u8g2_SetFont(&u8g2, u8g2_font_open_iconic_all_1x_t );
-		u8g2_DrawGlyph(&u8g2,48,32,LOCK_ICON);
-	}
-	if(CHECK_BIT(curr_led,2)!=0){
-		u8g2_SetFont(&u8g2, u8g2_font_5x7_tf );
-		u8g2_DrawStr(&u8g2, 57,31,"SCROLL");
-		u8g2_SetFont(&u8g2, u8g2_font_open_iconic_all_1x_t );
-		u8g2_DrawGlyph(&u8g2,88,32,LOCK_ICON);
-	}
+//	if(CHECK_BIT(curr_led,0)!=0){
+//		u8g2_SetFont(&u8g2, u8g2_font_5x7_tf );
+//		u8g2_DrawStr(&u8g2, 0,31,"NUM");
+//		u8g2_SetFont(&u8g2, u8g2_font_open_iconic_all_1x_t );
+//		u8g2_DrawGlyph(&u8g2, 16,32,LOCK_ICON);
+//	}
+//
+//	if(CHECK_BIT(curr_led,1)!=0){
+//		u8g2_SetFont(&u8g2, u8g2_font_5x7_tf );
+//		u8g2_DrawStr(&u8g2, 27,31,"CAPS");
+//		u8g2_SetFont(&u8g2, u8g2_font_open_iconic_all_1x_t );
+//		u8g2_DrawGlyph(&u8g2,48,32,LOCK_ICON);
+//	}
+//	if(CHECK_BIT(curr_led,2)!=0){
+//		u8g2_SetFont(&u8g2, u8g2_font_5x7_tf );
+//		u8g2_DrawStr(&u8g2, 57,31,"SCROLL");
+//		u8g2_SetFont(&u8g2, u8g2_font_open_iconic_all_1x_t );
+//		u8g2_DrawGlyph(&u8g2,88,32,LOCK_ICON);
+//	}
 
 	u8g2_SetFont(&u8g2, u8g2_font_5x7_tf );
 	char buf[sizeof(uint32_t)];
