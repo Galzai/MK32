@@ -5,7 +5,7 @@
 #include "keyboard_config.h"
 #include "keymap.h"
 
-// A bit different from QMK, default return you to the first layer, LOWER and raise increase/lower layer by order.
+// A bit different from QMK, default returns you to the first layer, LOWER and raise increase/lower layer by order.
 #define DEFAULT 0x100
 #define LOWER 0x101
 #define RAISE 0x102

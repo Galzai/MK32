@@ -172,9 +172,8 @@ extern "C" void slave_scan(void *pvParameters){
 		if(memcmp(&PAST_MATRIX, &MATRIX_STATE, sizeof MATRIX_STATE)!=0){
 			DEEP_SLEEP = false;
 			memcpy(&PAST_MATRIX, &MATRIX_STATE, sizeof MATRIX_STATE );
-
 			xQueueSend(espnow_matrix_send_q,(void*)&MATRIX_STATE, (TickType_t) 0);
-			//vTaskDelay(5/portTICK_PERIOD_MS);
+
 		}
 	}
 }
@@ -304,40 +303,39 @@ extern "C" void app_main()
 	espnow_recieve_q = xQueueCreate(32,REPORT_LEN*sizeof(uint8_t));
 	espnow_recieve();
 	xTaskCreatePinnedToCore(espnow_update_matrix, "ESP-NOW slave matrix state", 4096, NULL, configMAX_PRIORITIES, NULL,1);
-	ESP_LOGE("ESPNOW","initializezd");
+	ESP_LOGI("ESPNOW","initializezd");
 
 #endif
 
 
 	//activate encoder functions
 #ifdef	R_ENCODER
-ESP_LOGE("ENCODER","Encoder initializezd");
 	r_encoder_setup();
 	xTaskCreatePinnedToCore(encoder_report, "encoder report", 4096, NULL, configMAX_PRIORITIES, NULL,1);
-	ESP_LOGE("encoder task","initializezd");
+	ESP_LOGI("Encoder","initializezd");
 #endif
 
 	// Start the keyboard Tasks
 	// Create the key scanning task on core 1 (otherwise it will crash)
 #ifdef MASTER
 	xTaskCreatePinnedToCore(key_reports, "key report task", 4096, xKeyreportTask, configMAX_PRIORITIES, NULL,1);
-	ESP_LOGE("Keyboard task","initializezd");
+	ESP_LOGI("Keyboard task","initializezd");
 #endif
 	//activate oled
 #ifdef	OLED_ENABLE
 	init_oled();
 	xTaskCreatePinnedToCore(oled_task, "oled task", 4096, NULL, configMAX_PRIORITIES, &xOledTask,1);
-	ESP_LOGE("Oled task","initializezd");
+	ESP_LOGI("Oled","initializezd");
 #endif
 
 #ifdef BATT_STAT
 	init_batt_monitor();
-	ESP_LOGE("Battery monitor","initializezd");
+	ESP_LOGI("Battery monitor","initializezd");
 #endif
 
 #ifdef SLEEP_MINS
 	xTaskCreatePinnedToCore(deep_sleep, "deep sleep task", 4096, NULL, configMAX_PRIORITIES, NULL,1);
-	ESP_LOGE("Sleep","initializezd");
+	ESP_LOGI("Sleep","initializezd");
 #endif
 
 

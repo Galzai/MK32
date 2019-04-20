@@ -56,7 +56,7 @@
 
 
 //deep sleep parameters, mind that reconnecting after deep sleep might take a minute or two
-#define SLEEP_MINS 5 // undefine if you do not need deep sleep, otherwise define number of minutes for deepsleep
+#define SLEEP_MINS 2 // undefine if you do not need deep sleep, otherwise define number of minutes for deepsleep
 
 /*
  *---------------------------- Everything below here should not be modified for standard usage----------------------
