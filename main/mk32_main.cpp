@@ -61,6 +61,9 @@
 #define KEY_REPORT_TAG "KEY_REPORT"
 #define SYSTEM_REPORT_TAG "KEY_REPORT"
 
+//plugin functions
+#include "plugins.h"
+
 static config_data_t config;
 QueueHandle_t espnow_recieve_q;
 
@@ -337,6 +340,9 @@ extern "C" void app_main()
 	xTaskCreatePinnedToCore(deep_sleep, "deep sleep task", 4096, NULL, configMAX_PRIORITIES, NULL,1);
 	ESP_LOGI("Sleep","initializezd");
 #endif
+
+//This is for testing
+	//init_layout_server();
 
 
 }

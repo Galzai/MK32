@@ -6,6 +6,7 @@
 # lib(subdirectory_name).a in the build directory. This behaviour is entirely configurable,
 # please read the ESP-IDF documents if you need to do this.
 #
+COMPONENT_SRCDIRS +=../plugins
 COMPONENT_SRCDIRS +=../plugins/plugin_components/hid_keycode_conv
 COMPONENT_SRCDIRS +=../plugins/plugin_components/wifi_manager
 COMPONENT_SRCDIRS +=../plugins/plugin_components
@@ -17,6 +18,7 @@ COMPONENT_SRCDIRS +=../components/espnow
 COMPONENT_SRCDIRS +=../components/ble_new
 
 COMPONENT_ADD_INCLUDEDIRS=.
+COMPONENT_ADD_INCLUDEDIRS +=../plugins
 COMPONENT_ADD_INCLUDEDIRS +=../plugins/plugin_components/hid_keycode_conv
 COMPONENT_ADD_INCLUDEDIRS +=../plugins/plugin_components/wifi_manager
 COMPONENT_ADD_INCLUDEDIRS +=../plugins/plugin_components
@@ -26,4 +28,7 @@ COMPONENT_ADD_INCLUDEDIRS +=../components/u8g2_OLED
 COMPONENT_ADD_INCLUDEDIRS +=../components/r_encoder
 COMPONENT_ADD_INCLUDEDIRS +=../components/espnow
 COMPONENT_ADD_INCLUDEDIRS +=../components/ble_new
+
+COMPONENT_EMBED_TXTFILES := ../plugins/cacert.pem
+COMPONENT_EMBED_TXTFILES += ../plugins/prvtkey.pem
 # include $(IDF_PATH)/make/component_common.mk

@@ -1,8 +1,20 @@
+#include <string.h>
 #include "wifi_manager.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "freertos/event_groups.h"
 #include "esp_system.h"
+#include <esp_wifi.h>
+#include <esp_event.h>
+#include "esp_event_loop.h"
 #include "nvs_flash.h"
 #include "esp_log.h"
 #include "nvs.h"
+#include "tcpip_adapter.h"
+#include "lwip/err.h"
+#include "lwip/sys.h"
+
+#include "plugins.h"
 
 nvs_handle wifi_nvs_handle;
 #define WIFI_NAMESPACE "wifi"
@@ -180,23 +192,27 @@ uint8_t wifi_retrieve_ap(uint8_t ssid[MAX_AP_SSID_LEN] ,wifi_sta_config_t *ap_co
 	else{
 		ESP_LOGI(NVS_TAG, "Success getting %s ",AP_PASSWORD);
 	}
-
+	uint8_t buff;
 	//getting scan method from nvs
-	err =nvs_get_u8(wifi_nvs_handle,  config_scan_method,(uint8_t*)ap_config->scan_method);
+
+	err = nvs_get_u8(wifi_nvs_handle,  config_scan_method,&buff);
+
 	if (err != ESP_OK) {
 		ESP_LOGE(NVS_TAG, "Error getting %s: %s",AP_SCAN_METHOD, esp_err_to_name(err));
 	}
 	else{
 		ESP_LOGI(NVS_TAG, "Success getting %s ",AP_SCAN_METHOD);
+		ap_config->scan_method =  buff;
 	}
 
 	//getting bssid_set from nvs
-	err =nvs_get_u8(wifi_nvs_handle,  config_bssid_set,(uint8_t*)ap_config->bssid_set);
+	err =nvs_get_u8(wifi_nvs_handle,  config_bssid_set,&buff);
 	if (err != ESP_OK) {
 		ESP_LOGE(NVS_TAG, "Error getting %s: %s",AP_BSSID_SET, esp_err_to_name(err));
 	}
 	else{
 		ESP_LOGI(NVS_TAG, "Success getting %s ",AP_BSSID_SET);
+		ap_config->bssid_set =  buff;
 	}
 
 	//getting bssid from nvs
@@ -228,11 +244,12 @@ uint8_t wifi_retrieve_ap(uint8_t ssid[MAX_AP_SSID_LEN] ,wifi_sta_config_t *ap_co
 	}
 
 	//getting sort method interval from nvs
-	err =nvs_get_u8(wifi_nvs_handle, config_sort_method,(uint8_t*)ap_config->sort_method);
+	err =nvs_get_u8(wifi_nvs_handle, config_sort_method,&buff);
 	if (err != ESP_OK) {
 		ESP_LOGE(NVS_TAG, "Error getting %s: %s",AP_SORT_METHOD, esp_err_to_name(err));
 	}
 	else{
+		ap_config->sort_method = buff;
 		ESP_LOGI(NVS_TAG, "Success getting %s ",AP_SORT_METHOD);
 	}
 
@@ -364,14 +381,38 @@ void wifi_del_ap(uint8_t ssid[MAX_AP_SSID_LEN]){
 	nvs_close(wifi_nvs_handle);
 
 }
+#define EXAMPLE_ESP_MAXIMUM_RETRY  100
+static EventGroupHandle_t s_wifi_event_group;
+/* The event group allows multiple bits for each event, but we only care about one event
+ * - are we connected to the AP with an IP? */
+const int WIFI_CONNECTED_BIT = BIT0;
 
-// To my understanding the you need to assign a handler for the WiFi loop in order to start the function.
-static esp_err_t example_event_handler(void *ctx, system_event_t *event)
+static const char *TAG = "wifi station";
+
+static int s_retry_num = 0;
+static esp_err_t event_handler(void *ctx, system_event_t *event)
 {
 	switch(event->event_id) {
-	case SYSTEM_EVENT_STA_START:;
-	ESP_LOGI(WIFI_TAG,"WiFi Initialized");
-	break;
+	case SYSTEM_EVENT_STA_START:
+		esp_wifi_connect();
+		break;
+	case SYSTEM_EVENT_STA_GOT_IP:
+		ESP_LOGI(TAG, "got ip:%s",
+				ip4addr_ntoa(&event->event_info.got_ip.ip_info.ip));
+		s_retry_num = 0;
+		xEventGroupSetBits(s_wifi_event_group, WIFI_CONNECTED_BIT);
+		break;
+	case SYSTEM_EVENT_STA_DISCONNECTED:
+	{
+		if (s_retry_num < EXAMPLE_ESP_MAXIMUM_RETRY) {
+			esp_wifi_connect();
+			xEventGroupClearBits(s_wifi_event_group, WIFI_CONNECTED_BIT);
+			s_retry_num++;
+			ESP_LOGI(TAG,"retry to connect to the AP");
+		}
+		ESP_LOGI(TAG,"connect to the AP fail\n");
+		break;
+	}
 	default:
 		break;
 	}
@@ -383,20 +424,27 @@ void wifi_connection_init(void){
 
 	uint16_t num_records = 0;
 	wifi_ap_record_t* ap_records;
-	wifi_sta_config_t ap_config;
+	wifi_sta_config_t sta_config;
+	tcpip_adapter_ip_info_t ip_info;
+
+
+	;
+
 
 	// if the keyboards does not use esp now we need to init wifi
 #ifndef SPLIT_MASTER
 	tcpip_adapter_init();
-	ESP_ERROR_CHECK(esp_event_loop_init(example_event_handler, NULL));
 	wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
 	ESP_ERROR_CHECK(esp_wifi_init(&cfg));
 	ESP_ERROR_CHECK(esp_wifi_set_storage(WIFI_STORAGE_RAM));
-	ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA)) ; // For some reason ESP-NOW only works if all devices are in the same mode
+	ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA)) ; //
 	ESP_ERROR_CHECK(esp_wifi_set_storage(WIFI_STORAGE_RAM));
 	//esp_wifi_set_mac(ESP_IF_WIFI_STA, master_mac_adr);
 	ESP_ERROR_CHECK(esp_wifi_start());
 #endif
+	//try to connect to the default ap
+	s_wifi_event_group = xEventGroupCreate();
+
 	// start scanning for available aps
 	wifi_scan_config_t scan_config = {0};
 	err = esp_wifi_scan_start(&scan_config, 1);
@@ -406,39 +454,60 @@ void wifi_connection_init(void){
 		ESP_LOGE(WIFI_TAG, "Error scanning for AP : %s", esp_err_to_name(err));
 	}else{
 
-		ESP_LOGE(WIFI_TAG, "Success scanning for AP");
+		ESP_LOGI(WIFI_TAG, "Success scanning for AP");
 		err = esp_wifi_scan_get_ap_num(&num_records);
 		if(err != ESP_OK){
 
 			ESP_LOGE(WIFI_TAG, "Error scanning for AP records number : %s", esp_err_to_name(err));
 
-
 		}else{
 
-			ESP_LOGE(WIFI_TAG, "Success scanning for AP records number");
+			ESP_LOGI(WIFI_TAG, "Success scanning for AP records number");
 			ap_records = malloc(num_records*sizeof(wifi_ap_record_t));
 			err = esp_wifi_scan_get_ap_records(&num_records, ap_records);
 
 			if(err != ESP_OK){
 				ESP_LOGE(WIFI_TAG, "Error scanning for AP : %s", esp_err_to_name(err));
 			}else{
-				ESP_LOGE(WIFI_TAG, "Success scanning for AP");
+				ESP_LOGI(WIFI_TAG, "Success scanning for AP");
 				// check if one of the APs exists in flash and try to connect to it,
 				// if it does exist but cannot be connected to continue to try other APs in flash
 				for(uint8_t ap_record = 0; ap_record < num_records; ap_record++){
 
-					err = wifi_retrieve_ap(ap_records[ap_record].ssid, &ap_config);
+					ESP_LOGI(WIFI_TAG, "Found AP %d: %s",ap_record ,ap_records[ap_record].ssid);
+					if(strcmp((char*)ap_records[ap_record].ssid, DEFAULT_SSID) == 0){
+
+						wifi_config_t ap_config ={
+								.sta = {
+										.ssid = DEFAULT_SSID,
+										.password = DEFAULT_PASSWORD
+								},
+						};
+						ESP_ERROR_CHECK(esp_wifi_stop());
+						ESP_ERROR_CHECK(esp_event_loop_init(event_handler, NULL) );
+						err = esp_wifi_set_config(ESP_IF_WIFI_STA,&ap_config);
+						ESP_LOGI(WIFI_TAG, "Found default AP %d: %s",ap_record ,ap_records[ap_record].ssid);
+						ESP_ERROR_CHECK(esp_wifi_start());
+						break;
+					}
+					err = wifi_retrieve_ap(ap_records[ap_record].ssid, &sta_config);
 					if(err == SSID_FOUND){
+						wifi_config_t ap_config ={
+								.sta = sta_config
+						};
+						ESP_ERROR_CHECK(esp_wifi_stop());
+						ESP_ERROR_CHECK(esp_event_loop_init(event_handler, NULL) );
 						err = esp_wifi_set_config(ESP_IF_WIFI_STA,&ap_config);
 						if(err != ESP_OK){
-							ESP_LOGE(WIFI_TAG, "Error setting AP %s config: %s", ap_config.ssid, esp_err_to_name(err));
+							ESP_LOGE(WIFI_TAG, "Error setting AP %s config: %s", sta_config.ssid, esp_err_to_name(err));
 						}else{
-							ESP_LOGE(WIFI_TAG, "Success setting AP %s config: ",ap_config.ssid);
-							err = esp_wifi_connect();
+							ESP_LOGI(WIFI_TAG, "Success setting AP %s config ",sta_config.ssid);
+							ESP_ERROR_CHECK(esp_wifi_start());
 							if(err != ESP_OK){
-								ESP_LOGE(WIFI_TAG, "Error connecting to %s AP: %s", ap_config.ssid, esp_err_to_name(err));
+								ESP_LOGE(WIFI_TAG, "Error connecting to %s AP: %s", sta_config.ssid, esp_err_to_name(err));
 							}else{
-								ESP_LOGE(WIFI_TAG, "Success connecting to %s AP config",ap_config.ssid);
+								ESP_LOGI(WIFI_TAG, "Success connecting to %s AP config",sta_config.ssid);
+								ESP_LOGI(WIFI_TAG, "IP Address: %s ,Subnet mask: %s Subnet mask: %s",ip4addr_ntoa(&ip_info.ip),ip4addr_ntoa(&ip_info.netmask),ip4addr_ntoa(&ip_info.gw));
 								break;
 							}
 						}
@@ -447,4 +516,6 @@ void wifi_connection_init(void){
 			}
 		}
 	}
+
+
 }

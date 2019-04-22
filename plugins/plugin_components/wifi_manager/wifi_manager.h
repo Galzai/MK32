@@ -35,7 +35,7 @@ extern "C" {
 #define AP_BSSID_SET "bssid set"
 #define AP_BSSID "bssid"
 #define AP_CHANNEL "channel"
-#define AP_LISTEN_INTERVAL "listen interval"
+#define AP_LISTEN_INTERVAL "interval"
 #define AP_SORT_METHOD "sort method"
 #define AP_THRESHOLD "threshold"
 

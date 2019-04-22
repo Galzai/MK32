@@ -18,7 +18,7 @@ Please refer to the [MK32 Wiki page](https://github.com/Galzai/MK32/wiki) for in
 
 ## To-do:
 - Plugin API support (in progress).
-- More than 2 pads (currently supports 2 pads).
+- More than 2 pads with espnow (currently supports 2 pads).
 - Connection switching.
 - Modify keymap via webserver (in progress) .
 - Security (?)

@@ -48,28 +48,13 @@
 static const uint8_t channel=1;
 //uint8_t master_mac_adr[6]= {0xFF,0xFF,0xFF,0xFF,0xFF,0xFF}; // Will be used in the future for setting a mac address manually
 
-
-// To my understanding the you need to assign a handler for the WiFi loop in order to start the function.
-static esp_err_t example_event_handler(void *ctx, system_event_t *event)
-{
-	switch(event->event_id) {
-	case SYSTEM_EVENT_STA_START:;
-	ESP_LOGI(ESP_NOW_TAG,"WiFi Initialized");
-	break;
-	default:
-		break;
-	}
-	return ESP_OK;
-}
-
-// Initializing WiFi
 static void wifi_initialize_recieve(void){
 
 	ESP_LOGI(ESP_NOW_TAG,"Initialing WiFi");
 	uint8_t slave_mac_adr[6];
 
 	tcpip_adapter_init();
-	ESP_ERROR_CHECK(esp_event_loop_init(example_event_handler, NULL));
+	ESP_ERROR_CHECK(esp_event_loop_create_default());
 	wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
 	ESP_ERROR_CHECK(esp_wifi_init(&cfg));
 	ESP_ERROR_CHECK(esp_wifi_set_storage(WIFI_STORAGE_RAM));
@@ -82,12 +67,12 @@ static void wifi_initialize_recieve(void){
 
 
 	//Printout the mac ID (in case we change the starting one)
-	printf("DEVICE MAC ADDRESS:[");
+	printf("\nDEVICE MAC ADDRESS:[");
 	for(int i=0;i<6; i++)
 	{
 		printf("%d:", slave_mac_adr[i]);
 	}
-	printf("]");
+	printf("]\n");
 }
 
 //ESP-NOW callback upon receiving data
