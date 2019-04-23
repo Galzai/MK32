@@ -12,6 +12,7 @@
 extern "C" {
 #endif
 
+#include "keycode_conv.h"
 #include "wifi_manager.h"
 
 #ifdef __cplusplus

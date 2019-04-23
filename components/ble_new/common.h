@@ -17,7 +17,7 @@
  * Copyright 2017 Benjamin Aigner <aignerb@technikum-wien.at,
  * beni@asterics-foundation.org>
  */
- 
+
 /**
  * @file
  * @brief Common data structs and IPC pointers for the firmware
@@ -76,7 +76,6 @@
  * count of NEOPIXEL LEDs, which are used for color output
  * */
 #define LED_NEOPIXEL_COUNT  1
-
 
 /** @brief Maximum length for a slot name */
 #define SLOTNAME_LENGTH   32
@@ -149,7 +148,7 @@ extern EventGroupHandle_t connectionRoutingStatus;
  * @see SYSTEM_LOADCONFIG
  * @see SYSTEM_STABLECONFIG
  * @see SYSTEM_EMPTY_CMD_QUEUE
-*/
+ */
 extern EventGroupHandle_t systemStatus;
 
 /** @brief Queue for sending HID commands to USB */
@@ -205,93 +204,93 @@ extern QueueHandle_t debouncer_in;
  * Gesture VBs, a recorded gesture is treated like a virtual button
  * */
 #ifdef DEVICE_FLIPMOUSE
-  /** @brief Internal button (short nose), activates Wifi on a long press */
-  #define VB_INTERNAL2    0
-  /** @brief Internal button (long button) */
-  #define VB_INTERNAL1    1
-  /** @brief External button (connected via a 3.5mm jack plug) */
-  #define VB_EXTERNAL1    2
-  /** @brief External button (connected via a 3.5mm jack plug) */
-  #define VB_EXTERNAL2    3
-  /** @brief Mouthpiece up (threshold mode only) */
-  #define VB_UP           4
-  /** @brief Mouthpiece down (threshold mode only) */
-  #define VB_DOWN         5
-  /** @brief Mouthpiece left (threshold mode only) */
-  #define VB_LEFT         6
-  /** @brief Mouthpiece right (threshold mode only) */
-  #define VB_RIGHT        7
-  /** @brief Sip on the mouthpiece (weak) */
-  #define VB_SIP          8
-  /** @brief Sip on the mouthpiece (strong)
-   * @note If one of the VB_STRONGSIP_* actions is used, this one will not be triggered. */
-  #define VB_STRONGSIP    9
-  /** @brief Puff into the mouthpiece (weak) */
-  #define VB_PUFF         10
-  /** @brief Sip on the mouthpiece (strong)
-   * @note If one of the VB_STRONGPUFF_* actions is used, this one will not be triggered. */
-  #define VB_STRONGPUFF   11
-  /** @brief Strongsip + move mouthpiece up afterwards.
-   * @note If used, deactivates VB_STRONGSIP */
-  #define VB_STRONGSIP_UP     12
-  /** @brief Strongsip + move mouthpiece down afterwards.
-   * @note If used, deactivates VB_STRONGSIP */
-  #define VB_STRONGSIP_DOWN   13
-  /** @brief Strongsip + move mouthpiece left afterwards.
-   * @note If used, deactivates VB_STRONGSIP */
-  #define VB_STRONGSIP_LEFT   14
-  /** @brief Strongsip + move mouthpiece right afterwards.
-   * @note If used, deactivates VB_STRONGSIP */
-  #define VB_STRONGSIP_RIGHT  15
-  /** @brief Strongpuff + move mouthpiece up afterwards.
-   * @note If used, deactivates VB_STRONGPUFF */
-  #define VB_STRONGPUFF_UP    16
-  /** @brief Strongpuff + move mouthpiece down afterwards.
-   * @note If used, deactivates VB_STRONGPUFF */
-  #define VB_STRONGPUFF_DOWN  17
-  /** @brief Strongpuff + move mouthpiece left afterwards.
-   * @note If used, deactivates VB_STRONGPUFF */
-  #define VB_STRONGPUFF_LEFT  18
-  /** @brief Strongpuff + move mouthpiece right afterwards.
-   * @note If used, deactivates VB_STRONGPUFF */
-  #define VB_STRONGPUFF_RIGHT 19
-  /** @brief Limiter value, used for checking&accessing any arrays
-   * @note Set this value accordingly! */
-  #define VB_MAX          20
+/** @brief Internal button (short nose), activates Wifi on a long press */
+#define VB_INTERNAL2    0
+/** @brief Internal button (long button) */
+#define VB_INTERNAL1    1
+/** @brief External button (connected via a 3.5mm jack plug) */
+#define VB_EXTERNAL1    2
+/** @brief External button (connected via a 3.5mm jack plug) */
+#define VB_EXTERNAL2    3
+/** @brief Mouthpiece up (threshold mode only) */
+#define VB_UP           4
+/** @brief Mouthpiece down (threshold mode only) */
+#define VB_DOWN         5
+/** @brief Mouthpiece left (threshold mode only) */
+#define VB_LEFT         6
+/** @brief Mouthpiece right (threshold mode only) */
+#define VB_RIGHT        7
+/** @brief Sip on the mouthpiece (weak) */
+#define VB_SIP          8
+/** @brief Sip on the mouthpiece (strong)
+ * @note If one of the VB_STRONGSIP_* actions is used, this one will not be triggered. */
+#define VB_STRONGSIP    9
+/** @brief Puff into the mouthpiece (weak) */
+#define VB_PUFF         10
+/** @brief Sip on the mouthpiece (strong)
+ * @note If one of the VB_STRONGPUFF_* actions is used, this one will not be triggered. */
+#define VB_STRONGPUFF   11
+/** @brief Strongsip + move mouthpiece up afterwards.
+ * @note If used, deactivates VB_STRONGSIP */
+#define VB_STRONGSIP_UP     12
+/** @brief Strongsip + move mouthpiece down afterwards.
+ * @note If used, deactivates VB_STRONGSIP */
+#define VB_STRONGSIP_DOWN   13
+/** @brief Strongsip + move mouthpiece left afterwards.
+ * @note If used, deactivates VB_STRONGSIP */
+#define VB_STRONGSIP_LEFT   14
+/** @brief Strongsip + move mouthpiece right afterwards.
+ * @note If used, deactivates VB_STRONGSIP */
+#define VB_STRONGSIP_RIGHT  15
+/** @brief Strongpuff + move mouthpiece up afterwards.
+ * @note If used, deactivates VB_STRONGPUFF */
+#define VB_STRONGPUFF_UP    16
+/** @brief Strongpuff + move mouthpiece down afterwards.
+ * @note If used, deactivates VB_STRONGPUFF */
+#define VB_STRONGPUFF_DOWN  17
+/** @brief Strongpuff + move mouthpiece left afterwards.
+ * @note If used, deactivates VB_STRONGPUFF */
+#define VB_STRONGPUFF_LEFT  18
+/** @brief Strongpuff + move mouthpiece right afterwards.
+ * @note If used, deactivates VB_STRONGPUFF */
+#define VB_STRONGPUFF_RIGHT 19
+/** @brief Limiter value, used for checking&accessing any arrays
+ * @note Set this value accordingly! */
+#define VB_MAX          20
 #endif
 
 #ifdef DEVICE_FABI
-  /** @brief External button (connected via a 3.5mm jack plug) */
-  #define VB_EXTERNAL1    0
-  /** @brief External button (connected via a 3.5mm jack plug) */
-  #define VB_EXTERNAL2    1
-  /** @brief External button (connected via a 3.5mm jack plug) */
-  #define VB_EXTERNAL3    2
-  /** @brief External button (connected via a 3.5mm jack plug) */
-  #define VB_EXTERNAL4    3
-  /** @brief External button (connected via a 3.5mm jack plug) */
-  #define VB_EXTERNAL5    4
-  /** @brief External button (connected via a 3.5mm jack plug) */
-  #define VB_EXTERNAL6    5
-  /** @brief External button (connected via a 3.5mm jack plug) */
-  #define VB_EXTERNAL7    6
-  /** @brief External button (connected via a 3.5mm jack plug) */
-  #define VB_EXTERNAL8    7
-  /** @brief External button (connected via a 3.5mm jack plug) */
-  #define VB_EXTERNAL9    8
-  /** @brief Internal button (long nose), activates Wifi on a long press */
-  #define VB_INTERNAL1    9
-  /** @brief Sip on the mouthpiece (weak) */
-  #define VB_SIP          10
-  /** @brief Puff into the mouthpiece (weak) */
-  #define VB_PUFF         11
-  /** @brief Sip on the mouthpiece (strong) */
-  #define VB_STRONGSIP    12
-  /** @brief Puff into the mouthpiece (strong) */
-  #define VB_STRONGPUFF   13
-  /** @brief Limiter value, used for checking&accessing any arrays
-   * @note Set this value accordingly! */
-  #define VB_MAX          14
+/** @brief External button (connected via a 3.5mm jack plug) */
+#define VB_EXTERNAL1    0
+/** @brief External button (connected via a 3.5mm jack plug) */
+#define VB_EXTERNAL2    1
+/** @brief External button (connected via a 3.5mm jack plug) */
+#define VB_EXTERNAL3    2
+/** @brief External button (connected via a 3.5mm jack plug) */
+#define VB_EXTERNAL4    3
+/** @brief External button (connected via a 3.5mm jack plug) */
+#define VB_EXTERNAL5    4
+/** @brief External button (connected via a 3.5mm jack plug) */
+#define VB_EXTERNAL6    5
+/** @brief External button (connected via a 3.5mm jack plug) */
+#define VB_EXTERNAL7    6
+/** @brief External button (connected via a 3.5mm jack plug) */
+#define VB_EXTERNAL8    7
+/** @brief External button (connected via a 3.5mm jack plug) */
+#define VB_EXTERNAL9    8
+/** @brief Internal button (long nose), activates Wifi on a long press */
+#define VB_INTERNAL1    9
+/** @brief Sip on the mouthpiece (weak) */
+#define VB_SIP          10
+/** @brief Puff into the mouthpiece (weak) */
+#define VB_PUFF         11
+/** @brief Sip on the mouthpiece (strong) */
+#define VB_STRONGSIP    12
+/** @brief Puff into the mouthpiece (strong) */
+#define VB_STRONGPUFF   13
+/** @brief Limiter value, used for checking&accessing any arrays
+ * @note Set this value accordingly! */
+#define VB_MAX          14
 #endif
 
 /** @brief Special virtual button, which is used to trigger an action
@@ -306,16 +305,14 @@ extern QueueHandle_t debouncer_in;
  * and task_hid.
  * @note This enum is used for sending an action to the debouncer as well.*/
 typedef enum {
-  /** Press event issued */
-  VB_PRESS_EVENT,
-  /** Release event issued */
-  VB_RELEASE_EVENT
+	/** Press event issued */
+	VB_PRESS_EVENT,
+	/** Release event issued */
+	VB_RELEASE_EVENT
 } vb_event_t;
 
-
-
 /** @brief Declaring a new event base for VB actions */
-ESP_EVENT_DECLARE_BASE(VB_EVENT);
+ESP_EVENT_DECLARE_BASE (VB_EVENT);
 
 /*++++ TASK PRIORITY ASSIGNMENT ++++*/
 /** @brief ADC task priority. Not high. */
@@ -339,29 +336,30 @@ ESP_EVENT_DECLARE_BASE(VB_EVENT);
  * @see VB_RIGHT
  * */
 typedef enum mouthpiece_mode {
-  /** Do not do anything with the mouthpiece */
-  NONE,
-  /** Mouthpiece controls mouse cursor, <br>
-    *            Used parameters: <br>
-    *              * max_speed
-    *              * acceleration
-    *              * deadzone_x/y
-    *              * sensitivity_x/y
-    */
-  MOUSE, 
-  /** Mouthpiece controls two joystick axis <br>
-    *            Used parameters <br>
-    *              * deadzone_x/y
-    *              * sensitivity_x/y
-    *              * axis
-    */
-  JOYSTICK, 
-  /** Mouthpiece triggers virtual buttons <br>
-    *            Used parameters <br>
-    *              * deadzone_x/y
-    *              * threshold_x/y
-    */
-  THRESHOLD} mouthpiece_mode_t;
+	/** Do not do anything with the mouthpiece */
+	NONE,
+	/** Mouthpiece controls mouse cursor, <br>
+	 *            Used parameters: <br>
+	 *              * max_speed
+	 *              * acceleration
+	 *              * deadzone_x/y
+	 *              * sensitivity_x/y
+	 */
+	MOUSE,
+	/** Mouthpiece controls two joystick axis <br>
+	 *            Used parameters <br>
+	 *              * deadzone_x/y
+	 *              * sensitivity_x/y
+	 *              * axis
+	 */
+	JOYSTICK,
+	/** Mouthpiece triggers virtual buttons <br>
+	 *            Used parameters <br>
+	 *              * deadzone_x/y
+	 *              * threshold_x/y
+	 */
+	THRESHOLD
+} mouthpiece_mode_t;
 
 /**
  * @brief Config for the ADC task & the analog mode of operation
@@ -376,46 +374,46 @@ typedef enum mouthpiece_mode {
  * @see VB_STRONGPUFF
  * */
 typedef struct adc_config {
-  /** mode setting for mouthpiece, @see mouthpiece_mode_t */
-  mouthpiece_mode_t mode;
-  /** acceleration for x & y axis (mouse & joystick mode) */
-  uint8_t acceleration;
-  /** max speed for x & y axis (mouse & joystick mode) */
-  uint8_t max_speed;
-  /** deadzone values for x & y axis (mouse & joystick & threshold mode) */
-  uint8_t deadzone_x;
-  uint8_t deadzone_y;
-  /** sensitivity values for x & y axis (mouse & joystick mode) */
-  uint8_t sensitivity_x;
-  uint8_t sensitivity_y;
-  /** pressure sensor, sip threshold */
-  uint16_t threshold_sip;
-  /** pressure sensor, puff threshold */
-  uint16_t threshold_puff;
-  /** pressure sensor, strongsip threshold */
-  uint16_t threshold_strongsip;
-  /** pressure sensor, strongpuff threshold */
-  uint16_t threshold_strongpuff;
-  /** Enable report RAW values (!=0), values are sent via halSerialSendUSBSerial */
-  uint8_t reportraw;
-  /** joystick axis assignment TBD: assign axis to numbers*/
-  uint8_t axis;
-  /** FLipMouse orientation, 0,90,180 or 270° */
-  uint16_t orientation;
-  /** On-the-fly calibration, count of idle events before triggering calibration */
-  uint8_t otf_count;
-  /** On-the-fly calibration, level of detecting idle (all raw values need to change less
-   * than this value to be detected as idle) */
-  uint8_t otf_idle;
+	/** mode setting for mouthpiece, @see mouthpiece_mode_t */
+	mouthpiece_mode_t mode;
+	/** acceleration for x & y axis (mouse & joystick mode) */
+	uint8_t acceleration;
+	/** max speed for x & y axis (mouse & joystick mode) */
+	uint8_t max_speed;
+	/** deadzone values for x & y axis (mouse & joystick & threshold mode) */
+	uint8_t deadzone_x;
+	uint8_t deadzone_y;
+	/** sensitivity values for x & y axis (mouse & joystick mode) */
+	uint8_t sensitivity_x;
+	uint8_t sensitivity_y;
+	/** pressure sensor, sip threshold */
+	uint16_t threshold_sip;
+	/** pressure sensor, puff threshold */
+	uint16_t threshold_puff;
+	/** pressure sensor, strongsip threshold */
+	uint16_t threshold_strongsip;
+	/** pressure sensor, strongpuff threshold */
+	uint16_t threshold_strongpuff;
+	/** Enable report RAW values (!=0), values are sent via halSerialSendUSBSerial */
+	uint8_t reportraw;
+	/** joystick axis assignment TBD: assign axis to numbers*/
+	uint8_t axis;
+	/** FLipMouse orientation, 0,90,180 or 270° */
+	uint16_t orientation;
+	/** On-the-fly calibration, count of idle events before triggering calibration */
+	uint8_t otf_count;
+	/** On-the-fly calibration, level of detecting idle (all raw values need to change less
+	 * than this value to be detected as idle) */
+	uint8_t otf_idle;
 } adc_config_t;
 
 /** @brief Type of VB command
  * @see vb_cmd_t */
 typedef enum {
-  T_CONFIGCHANGE = 1, /** @brief Config change request */
-  T_CALIBRATE, /** @brief Calibrationrequest */
-  T_SENDIR, /** @brief Send an IR command */
-  T_MACRO /** @brief Trigger macro execution */
+	T_CONFIGCHANGE = 1, /** @brief Config change request */
+	T_CALIBRATE, /** @brief Calibrationrequest */
+	T_SENDIR, /** @brief Send an IR command */
+	T_MACRO /** @brief Trigger macro execution */
 } vb_cmd_type_t;
 
 /** @brief Complete configuration for the current settings.
@@ -424,48 +422,48 @@ typedef enum {
  * setup. It will be loaded on a slot change (or startup).
  * 
  * @note This struct contains only settings which will be stored/loaded from flash.
- */ 
+ */
 typedef struct generalConfig {
-  /** @brief Versionnumber for this slot.
-   * @note Currently unused */
-  uint32_t slotversion;
-  /** @brief ADC related config */
-  adc_config_t adc;
-  /** @brief Flag for active BLE-HID */
-  uint8_t ble_active;
-  /** @brief Flag for active USB-HID */
-  uint8_t usb_active;
-  /** @brief Mouse wheel: stepsize */
-  uint8_t wheel_stepsize;
-  /** @brief keyboard locale to be used by BLE&USB(serial) HID */
-  uint8_t locale;
-  /** @brief Timeout between IR edges before command is declared as finished */
-  uint8_t irtimeout;
-  /** @brief Global anti-tremor time for press */
-  uint16_t debounce_press;
-  /** @brief Global anti-tremor time for release */
-  uint16_t debounce_release;
-  /** @brief Global anti-tremor time for idle */
-  uint16_t debounce_idle;
-  /** @brief Enable/disable button learning mode
-   * @todo Move to "volatile" storage, independent from slot change */
-  uint8_t button_learn;
-  /** @brief Feedback mode.
-   * 
-   * * 0 disables LED and buzzer
-   * * 1 disables buzzer, but LED is on
-   * * 2 disables LED, but buzzer gives output
-   * * 3 gives LED and buzzer feedback
-   * */
-  uint8_t feedback;
-  /** @brief Anti-tremor (debounce) time for press of each VB */
-  uint16_t debounce_press_vb[VB_MAX];
-  /** @brief Anti-tremor (debounce) time for release of each VB */
-  uint16_t debounce_release_vb[VB_MAX];
-  /** @brief Anti-tremor (debounce) time for idle of each VB */
-  uint16_t debounce_idle_vb[VB_MAX];
-  /** @brief Slotname of this config */
-  char slotName[SLOTNAME_LENGTH];
+	/** @brief Versionnumber for this slot.
+	 * @note Currently unused */
+	uint32_t slotversion;
+	/** @brief ADC related config */
+	adc_config_t adc;
+	/** @brief Flag for active BLE-HID */
+	uint8_t ble_active;
+	/** @brief Flag for active USB-HID */
+	uint8_t usb_active;
+	/** @brief Mouse wheel: stepsize */
+	uint8_t wheel_stepsize;
+	/** @brief keyboard locale to be used by BLE&USB(serial) HID */
+	uint8_t locale;
+	/** @brief Timeout between IR edges before command is declared as finished */
+	uint8_t irtimeout;
+	/** @brief Global anti-tremor time for press */
+	uint16_t debounce_press;
+	/** @brief Global anti-tremor time for release */
+	uint16_t debounce_release;
+	/** @brief Global anti-tremor time for idle */
+	uint16_t debounce_idle;
+	/** @brief Enable/disable button learning mode
+	 * @todo Move to "volatile" storage, independent from slot change */
+	uint8_t button_learn;
+	/** @brief Feedback mode.
+	 * 
+	 * * 0 disables LED and buzzer
+	 * * 1 disables buzzer, but LED is on
+	 * * 2 disables LED, but buzzer gives output
+	 * * 3 gives LED and buzzer feedback
+	 * */
+	uint8_t feedback;
+	/** @brief Anti-tremor (debounce) time for press of each VB */
+	uint16_t debounce_press_vb[VB_MAX];
+	/** @brief Anti-tremor (debounce) time for release of each VB */
+	uint16_t debounce_release_vb[VB_MAX];
+	/** @brief Anti-tremor (debounce) time for idle of each VB */
+	uint16_t debounce_idle_vb[VB_MAX];
+	/** @brief Slotname of this config */
+	char slotName[SLOTNAME_LENGTH];
 } generalConfig_t;
 
 /** @brief One VB command (not HID), maybe an element of a command chain 
@@ -478,23 +476,23 @@ typedef struct generalConfig {
  * @see task_vb_getCmdChain
  * @see task_vb_setCmdChain */
 typedef struct vb_cmd {
-  /** @brief Number of virtual button. MSB signals if this is a press or
-   * release action:
-   * * If it is set (mask: 0x80), it is a press action
-   * * If it is cleared, it is a release action 
-   * */
-  uint8_t vb;
-  /** @brief Type of command */
-  vb_cmd_type_t cmd;
-  /** @brief Original AT command string, might be NULL if not used.
-   * @note This value is used to store a command. If it is NULL,
-   * this command cannot be stored. */
-  char *atoriginal;
-  /** @brief Parameter string, e.g. for slot names. Might be NULL if not necessary */
-  char *cmdparam;
-  /** @brief Pointer to next VB command element, might be NULL. 
-   * @note This pointer is set to NULL as long as it is not added to the command chain. */
-  struct vb_cmd *next;
+	/** @brief Number of virtual button. MSB signals if this is a press or
+	 * release action:
+	 * * If it is set (mask: 0x80), it is a press action
+	 * * If it is cleared, it is a release action 
+	 * */
+	uint8_t vb;
+	/** @brief Type of command */
+	vb_cmd_type_t cmd;
+	/** @brief Original AT command string, might be NULL if not used.
+	 * @note This value is used to store a command. If it is NULL,
+	 * this command cannot be stored. */
+	char *atoriginal;
+	/** @brief Parameter string, e.g. for slot names. Might be NULL if not necessary */
+	char *cmdparam;
+	/** @brief Pointer to next VB command element, might be NULL. 
+	 * @note This pointer is set to NULL as long as it is not added to the command chain. */
+	struct vb_cmd *next;
 } vb_cmd_t;
 
 /** @brief  One HID command, maybe an element of a command chain
@@ -511,64 +509,64 @@ typedef struct vb_cmd {
  * @see task_hid_getCmdChain
  * @see task_hid_setCmdChain */
 typedef struct hid_cmd {
-  /** @brief Number of virtual button. MSB signals if this is a press or
-   * release action:
-   * * If it is set (mask: 0x80), it is a press action
-   * * If it is cleared, it is a release action 
-   * */
-  uint8_t vb;
-  /** @brief Command to be sent, see HID_kbdmousejoystick.cpp or the
-   * usb_bridge for explanations. */
-  uint8_t cmd[3];
-  /** @brief Original AT command string, might be NULL if not used.
-   * @note This value is used to store a command. If it is NULL,
-   * this command cannot be stored. */
-  char *atoriginal;
-  /** @brief Pointer to next HID command element, might be NULL. 
-   * @note This pointer is set to NULL as long as it is not added to the command chain. */
-  struct hid_cmd *next;
+	/** @brief Number of virtual button. MSB signals if this is a press or
+	 * release action:
+	 * * If it is set (mask: 0x80), it is a press action
+	 * * If it is cleared, it is a release action 
+	 * */
+	uint8_t vb;
+	/** @brief Command to be sent, see HID_kbdmousejoystick.cpp or the
+	 * usb_bridge for explanations. */
+	uint8_t cmd[3];
+	/** @brief Original AT command string, might be NULL if not used.
+	 * @note This value is used to store a command. If it is NULL,
+	 * this command cannot be stored. */
+	char *atoriginal;
+	/** @brief Pointer to next HID command element, might be NULL. 
+	 * @note This pointer is set to NULL as long as it is not added to the command chain. */
+	struct hid_cmd *next;
 } hid_cmd_t;
 
 /** @brief State of IR receiver
  * @see TASK_HAL_IR_RECEV_MINIMUM_EDGES
  * @see TASK_HAL_IR_RECV_MAXIMUM_EDGES*/
 typedef enum irstate {
-  /** @brief Nothing is done, this halIOIR_t struct is not used for receiving */
-  IR_IDLE,
-  /** @brief Receiver is active and storing */
-  IR_RECEIVING,
-  /** @brief If timeout was triggered and not enough edges are detected */
-  IR_TOOSHORT,
-  /** @brief If timeout was triggered and enough edges were stored */
-  IR_FINISHED,
-  /** @brief Too many edges were detected, could not store */
-  IR_OVERFLOW
+	/** @brief Nothing is done, this halIOIR_t struct is not used for receiving */
+	IR_IDLE,
+	/** @brief Receiver is active and storing */
+	IR_RECEIVING,
+	/** @brief If timeout was triggered and not enough edges are detected */
+	IR_TOOSHORT,
+	/** @brief If timeout was triggered and enough edges were stored */
+	IR_FINISHED,
+	/** @brief Too many edges were detected, could not store */
+	IR_OVERFLOW
 } irstate_t;
 
 /** @brief Struct for sending/receiving an IR command */
 typedef struct halIOIR {
-  /** @brief Buffer for IR signal
-   * @warning Do not free this buffer! It will be freed by transmitting function
-   * @note In case of receiving, this buffer can be freed. */
-  rmt_item32_t *buffer;
-  /** @brief Count of rmt_item32_t items */
-  uint16_t count;
-  /** @brief Status of receiver */
-  irstate_t status;
+	/** @brief Buffer for IR signal
+	 * @warning Do not free this buffer! It will be freed by transmitting function
+	 * @note In case of receiving, this buffer can be freed. */
+	rmt_item32_t *buffer;
+	/** @brief Count of rmt_item32_t items */
+	uint16_t count;
+	/** @brief Status of receiver */
+	irstate_t status;
 } halIOIR_t;
 
 /** @brief RAW VB action type, sent to debouncer_in queue.
  * @see debouncer_in
  */
 typedef struct raw_action {
-  /** @brief VB number
-   * @note We don't use the MSB for signalling press/release here. */
-  uint32_t vb;
-  /** @brief Type of event */
-  vb_event_t type;
-  /** @brief Any additional payload.
-   * @note Currently unused. Might be used in future versions */
-  void *payload;
+	/** @brief VB number
+	 * @note We don't use the MSB for signalling press/release here. */
+	uint32_t vb;
+	/** @brief Type of event */
+	vb_event_t type;
+	/** @brief Any additional payload.
+	 * @note Currently unused. Might be used in future versions */
+	void *payload;
 } raw_action_t;
 
 /** @brief Strips away \\r\\t and \\n */
@@ -584,14 +582,14 @@ void strip(char *s);
  * @note Stackoverflow: https://stackoverflow.com/questions/111928/is-there-a-printf-converter-to-print-in-binary-format
  * @note Usage: printf("Leading text "BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(byte)); OR
  * printf("m: "BYTE_TO_BINARY_PATTERN" "BYTE_TO_BINARY_PATTERN"\n",
-  BYTE_TO_BINARY(m>>8), BYTE_TO_BINARY(m));
+ BYTE_TO_BINARY(m>>8), BYTE_TO_BINARY(m));
  */
 #define BYTE_TO_BINARY_PATTERN "%c%c%c%c%c%c%c%c" 
- 
+
 /** @brief printf parameter for 8bit binary output.
  * @note Stackoverflow: https://stackoverflow.com/questions/111928/is-there-a-printf-converter-to-print-in-binary-format
  * printf("m: "BYTE_TO_BINARY_PATTERN" "BYTE_TO_BINARY_PATTERN"\n",
-  BYTE_TO_BINARY(m>>8), BYTE_TO_BINARY(m));
+ BYTE_TO_BINARY(m>>8), BYTE_TO_BINARY(m));
  */
 #define BYTE_TO_BINARY(byte)  \
   (byte & 0x80 ? '1' : '0'), \
@@ -602,6 +600,5 @@ void strip(char *s);
   (byte & 0x04 ? '1' : '0'), \
   (byte & 0x02 ? '1' : '0'), \
   (byte & 0x01 ? '1' : '0') 
-
 
 #endif /*FUNCTION_COMMON_H_*/

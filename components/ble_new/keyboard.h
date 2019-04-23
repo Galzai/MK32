@@ -54,7 +54,7 @@
  * 
  * @note Once again: Thank you very much Paul for these layouts!
  **/
- 
+
 #ifndef _KEYBOARD_H_
 #define _KEYBOARD_H_
 
@@ -63,35 +63,34 @@
 #include <string.h>
 
 /** @brief Available keyboard layouts (locales) */
-enum keyboard_layouts{
-  LAYOUT_US_ENGLISH,
-  LAYOUT_US_INTERNATIONAL,
-  LAYOUT_GERMAN,
-  LAYOUT_GERMAN_MAC,
-  LAYOUT_CANADIAN_FRENCH,
-  LAYOUT_CANADIAN_MULTILINGUAL,
-  LAYOUT_UNITED_KINGDOM,
-  LAYOUT_FINNISH,
-  LAYOUT_FRENCH,
-  LAYOUT_DANISH,
-  LAYOUT_NORWEGIAN,
-  LAYOUT_SWEDISH,
-  LAYOUT_SPANISH,
-  LAYOUT_PORTUGUESE,
-  LAYOUT_ITALIAN,
-  LAYOUT_PORTUGUESE_BRAZILIAN,
-  LAYOUT_FRENCH_BELGIAN,
-  LAYOUT_GERMAN_SWISS,
-  LAYOUT_FRENCH_SWISS,
-  LAYOUT_SPANISH_LATIN_AMERICA,
-  LAYOUT_IRISH,
-  LAYOUT_ICELANDIC,
-  LAYOUT_TURKISH,
-  LAYOUT_CZECH,
-  LAYOUT_SERBIAN_LATIN_ONLY,
-  LAYOUT_MAX
+enum keyboard_layouts {
+	LAYOUT_US_ENGLISH,
+	LAYOUT_US_INTERNATIONAL,
+	LAYOUT_GERMAN,
+	LAYOUT_GERMAN_MAC,
+	LAYOUT_CANADIAN_FRENCH,
+	LAYOUT_CANADIAN_MULTILINGUAL,
+	LAYOUT_UNITED_KINGDOM,
+	LAYOUT_FINNISH,
+	LAYOUT_FRENCH,
+	LAYOUT_DANISH,
+	LAYOUT_NORWEGIAN,
+	LAYOUT_SWEDISH,
+	LAYOUT_SPANISH,
+	LAYOUT_PORTUGUESE,
+	LAYOUT_ITALIAN,
+	LAYOUT_PORTUGUESE_BRAZILIAN,
+	LAYOUT_FRENCH_BELGIAN,
+	LAYOUT_GERMAN_SWISS,
+	LAYOUT_FRENCH_SWISS,
+	LAYOUT_SPANISH_LATIN_AMERICA,
+	LAYOUT_IRISH,
+	LAYOUT_ICELANDIC,
+	LAYOUT_TURKISH,
+	LAYOUT_CZECH,
+	LAYOUT_SERBIAN_LATIN_ONLY,
+	LAYOUT_MAX
 };
-
 
 /** @brief Parse a decoded code point to a keycode, step 2
  * 
@@ -138,15 +137,13 @@ uint8_t keycode_to_modifier(uint16_t keycode, uint8_t locale);
  * */
 uint8_t keycode_is_modifier(uint16_t keycode);
 
-
 /** @brief Test if key is in given keycode array
  * @note The size of the keycode_arr parameter MUST be 6
  * @param keycode Keycode to be tested
  * @param keycode_arr Array to test
  * @return 0 if the keycode is not in array, 1 if the keycode is in the array
  */
-uint8_t is_in_keycode_arr(uint8_t keycode,uint8_t *keycode_arr);
-
+uint8_t is_in_keycode_arr(uint8_t keycode, uint8_t *keycode_arr);
 
 /** @brief Parse a keycode for deadkey input, step 3
  * 
@@ -193,7 +190,8 @@ uint16_t parseIdentifierToKeycode(char* keyidentifier);
  * 
  * @see parseKeycodeToIdentifier
  * */
-uint16_t parseKeycodeToIdentifier(uint16_t keycode, char* buffer, uint8_t buf_len);
+uint16_t parseKeycodeToIdentifier(uint16_t keycode, char* buffer,
+		uint8_t buf_len);
 
 /** @brief Parse an incoming byte for a keycode
  * 
@@ -209,7 +207,8 @@ uint16_t parseKeycodeToIdentifier(uint16_t keycode, char* buffer, uint8_t buf_le
  * @return 0 if another byte is needed or no keycode is found; the keycode otherwise
  * 
  * */
-uint8_t parse_for_keycode(uint8_t inputdata, uint8_t locale, uint8_t *keycode_modifier, uint8_t *deadkey_first_keycode);
+uint8_t parse_for_keycode(uint8_t inputdata, uint8_t locale,
+		uint8_t *keycode_modifier, uint8_t *deadkey_first_keycode);
 
 /** @brief Remove a keycode from the given HID keycode array.
  * 
@@ -218,7 +217,7 @@ uint8_t parse_for_keycode(uint8_t inputdata, uint8_t locale, uint8_t *keycode_mo
  * @param keycode_arr Keycode to remove this keycode from
  * @return 0 if the keycode was removed, 1 if the keycode was not in the array
  * */
-uint8_t remove_keycode(uint8_t keycode,uint8_t *keycode_arr);
+uint8_t remove_keycode(uint8_t keycode, uint8_t *keycode_arr);
 
 /** @brief Add a keycode to the given HID keycode array.
  * 
@@ -227,8 +226,7 @@ uint8_t remove_keycode(uint8_t keycode,uint8_t *keycode_arr);
  * @param keycode_arr Keycode to add this keycode to
  * @return 0 if the keycode was added, 1 if the keycode was already in the array, 2 if there was no space
  * */
-uint8_t add_keycode(uint8_t keycode,uint8_t *keycode_arr);
-
+uint8_t add_keycode(uint8_t keycode, uint8_t *keycode_arr);
 
 /** @brief Get a keycode for the given UTF codepoint
  * 
@@ -242,8 +240,8 @@ uint8_t add_keycode(uint8_t keycode,uint8_t *keycode_arr);
  * @param deadkey_first_keystroke If a deadkey stroke is needed, it will be written here
  * @return 0 if no keycode is found; the keycode otherwise
  * */
-uint8_t get_keycode(uint16_t cpoint,uint8_t locale,uint8_t *keycode_modifier, uint8_t *deadkey_first_keystroke);
-
+uint8_t get_keycode(uint16_t cpoint, uint8_t locale, uint8_t *keycode_modifier,
+		uint8_t *deadkey_first_keystroke);
 
 /** @brief Translate Unicode characters between different locales
  * 
@@ -255,8 +253,7 @@ uint8_t get_keycode(uint16_t cpoint,uint8_t locale,uint8_t *keycode_modifier, ui
  * @param locale_dst Locale for return cpoint
  * @return 0 if no cpoint is found; the cpoint otherwise
  * */
-uint16_t get_cpoint(uint16_t cpoint,uint8_t locale_src,uint8_t locale_dst);
-
+uint16_t get_cpoint(uint16_t cpoint, uint8_t locale_src, uint8_t locale_dst);
 
 /** @brief Getting the HID country code for a given locale
  * 
@@ -269,4 +266,4 @@ uint16_t get_cpoint(uint16_t cpoint,uint8_t locale_src,uint8_t locale_dst);
 uint8_t get_hid_country_code(uint8_t locale);
 
 #endif
- 
+

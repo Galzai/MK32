@@ -31,7 +31,6 @@ extern "C" {
 
 uint32_t get_battery_level(void);
 
-
 //initialize battery monitor pin
 void init_batt_monitor(void);
 

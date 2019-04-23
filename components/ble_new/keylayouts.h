@@ -34,7 +34,7 @@
 #include <stdint.h>
 
 #ifdef __cplusplus
-extern "C"{
+extern "C" {
 #endif
 
 //#define LAYOUT_US_ENGLISH
@@ -61,10 +61,7 @@ extern "C"{
 //#define LAYOUT_UNITED_KINGDOM	
 //#define LAYOUT_US_INTERNATIONAL
 
-
-
 // http://en.wikipedia.org/wiki/Keyboard_layout
-
 
 #define MODIFIERKEY_CTRL        ( 0x01 | 0xE000 )
 #define MODIFIERKEY_SHIFT       ( 0x02 | 0xE000 )
@@ -100,7 +97,6 @@ extern "C"{
 #define KEY_MEDIA_CHANNEL_UP     (156 | 0xE400 ) // Channel Increment
 #define KEY_MEDIA_CHANNEL_DOWN   (157 | 0xE400 ) // Channel Decrement
 
-
 #define KEY_MEDIA_SELECT_DISC    (186 | 0xE400 ) // Select Disk
 #define KEY_MEDIA_ENTER_DISC     (187 | 0xE400 ) // Enter Disc
 #define KEY_MEDIA_REPEAT         (188 | 0xE400 ) // Repeat
@@ -109,7 +105,6 @@ extern "C"{
 #define KEY_MEDIA_BALANCE        (225 | 0xE400 ) // Balance
 #define KEY_MEDIA_BASS           (227 | 0xE400 ) // Bass
 /*++++++++++++++++*/
-
 
 #define KEY_MEDIA_PLAY          ( 0xB0 | 0xE400 )
 #define KEY_MEDIA_PAUSE         ( 0xB1 | 0xE400 )
@@ -254,11 +249,9 @@ extern "C"{
 #define KEY_RIGHT_ALT	MODIFIERKEY_RIGHT_ALT
 #define KEY_RIGHT_GUI	MODIFIERKEY_RIGHT_GUI
 
-
 // Everything below this line is not intended for use in "normal" programs.
 // These private symbols populate lookup tables, which are used to translate
 // ascii and UTF8 unicode into keystroke sequences.
-
 
 #ifdef LAYOUT_US_ENGLISH
 
@@ -364,9 +357,6 @@ extern "C"{
 #define ASCII_7F	KEY_BACKSPACE				// 127
 
 #endif // LAYOUT_US_ENGLISH
-
-
-
 
 #ifdef LAYOUT_US_INTERNATIONAL
 
@@ -585,8 +575,6 @@ extern "C"{
 
 #endif // LAYOUT_US_INTERNATIONAL
 
-
-
 #ifdef LAYOUT_GERMAN
 
 #define SHIFT_MASK		0x0040
@@ -800,8 +788,6 @@ extern "C"{
 #define KEYCODE_EXTRA00	KEY_E + ALTGR_MASK			// 20AC €    Euro Sign
 
 #endif // LAYOUT_GERMAN
-
-
 
 #ifdef LAYOUT_GERMAN_MAC
 
@@ -1021,11 +1007,6 @@ extern "C"{
 
 #endif // LAYOUT_GERMAN_MAC
 
-
-
-
-
-
 #ifdef LAYOUT_CANADIAN_FRENCH
 
 #define SHIFT_MASK		0x0040
@@ -1241,8 +1222,6 @@ extern "C"{
 #define ISO_8859_1_FF	DIAERESIS_BITS + KEY_Y			// 255 ÿ     y DIAERESIS
 
 #endif // LAYOUT_CANADIAN_FRENCH
-
-
 
 #ifdef LAYOUT_CANADIAN_MULTILINGUAL
 
@@ -1463,11 +1442,6 @@ extern "C"{
 
 #endif // LAYOUT_CANADIAN_MULTILINGUAL
 
-
-
-
-
-
 #ifdef LAYOUT_UNITED_KINGDOM
 
 #define SHIFT_MASK		0x0040
@@ -1675,8 +1649,6 @@ extern "C"{
 #define KEYCODE_EXTRA00	KEY_4 + ALTGR_MASK			// 20AC €    Euro Sign
 
 #endif // LAYOUT_UNITED_KINGDOM
-
-
 
 #ifdef LAYOUT_FINNISH
 
@@ -1898,12 +1870,6 @@ extern "C"{
 
 #endif // LAYOUT_FINNISH
 
-
-
-
-
-
-
 #ifdef LAYOUT_FRENCH
 
 #define SHIFT_MASK		0x0040
@@ -2119,10 +2085,6 @@ extern "C"{
 #define KEYCODE_EXTRA00	KEY_E + ALTGR_MASK			// 20AC €    Euro Sign
 
 #endif // LAYOUT_FRENCH
-
-
-
-
 
 #ifdef LAYOUT_DANISH
 
@@ -2343,10 +2305,6 @@ extern "C"{
 
 #endif // LAYOUT_DANISH
 
-
-
-
-
 #ifdef LAYOUT_NORWEGIAN
 
 #define SHIFT_MASK		0x0040
@@ -2565,11 +2523,6 @@ extern "C"{
 #define KEYCODE_EXTRA00	KEY_E + ALTGR_MASK			// 20AC €    Euro Sign
 
 #endif // LAYOUT_NORWEGIAN
-
-
-
-
-
 
 #ifdef LAYOUT_SWEDISH
 
@@ -2790,11 +2743,6 @@ extern "C"{
 
 #endif // LAYOUT_SWEDISH
 
-
-
-
-
-
 #ifdef LAYOUT_SPANISH
 
 #define SHIFT_MASK		0x0040
@@ -3013,9 +2961,6 @@ extern "C"{
 #define KEYCODE_EXTRA00	KEY_5 + ALTGR_MASK			// 20AC €    Euro Sign
 
 #endif // LAYOUT_SPANISH
-
-
-
 
 #ifdef LAYOUT_PORTUGUESE
 
@@ -3236,12 +3181,6 @@ extern "C"{
 
 #endif // LAYOUT_PORTUGUESE
 
-
-
-
-
-
-
 #ifdef LAYOUT_ITALIAN
 
 #define SHIFT_MASK		0x40
@@ -3445,9 +3384,6 @@ extern "C"{
 #define ISO_8859_1_FF	0					// 255 ÿ     y DIAERESIS
 
 #endif // LAYOUT_ITALIAN
-
-
-
 
 #ifdef LAYOUT_PORTUGUESE_BRAZILIAN
 
@@ -3663,8 +3599,6 @@ extern "C"{
 #define ISO_8859_1_FF	DIAERESIS_BITS + KEY_Y			// 255 ÿ     y DIAERESIS
 
 #endif // LAYOUT_PORTUGUESE_BRAZILIAN
-
-
 
 #ifdef LAYOUT_FRENCH_BELGIAN
 
@@ -3884,9 +3818,6 @@ extern "C"{
 
 #endif // LAYOUT_FRENCH_BELGIAN
 
-
-
-
 #ifdef LAYOUT_GERMAN_SWISS
 
 #define SHIFT_MASK		0x0040
@@ -4104,9 +4035,6 @@ extern "C"{
 #define KEYCODE_EXTRA00	KEY_E + ALTGR_MASK			// 20AC €    Euro Sign
 
 #endif // LAYOUT_GERMAN_SWISS
-
-
-
 
 #ifdef LAYOUT_FRENCH_SWISS
 
@@ -4326,10 +4254,6 @@ extern "C"{
 
 #endif // LAYOUT_FRENCH_SWISS
 
-
-
-
-
 #ifdef LAYOUT_SPANISH_LATIN_AMERICA
 
 #define SHIFT_MASK		0x0040
@@ -4543,8 +4467,6 @@ extern "C"{
 
 #endif // LAYOUT_SPANISH_LATIN_AMERICA
 
-
-
 #ifdef LAYOUT_IRISH
 
 #define SHIFT_MASK		0x0040
@@ -4757,9 +4679,6 @@ extern "C"{
 #define KEYCODE_EXTRA00	KEY_4 + ALTGR_MASK			// 20AC €    Euro Sign
 
 #endif // LAYOUT_IRISH
-
-
-
 
 #ifdef LAYOUT_ICELANDIC
 
@@ -4979,8 +4898,6 @@ extern "C"{
 #define KEYCODE_EXTRA00	KEY_5 + ALTGR_MASK			// 20AC €    Euro Sign
 
 #endif // LAYOUT_ICELANDIC
-
-
 
 #ifdef LAYOUT_TURKISH
 // http://forum.pjrc.com/threads/18781-Turkish-Language-Support
@@ -5213,8 +5130,6 @@ extern "C"{
 #define KEYCODE_EXTRA06 KEY_SEMICOLON				// 0151 ş    Latin small letter s with cedilla
 
 #endif // LAYOUT_TURKISH
-
-
 
 #ifdef LAYOUT_CZECH
 // http://forum.pjrc.com/threads/24495-Czech-keyboard
@@ -5465,7 +5380,6 @@ extern "C"{
 #define KEYCODE_EXTRA0A	KEY_E + ALTGR_MASK
 
 #endif // LAYOUT_CZECH
-
 
 #ifdef LAYOUT_SERBIAN_LATIN_ONLY
 // http://forum.pjrc.com/threads/27032-Serbian-Keyboard-Layout

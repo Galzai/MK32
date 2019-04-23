@@ -17,7 +17,6 @@
  * Copyright 2018 Gal Zaidenstein.
  */
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -39,8 +38,6 @@
 #include "esp_timer.h"
 #include "esp_sleep.h"
 #include "esp_pm.h"
-
-
 
 //HID Ble functions
 //#include "HID_kbdmousejoystick.h"
@@ -70,77 +67,80 @@ QueueHandle_t espnow_recieve_q;
 bool DEEP_SLEEP = true; // flag to check if we need to go to deep sleep
 
 #ifdef OLED_ENABLE
-		TaskHandle_t xOledTask;
+TaskHandle_t xOledTask;
 #endif
 TaskHandle_t xKeyreportTask;
 
 //Task for continually updating the OLED
-extern "C" void oled_task(void *pvParameters){
+extern "C" void oled_task(void *pvParameters) {
 #ifdef MASTER
 	ble_connected_oled();
 	bool CON_LOG_FLAG = false; // Just because I don't want it to keep logging the same thing a billion times
-	while(1){
-		if(halBLEIsConnected() == 0) {
-			if (CON_LOG_FLAG == false){
-				ESP_LOGI(KEY_REPORT_TAG,"Not connected, waiting for connection ");
+	while (1) {
+		if (halBLEIsConnected() == 0) {
+			if (CON_LOG_FLAG == false) {
+				ESP_LOGI(KEY_REPORT_TAG,
+						"Not connected, waiting for connection ");
 			}
-				waiting_oled();
+			waiting_oled();
 			DEEP_SLEEP = false;
 			CON_LOG_FLAG = true;
-		}else{
-			if(CON_LOG_FLAG==true){
-		ble_connected_oled();
+		} else {
+			if (CON_LOG_FLAG == true) {
+				ble_connected_oled();
 			}
-		update_oled();
-		CON_LOG_FLAG = false;
+			update_oled();
+			CON_LOG_FLAG = false;
 		}
 	}
 #endif
 #ifdef SLAVE
-				while(1){
-					ble_slave_oled();
-				}
+	while(1) {
+		ble_slave_oled();
+	}
 #endif
 }
 
 //How to handle key reports
-extern "C" void key_reports(void *pvParameters)
-{
+extern "C" void key_reports(void *pvParameters) {
 	// Arrays for holding the report at various stages
-	uint8_t past_report[REPORT_LEN]={0};
+	uint8_t past_report[REPORT_LEN] = { 0 };
 	uint8_t report_state[REPORT_LEN];
 
+	while (1) {
+		memcpy(report_state, check_key_state(layouts[current_layout]),
+				sizeof report_state);
+		//Do not send anything if queues are uninitialized
+		if (mouse_q == NULL || keyboard_q == NULL || joystick_q == NULL) {
+			ESP_LOGE(KEY_REPORT_TAG, "queues not initialized");
+			continue;
+		}
 
-	while(1){
-			memcpy(report_state, check_key_state(layouts[current_layout]), sizeof report_state);
-//			ESP_LOGE(KEY_REPORT_TAG,"test1");
-			//Do not send anything if queues are uninitialized
-			if(mouse_q == NULL || keyboard_q == NULL || joystick_q == NULL)
-			{
-				ESP_LOGE(KEY_REPORT_TAG,"queues not initialized");
-				continue;
-			}
+		//Check if the report was modified, if so send it
+		if (memcmp(past_report, report_state, sizeof past_report) != 0) {
+			DEEP_SLEEP = false;
+			memcpy(past_report, report_state, sizeof past_report);
 
-			//Check if the report was modified, if so send it
-			if(memcmp(past_report, report_state, sizeof past_report)!=0){
-				DEEP_SLEEP = false;
-				memcpy(past_report,report_state, sizeof past_report );
-				xQueueSend(keyboard_q,(void*)&report_state, (TickType_t) 0);
-				//vTaskDelay(5/portTICK_PERIOD_MS);
+			if(BLE_EN == 1){
+				xQueueSend(keyboard_q, (void*) &report_state, (TickType_t) 0);
 			}
+			if(input_str_q != NULL){
+				xQueueSend(input_str_q, (void*) &report_state, (TickType_t) 0);
+			}
+		}
 
 	}
 
 }
 
 //Handling rotary encoder
-extern "C" void encoder_report(void *pvParameters){
-	uint8_t encoder_state=0;
-	uint8_t past_encoder_state=0;
+extern "C" void encoder_report(void *pvParameters) {
+	uint8_t encoder_state = 0;
+	uint8_t past_encoder_state = 0;
 
-	while(1){
-		encoder_state=r_encoder_state();
-		if(encoder_state!=past_encoder_state){
+	while (1) {
+		encoder_state = r_encoder_state();
+		if (encoder_state != past_encoder_state) {
 			DEEP_SLEEP = false;
 			r_encoder_command(encoder_state, encoder_map[current_layout]);
 			past_encoder_state = encoder_state;
@@ -150,15 +150,16 @@ extern "C" void encoder_report(void *pvParameters){
 }
 
 //Handling rotary encoder for slave pad
-extern "C" void slave_encoder_report(void *pvParameters){
-	uint8_t encoder_state=0;
-	uint8_t past_encoder_state=0;
+extern "C" void slave_encoder_report(void *pvParameters) {
+	uint8_t encoder_state = 0;
+	uint8_t past_encoder_state = 0;
 
-	while(1){
-		encoder_state=r_encoder_state();
-		if(encoder_state!=past_encoder_state){
+	while (1) {
+		encoder_state = r_encoder_state();
+		if (encoder_state != past_encoder_state) {
 			DEEP_SLEEP = false;
-			xQueueSend(espnow_encoder_send_q,(void*)&encoder_state, (TickType_t) 0);
+			xQueueSend(espnow_encoder_send_q, (void*) &encoder_state,
+					(TickType_t) 0);
 			past_encoder_state = encoder_state;
 		}
 
@@ -166,31 +167,30 @@ extern "C" void slave_encoder_report(void *pvParameters){
 }
 
 //Function for sending out the modified matrix
-extern "C" void slave_scan(void *pvParameters){
+extern "C" void slave_scan(void *pvParameters) {
 
-	uint8_t PAST_MATRIX[MATRIX_ROWS][MATRIX_COLS]={0};
+	uint8_t PAST_MATRIX[MATRIX_ROWS][MATRIX_COLS] = { 0 };
 
-	while(1){
+	while (1) {
 		scan_matrix();
-		if(memcmp(&PAST_MATRIX, &MATRIX_STATE, sizeof MATRIX_STATE)!=0){
+		if (memcmp(&PAST_MATRIX, &MATRIX_STATE, sizeof MATRIX_STATE) != 0) {
 			DEEP_SLEEP = false;
-			memcpy(&PAST_MATRIX, &MATRIX_STATE, sizeof MATRIX_STATE );
-			xQueueSend(espnow_matrix_send_q,(void*)&MATRIX_STATE, (TickType_t) 0);
+			memcpy(&PAST_MATRIX, &MATRIX_STATE, sizeof MATRIX_STATE);
+			xQueueSend(espnow_matrix_send_q, (void*) &MATRIX_STATE,
+					(TickType_t) 0);
 
 		}
 	}
 }
 
 //Update the matrix state via reports recieved by espnow
-extern "C" void espnow_update_matrix(void *pvParameters){
+extern "C" void espnow_update_matrix(void *pvParameters) {
 
-
-	uint8_t CURRENT_MATRIX[MATRIX_ROWS][MATRIX_COLS]={0};
-	while(1){
-		if(xQueueReceive(espnow_recieve_q,&CURRENT_MATRIX,10000))
-		{
+	uint8_t CURRENT_MATRIX[MATRIX_ROWS][MATRIX_COLS] = { 0 };
+	while (1) {
+		if (xQueueReceive(espnow_recieve_q, &CURRENT_MATRIX, 10000)) {
 			DEEP_SLEEP = false;
-			memcpy(&SLAVE_MATRIX_STATE, &CURRENT_MATRIX, sizeof CURRENT_MATRIX );
+			memcpy(&SLAVE_MATRIX_STATE, &CURRENT_MATRIX, sizeof CURRENT_MATRIX);
 		}
 	}
 }
@@ -204,49 +204,47 @@ extern "C" void espnow_update_matrix(void *pvParameters){
  *  wake up on touch on GPIO pin 2
  *  */
 #ifdef SLEEP_MINS
-extern "C" void deep_sleep(void *pvParameters){
+extern "C" void deep_sleep(void *pvParameters) {
 	uint64_t initial_time = esp_timer_get_time(); // notice that timer returns time passed in microseconds!
 	uint64_t current_time_passed = 0;
-	while(1){
+	while (1) {
 
-		current_time_passed=(esp_timer_get_time()-initial_time);
+		current_time_passed = (esp_timer_get_time() - initial_time);
 
-		if(DEEP_SLEEP == false){
-			current_time_passed  = 0;
+		if (DEEP_SLEEP == false) {
+			current_time_passed = 0;
 			initial_time = esp_timer_get_time();
-			DEEP_SLEEP= true;
+			DEEP_SLEEP = true;
 		}
 
-		if(current_time_passed>=1000000*60*SLEEP_MINS){
-			if(DEEP_SLEEP == true){
-				ESP_LOGE(SYSTEM_REPORT_TAG,"going to sleep!");
+		if (current_time_passed >= 1000000 * 60 * SLEEP_MINS) {
+			if (DEEP_SLEEP == true) {
+				ESP_LOGE(SYSTEM_REPORT_TAG, "going to sleep!");
 #ifdef OLED_ENABLE
-				vTaskDelay(20/portTICK_PERIOD_MS);
+				vTaskDelay(20 / portTICK_PERIOD_MS);
 				vTaskSuspend(xOledTask);
 				deinit_oled();
 #endif
 				// wake up esp32 using rtc gpio
 				rtc_matrix_setup();
 				esp_sleep_enable_touchpad_wakeup();
-				esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_PERIPH,ESP_PD_OPTION_ON);
+				esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_PERIPH, ESP_PD_OPTION_ON);
 				esp_deep_sleep_start();
 
 			}
-			if(DEEP_SLEEP == false){
+			if (DEEP_SLEEP == false) {
 				current_time_passed = 0;
 				initial_time = esp_timer_get_time();
-				DEEP_SLEEP= true;
+				DEEP_SLEEP = true;
 			}
 		}
-
 
 	}
 
 }
 #endif
 
-extern "C" void app_main()
-{
+extern "C" void app_main() {
 	//Reset the rtc GPIOS
 	rtc_matrix_deinit();
 
@@ -261,24 +259,24 @@ extern "C" void app_main()
 	// Initialize NVS.
 	ret = nvs_flash_init();
 	if (ret == ESP_ERR_NVS_NO_FREE_PAGES) {
-		ESP_ERROR_CHECK(nvs_flash_erase());
-		ret = nvs_flash_init();
+		ESP_ERROR_CHECK (nvs_flash_erase());ret = nvs_flash_init();
 	}
-	ESP_ERROR_CHECK( ret );
+	ESP_ERROR_CHECK(ret);
 
 	// Read config
 	nvs_handle my_handle;
-	ESP_LOGI("MAIN","loading configuration from NVS");
+	ESP_LOGI("MAIN", "loading configuration from NVS");
 	ret = nvs_open("config_c", NVS_READWRITE, &my_handle);
-	if(ret != ESP_OK) ESP_LOGE("MAIN","error opening NVS");
+	if (ret != ESP_OK)
+		ESP_LOGE("MAIN", "error opening NVS");
 	size_t available_size = MAX_BT_DEVICENAME_LENGTH;
 	strcpy(config.bt_device_name, GATTS_TAG);
-	nvs_get_str (my_handle, "btname", config.bt_device_name, &available_size);
-	if(ret != ESP_OK)
-	{
-		ESP_LOGE("MAIN","error reading NVS - bt name, setting to default");
+	nvs_get_str(my_handle, "btname", config.bt_device_name, &available_size);
+	if (ret != ESP_OK) {
+		ESP_LOGE("MAIN", "error reading NVS - bt name, setting to default");
 		strcpy(config.bt_device_name, GATTS_TAG);
-	} else ESP_LOGI("MAIN","bt device name is: %s",config.bt_device_name);
+	} else
+		ESP_LOGI("MAIN", "bt device name is: %s", config.bt_device_name);
 
 	esp_log_level_set("*", ESP_LOG_INFO);
 
@@ -286,8 +284,8 @@ extern "C" void app_main()
 #ifdef MASTER
 	nvs_load_layouts();
 	//activate keyboard BT stack
-	halBLEInit(1,1,1,0);
-	ESP_LOGI("HIDD","MAIN finished...");
+	halBLEInit(1, 1, 1, 0);
+	ESP_LOGI("HIDD", "MAIN finished...");
 #endif
 
 	//If the device is a slave initialize sending reports to master
@@ -299,51 +297,54 @@ extern "C" void app_main()
 	espnow_send();
 #endif
 
-
-
 	//If the device is a master for split board initialize receiving reports from slave
 #ifdef SPLIT_MASTER
-	espnow_recieve_q = xQueueCreate(32,REPORT_LEN*sizeof(uint8_t));
+	espnow_recieve_q = xQueueCreate(32, REPORT_LEN * sizeof(uint8_t));
 	espnow_recieve();
-	xTaskCreatePinnedToCore(espnow_update_matrix, "ESP-NOW slave matrix state", 4096, NULL, configMAX_PRIORITIES, NULL,1);
-	ESP_LOGI("ESPNOW","initializezd");
+	xTaskCreatePinnedToCore(espnow_update_matrix, "ESP-NOW slave matrix state",
+			4096, NULL, configMAX_PRIORITIES, NULL, 1);
+	ESP_LOGI("ESPNOW", "initializezd");
 
 #endif
-
 
 	//activate encoder functions
 #ifdef	R_ENCODER
 	r_encoder_setup();
-	xTaskCreatePinnedToCore(encoder_report, "encoder report", 4096, NULL, configMAX_PRIORITIES, NULL,1);
-	ESP_LOGI("Encoder","initializezd");
+	xTaskCreatePinnedToCore(encoder_report, "encoder report", 4096, NULL,
+			configMAX_PRIORITIES, NULL, 1);
+	ESP_LOGI("Encoder", "initializezd");
 #endif
 
 	// Start the keyboard Tasks
 	// Create the key scanning task on core 1 (otherwise it will crash)
 #ifdef MASTER
-	xTaskCreatePinnedToCore(key_reports, "key report task", 4096, xKeyreportTask, configMAX_PRIORITIES, NULL,1);
-	ESP_LOGI("Keyboard task","initializezd");
+	BLE_EN = 1;
+	xTaskCreatePinnedToCore(key_reports, "key report task", 4096,
+			xKeyreportTask, configMAX_PRIORITIES, NULL, 1);
+	ESP_LOGI("Keyboard task", "initializezd");
 #endif
 	//activate oled
 #ifdef	OLED_ENABLE
 	init_oled();
-	xTaskCreatePinnedToCore(oled_task, "oled task", 4096, NULL, configMAX_PRIORITIES, &xOledTask,1);
-	ESP_LOGI("Oled","initializezd");
+	xTaskCreatePinnedToCore(oled_task, "oled task", 4096, NULL,
+			configMAX_PRIORITIES, &xOledTask, 1);
+	ESP_LOGI("Oled", "initializezd");
 #endif
 
 #ifdef BATT_STAT
 	init_batt_monitor();
-	ESP_LOGI("Battery monitor","initializezd");
+	ESP_LOGI("Battery monitor", "initializezd");
 #endif
 
 #ifdef SLEEP_MINS
-	xTaskCreatePinnedToCore(deep_sleep, "deep sleep task", 4096, NULL, configMAX_PRIORITIES, NULL,1);
-	ESP_LOGI("Sleep","initializezd");
+	xTaskCreatePinnedToCore(deep_sleep, "deep sleep task", 4096, NULL,
+			configMAX_PRIORITIES, NULL, 1);
+	ESP_LOGI("Sleep", "initializezd");
 #endif
 
 //This is for testing
 	//init_layout_server();
-
+	//input_string();
 
 }
 }

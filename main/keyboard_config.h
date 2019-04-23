@@ -54,7 +54,6 @@
 #define BATT_STAT //define to enable battery monitoring
 #define BATT_PIN ADC1_CHANNEL_7 //gpio pin 35, refer to the esp32 before modifying
 
-
 //deep sleep parameters, mind that reconnecting after deep sleep might take a minute or two
 #define SLEEP_MINS 5 // undefine if you do not need deep sleep, otherwise define number of minutes for deepsleep
 
@@ -72,7 +71,6 @@
 #define REPORT_LEN (MOD_LED_BYTES+MACRO_LEN+MATRIX_ROWS*KEYMAP_COLS) //size of hid reports with NKRO and room for 3 key macro
 #define REPORT_COUNT_BYTES (MATRIX_ROWS*KEYMAP_COLS+MACRO_LEN)
 
-
 #define LAYER_HOLD_MAX_VAL 0x134
 #define LAYER_HOLD_BASE_VAL 0x123
 #define MACRO_BASE_VAL 0x103
@@ -82,7 +80,6 @@
 #define MEDIA_ENCODER 0
 #define MOUSE_ENCODER 1
 #define KEY_ENCODER 2
-
 
 typedef struct config_data {
 	char bt_device_name[MAX_BT_DEVICENAME_LENGTH];
@@ -99,7 +96,6 @@ typedef struct joystick_data {
 	uint16_t buttons2;
 	int16_t hat;
 } joystick_data_t;
-
 
 extern uint8_t current_layout;
 extern uint8_t curr_led;

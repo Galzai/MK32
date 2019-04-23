@@ -11,6 +11,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+#include "plugin_manager.h"
 
 #define DEFAULT_SSID "SSID" //default SSID for WiFi access point
 #define DEFAULT_PASSWORD "PASSWORD" //default password for WiFi access point

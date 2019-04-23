@@ -19,7 +19,7 @@
 
 /** @file
  * @brief This file is a wrapper for the BLE-HID example of Espressif.
-*/
+ */
 #ifndef _HAL_BLE_H_
 #define _HAL_BLE_H_
 
@@ -81,7 +81,6 @@ uint8_t halBLEIsConnected(void);
  * */
 esp_err_t halBLEEnDisable(int onoff);
 
-
 /** @brief Reset the BLE data
  * 
  * Used for slot/config switchers.
@@ -99,6 +98,7 @@ void halBLEReset(uint8_t exceptDevice);
 
 /** @brief Main init function to start HID interface (C interface)
  * @see hid_ble */
-esp_err_t halBLEInit(uint8_t enableKeyboard,uint8_t enableMedia, uint8_t enableMouse, uint8_t enableJoystick);
+esp_err_t halBLEInit(uint8_t enableKeyboard, uint8_t enableMedia,
+		uint8_t enableMouse, uint8_t enableJoystick);
 
 #endif /* _HAL_BLE_H_ */
