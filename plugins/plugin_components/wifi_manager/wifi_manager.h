@@ -8,11 +8,12 @@
 #ifndef WIFI_MANAGER_WIFI_MANAGER_H_
 #define WIFI_MANAGER_WIFI_MANAGER_H_
 
-#include <keyboard_config.h>
+#include "keyboard_config.h"
 #include "tcpip_adapter.h"
 #include "esp_wifi.h"
 #include "esp_wifi_types.h"
 #include "esp_event_loop.h"
+
 
 
 #ifdef __cplusplus
@@ -46,7 +47,7 @@ extern "C" {
  * @brief check if a previous wifi ap is available, if so connect to it.
  * otherwise prompt to enter connection manager
  */
-void wifi_connection_init(void);
+uint8_t wifi_connection_init(void);
 
 /**
  * @brief scan for availabe wifi aps and select one to connect and store to nvs
@@ -57,7 +58,7 @@ void wifi_availble_ap(void);
  * @brief retrieve a wifi ap config by ssid name and pass it to buffer,
  * if no ssid found return NO_SSID_FOUND otherwise returns SSID_FOUND
  */
- uint8_t wifi_retrieve_ap(uint8_t ssid[MAX_AP_SSID_LEN],wifi_sta_config_t *ap_config);
+uint8_t wifi_retrieve_ap(uint8_t ssid[MAX_AP_SSID_LEN],wifi_sta_config_t *ap_config);
 
 /**
  * @brief remove ap from nvs
@@ -69,6 +70,10 @@ void wifi_del_ap(uint8_t ssid[MAX_AP_SSID_LEN]);
  */
 void wifi_store_ap(wifi_sta_config_t ap_config);
 
+/**
+ * @brief disable wifi connection
+ */
+void wifi_connection_deinit(void);
 
 
 #ifdef __cplusplus

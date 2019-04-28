@@ -145,9 +145,7 @@ void espnow_initialize_send(void){
 void espnow_send(void){
 
 	ESP_LOGI(ESP_NOW_TAG,"Initialing ESP-NOW functions for sending data");
-
-	uint8_t array_sample[2+MATRIX_ROWS*MATRIX_COLS];
-	espnow_matrix_send_q = xQueueCreate(32,sizeof(array_sample));
+	espnow_matrix_send_q = xQueueCreate(32,(2+MATRIX_ROWS*MATRIX_COLS)*sizeof(uint8_t));
 #ifdef R_ENCODER_SLAVE
 	r_encoder_setup();
 	espnow_encoder_send_q = xQueueCreate(32,sizeof(uint8_t));

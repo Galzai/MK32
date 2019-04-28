@@ -139,7 +139,6 @@ char* input_string(void) {
 		}
 	}
 	str_buff[i] = 0; // Null terminate
-	printf(str_buff);
 	vQueueDelete(input_str_q);
 	return str_buff;
 }

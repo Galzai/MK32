@@ -22,14 +22,14 @@
 #define SPLIT_MASTER	 // undefine if keyboard is not split and master
 //#define SLAVE	 // undefine if keyboard is master
 
-#define DEBOUNCE 5 //debounce time in ms
+#define DEBOUNCE 7 //debounce time in ms
 
 //Define matrix
 #define KEYPADS 2 // intended in order to create a Multiple keypad split boards
 #define MATRIX_ROWS 4
 #define MATRIX_COLS 6 // For split keyboards, define columns for one side only.
 
-#define LAYERS 2 // number of layers defined
+#define LAYERS 3 // number of layers defined
 
 // Select diode direction
 #define COL2ROW
@@ -71,6 +71,7 @@
 #define REPORT_LEN (MOD_LED_BYTES+MACRO_LEN+MATRIX_ROWS*KEYMAP_COLS) //size of hid reports with NKRO and room for 3 key macro
 #define REPORT_COUNT_BYTES (MATRIX_ROWS*KEYMAP_COLS+MACRO_LEN)
 
+#define PLUGIN_BASE_VAL 0x135
 #define LAYER_HOLD_MAX_VAL 0x134
 #define LAYER_HOLD_BASE_VAL 0x123
 #define MACRO_BASE_VAL 0x103
@@ -84,18 +85,6 @@
 typedef struct config_data {
 	char bt_device_name[MAX_BT_DEVICENAME_LENGTH];
 } config_data_t;
-
-typedef struct joystick_data {
-	uint16_t X;
-	uint16_t Y;
-	uint16_t Z;
-	uint16_t Z_rotate;
-	uint16_t slider_left;
-	uint16_t slider_right;
-	uint16_t buttons1;
-	uint16_t buttons2;
-	int16_t hat;
-} joystick_data_t;
 
 extern uint8_t current_layout;
 extern uint8_t curr_led;

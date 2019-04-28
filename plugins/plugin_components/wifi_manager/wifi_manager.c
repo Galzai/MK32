@@ -5,6 +5,7 @@
 #include "freertos/event_groups.h"
 #include "esp_system.h"
 #include <esp_wifi.h>
+#include "esp_private/wifi.h"
 #include <esp_event.h>
 #include "esp_event_loop.h"
 #include "nvs_flash.h"
@@ -13,6 +14,9 @@
 #include "tcpip_adapter.h"
 #include "lwip/err.h"
 #include "lwip/sys.h"
+
+#define FAILED 0
+#define SUCCESS 1
 
 #include "plugins.h"
 
@@ -381,6 +385,7 @@ void wifi_del_ap(uint8_t ssid[MAX_AP_SSID_LEN]){
 	nvs_close(wifi_nvs_handle);
 
 }
+
 #define EXAMPLE_ESP_MAXIMUM_RETRY  100
 static EventGroupHandle_t s_wifi_event_group;
 /* The event group allows multiple bits for each event, but we only care about one event
@@ -389,51 +394,65 @@ const int WIFI_CONNECTED_BIT = BIT0;
 
 static const char *TAG = "wifi station";
 
+
 static int s_retry_num = 0;
-static esp_err_t event_handler(void *ctx, system_event_t *event)
+
+static void event_handler(void* arg, esp_event_base_t event_base,
+                                int32_t event_id, void* event_data)
 {
-	switch(event->event_id) {
-	case SYSTEM_EVENT_STA_START:
-		esp_wifi_connect();
-		break;
-	case SYSTEM_EVENT_STA_GOT_IP:
-		ESP_LOGI(TAG, "got ip:%s",
-				ip4addr_ntoa(&event->event_info.got_ip.ip_info.ip));
-		s_retry_num = 0;
-		xEventGroupSetBits(s_wifi_event_group, WIFI_CONNECTED_BIT);
-		break;
-	case SYSTEM_EVENT_STA_DISCONNECTED:
-	{
-		if (s_retry_num < EXAMPLE_ESP_MAXIMUM_RETRY) {
-			esp_wifi_connect();
-			xEventGroupClearBits(s_wifi_event_group, WIFI_CONNECTED_BIT);
-			s_retry_num++;
-			ESP_LOGI(TAG,"retry to connect to the AP");
-		}
-		ESP_LOGI(TAG,"connect to the AP fail\n");
-		break;
-	}
-	default:
-		break;
-	}
-	return ESP_OK;
+    if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_START) {
+        esp_wifi_connect();
+    } else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED) {
+        if (s_retry_num < EXAMPLE_ESP_MAXIMUM_RETRY) {
+            esp_wifi_connect();
+            xEventGroupClearBits(s_wifi_event_group, WIFI_CONNECTED_BIT);
+            s_retry_num++;
+            ESP_LOGI(TAG, "retry to connect to the AP");
+        }
+        ESP_LOGI(TAG,"connect to the AP fail");
+    } else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP) {
+        ip_event_got_ip_t* event = (ip_event_got_ip_t*) event_data;
+        ESP_LOGI(TAG, "got ip:%s",
+                 ip4addr_ntoa(&event->ip_info.ip));
+        s_retry_num = 0;
+        xEventGroupSetBits(s_wifi_event_group, WIFI_CONNECTED_BIT);
+    }
 }
 
+// disconnect to a wifi AP
+void wifi_connection_deinit(void){
+
+	ESP_ERROR_CHECK(esp_event_handler_unregister(WIFI_EVENT, ESP_EVENT_ANY_ID, event_handler));
+	ESP_ERROR_CHECK(esp_wifi_disconnect());
+#ifndef SPLIT_MASTER
+	ESP_ERROR_CHECK(esp_wifi_stop());
+	ESP_ERROR_CHECK(esp_wifi_deinit());
+#endif
+#ifdef SPLIT_MASTER
+	wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
+	ESP_ERROR_CHECK(esp_wifi_stop());
+	ESP_ERROR_CHECK(esp_wifi_init(&cfg));
+	ESP_ERROR_CHECK(esp_wifi_start());
+	esp_wifi_set_channel(1, WIFI_SECOND_CHAN_NONE); // Make sure we are on the same channel
+#endif
+	vTaskDelay(250/portTICK_PERIOD_MS);
+
+}
+
+
 // connect to a wifi AP
-void wifi_connection_init(void){
+uint8_t wifi_connection_init(void){
 
 	uint16_t num_records = 0;
 	wifi_ap_record_t* ap_records;
 	wifi_sta_config_t sta_config;
 	tcpip_adapter_ip_info_t ip_info;
-
-
 	;
-
 
 	// if the keyboards does not use esp now we need to init wifi
 #ifndef SPLIT_MASTER
 	tcpip_adapter_init();
+    ESP_ERROR_CHECK(esp_event_loop_create_default());
 	wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
 	ESP_ERROR_CHECK(esp_wifi_init(&cfg));
 	ESP_ERROR_CHECK(esp_wifi_set_storage(WIFI_STORAGE_RAM));
@@ -442,7 +461,7 @@ void wifi_connection_init(void){
 	//esp_wifi_set_mac(ESP_IF_WIFI_STA, master_mac_adr);
 	ESP_ERROR_CHECK(esp_wifi_start());
 #endif
-	//try to connect to the default ap
+
 	s_wifi_event_group = xEventGroupCreate();
 
 	// start scanning for available aps
@@ -459,6 +478,7 @@ void wifi_connection_init(void){
 		if(err != ESP_OK){
 
 			ESP_LOGE(WIFI_TAG, "Error scanning for AP records number : %s", esp_err_to_name(err));
+			return FAILED;
 
 		}else{
 
@@ -483,12 +503,17 @@ void wifi_connection_init(void){
 										.password = DEFAULT_PASSWORD
 								},
 						};
+						//try to connect to the default ap
 						ESP_ERROR_CHECK(esp_wifi_stop());
-						ESP_ERROR_CHECK(esp_event_loop_init(event_handler, NULL) );
+						ESP_ERROR_CHECK(esp_event_handler_register(WIFI_EVENT, ESP_EVENT_ANY_ID, &event_handler, NULL));
 						err = esp_wifi_set_config(ESP_IF_WIFI_STA,&ap_config);
 						ESP_LOGI(WIFI_TAG, "Found default AP %d: %s",ap_record ,ap_records[ap_record].ssid);
-						ESP_ERROR_CHECK(esp_wifi_start());
-						break;
+						err = esp_wifi_start();
+						if(err == ESP_OK){
+							ESP_LOGI(WIFI_TAG, "Success connecting to  AP : %s", ap_records[ap_record].ssid);
+							return SUCCESS;
+						}
+
 					}
 					err = wifi_retrieve_ap(ap_records[ap_record].ssid, &sta_config);
 					if(err == SSID_FOUND){
@@ -496,19 +521,19 @@ void wifi_connection_init(void){
 								.sta = sta_config
 						};
 						ESP_ERROR_CHECK(esp_wifi_stop());
-						ESP_ERROR_CHECK(esp_event_loop_init(event_handler, NULL) );
+						ESP_ERROR_CHECK(esp_event_handler_register(WIFI_EVENT, ESP_EVENT_ANY_ID, &event_handler, NULL));
 						err = esp_wifi_set_config(ESP_IF_WIFI_STA,&ap_config);
 						if(err != ESP_OK){
 							ESP_LOGE(WIFI_TAG, "Error setting AP %s config: %s", sta_config.ssid, esp_err_to_name(err));
 						}else{
 							ESP_LOGI(WIFI_TAG, "Success setting AP %s config ",sta_config.ssid);
-							ESP_ERROR_CHECK(esp_wifi_start());
+							err = esp_wifi_start();
 							if(err != ESP_OK){
 								ESP_LOGE(WIFI_TAG, "Error connecting to %s AP: %s", sta_config.ssid, esp_err_to_name(err));
 							}else{
 								ESP_LOGI(WIFI_TAG, "Success connecting to %s AP config",sta_config.ssid);
 								ESP_LOGI(WIFI_TAG, "IP Address: %s ,Subnet mask: %s Subnet mask: %s",ip4addr_ntoa(&ip_info.ip),ip4addr_ntoa(&ip_info.netmask),ip4addr_ntoa(&ip_info.gw));
-								break;
+								return SUCCESS;
 							}
 						}
 					}
@@ -516,6 +541,7 @@ void wifi_connection_init(void){
 			}
 		}
 	}
+	return FAILED;
 
 
 }

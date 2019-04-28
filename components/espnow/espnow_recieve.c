@@ -22,7 +22,6 @@
 #include <string.h>
 #include <assert.h>
 
-
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
 #include "freertos/timers.h"
@@ -45,12 +44,12 @@
 
 // Queue for received esp-now report
 
-static const uint8_t channel=1;
+static const uint8_t channel = 1;
 //uint8_t master_mac_adr[6]= {0xFF,0xFF,0xFF,0xFF,0xFF,0xFF}; // Will be used in the future for setting a mac address manually
 
-static void wifi_initialize_recieve(void){
+static void wifi_initialize_recieve(void) {
 
-	ESP_LOGI(ESP_NOW_TAG,"Initialing WiFi");
+	ESP_LOGI(ESP_NOW_TAG, "Initialing WiFi");
 	uint8_t slave_mac_adr[6];
 
 	tcpip_adapter_init();
@@ -58,54 +57,53 @@ static void wifi_initialize_recieve(void){
 	wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
 	ESP_ERROR_CHECK(esp_wifi_init(&cfg));
 	ESP_ERROR_CHECK(esp_wifi_set_storage(WIFI_STORAGE_RAM));
-	ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA)) ; // For some reason ESP-NOW only works if all devices are in the same mode
+	ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA)); // For some reason ESP-NOW only works if all devices are in the same mode
 	ESP_ERROR_CHECK(esp_wifi_set_storage(WIFI_STORAGE_RAM));
 	//esp_wifi_set_mac(ESP_IF_WIFI_STA, master_mac_adr);
 	ESP_ERROR_CHECK(esp_wifi_start());
 	esp_wifi_set_channel(channel, WIFI_SECOND_CHAN_NONE); // Make sure we are on the same channel
-	ESP_ERROR_CHECK(esp_wifi_get_mac(ESP_IF_WIFI_STA,slave_mac_adr));
-
+	ESP_ERROR_CHECK(esp_wifi_get_mac(ESP_IF_WIFI_STA, slave_mac_adr));
 
 	//Printout the mac ID (in case we change the starting one)
 	printf("\nDEVICE MAC ADDRESS:[");
-	for(int i=0;i<6; i++)
-	{
+	for (int i = 0; i < 6; i++) {
 		printf("%d:", slave_mac_adr[i]);
 	}
 	printf("]\n");
 }
 
 //ESP-NOW callback upon receiving data
-static void espnow_recv_cb(const uint8_t *mac_addr, const uint8_t *data, int data_len){
-	ESP_LOGI(ESP_NOW_TAG,"Data received!");
-	uint8_t CURRENT_ENCODER[1]={0};
-	uint8_t CURRENT_MATRIX[MATRIX_ROWS][MATRIX_COLS]={0};
+static void espnow_recv_cb(const uint8_t *mac_addr, const uint8_t *data,
+		int data_len) {
+	ESP_LOGI(ESP_NOW_TAG, "Data received!");
+	uint8_t CURRENT_ENCODER[1] = { 0 };
+	uint8_t CURRENT_MATRIX[MATRIX_ROWS][MATRIX_COLS] = { 0 };
 
 	// for key reports
-	if(data_len == MATRIX_ROWS*MATRIX_COLS){
-		memcpy(CURRENT_MATRIX, data, sizeof(CURRENT_MATRIX) );
-		xQueueSend(espnow_recieve_q,(void*)&CURRENT_MATRIX, (TickType_t) 0);
+	if (data_len == MATRIX_ROWS * MATRIX_COLS) {
+		memcpy(CURRENT_MATRIX, data, sizeof(CURRENT_MATRIX));
+		xQueueSend(espnow_recieve_q, (void*) &CURRENT_MATRIX, (TickType_t) 0);
 	}
 
 	// currently for encoder reports
-	if(data_len==1){
-		memcpy(CURRENT_ENCODER, data, sizeof(CURRENT_ENCODER) );
-		r_encoder_command(CURRENT_ENCODER[0], slave_encoder_map[current_layout]);
+	if (data_len == 1) {
+		memcpy(CURRENT_ENCODER, data, sizeof(CURRENT_ENCODER));
+		r_encoder_command(CURRENT_ENCODER[0],
+				slave_encoder_map[current_layout]);
 
 	}
 
 }
 
-
 //Initialize receiving via ESP-NOW
-static void espnow_initialize_recieve(void){
-	ESP_LOGI(ESP_NOW_TAG,"Initialing ESP-NOW");
+static void espnow_initialize_recieve(void) {
+	ESP_LOGI(ESP_NOW_TAG, "Initialing ESP-NOW");
 	esp_now_init();
 	esp_now_register_recv_cb(espnow_recv_cb);
 }
 
-void espnow_recieve(void){
-	ESP_LOGI(ESP_NOW_TAG,"Initialing ESP-NOW functions for receiving data");
+void espnow_recieve(void) {
+	ESP_LOGI(ESP_NOW_TAG, "Initialing ESP-NOW functions for receiving data");
 
 	wifi_initialize_recieve();
 	espnow_initialize_recieve();

@@ -26,7 +26,8 @@
 #include "driver/rtc_io.h"
 #include "keyboard_config.h"
 #include "esp_sleep.h"
-
+#include "esp_log.h"
+#define GPIO_TAG "GPIO"
 /* Define pins, notice that:
  * GPIO6-11 are usually used for SPI flash
  * GPIO34-39 can only be set as input mode and do not have software pullup or pulldown functions.
@@ -90,7 +91,8 @@ void rtc_matrix_setup(void) {
 			rtc_gpio_set_direction(MATRIX_COLS_PINS[col],
 					RTC_GPIO_MODE_INPUT_OUTPUT);
 			rtc_gpio_set_level(MATRIX_COLS_PINS[col], 1);
-			printf("\n%d is level %d", MATRIX_COLS_PINS[col],
+
+			ESP_LOGI(GPIO_TAG,"%d is level %d", MATRIX_COLS_PINS[col],
 					gpio_get_level(MATRIX_COLS_PINS[col]));
 		}
 	}
@@ -108,7 +110,7 @@ void rtc_matrix_setup(void) {
 			rtc_gpio_wakeup_enable(MATRIX_ROWS_PINS[row], GPIO_INTR_HIGH_LEVEL);
 			SET_BIT(rtc_mask, MATRIX_ROWS_PINS[row]);
 
-			printf("\n%d is level %d", MATRIX_ROWS_PINS[row],
+			ESP_LOGI(GPIO_TAG,"%d is level %d", MATRIX_ROWS_PINS[row],
 					gpio_get_level(MATRIX_ROWS_PINS[row]));
 		}
 		esp_sleep_enable_ext1_wakeup(rtc_mask, ESP_EXT1_WAKEUP_ANY_HIGH);
@@ -125,7 +127,8 @@ void matrix_setup(void) {
 		gpio_pad_select_gpio(MATRIX_COLS_PINS[col]);
 		gpio_set_direction(MATRIX_COLS_PINS[col], GPIO_MODE_INPUT_OUTPUT);
 		gpio_set_level(MATRIX_COLS_PINS[col], 0);
-		printf("\n%d is level %d", MATRIX_COLS_PINS[col],
+
+		ESP_LOGI(GPIO_TAG,"%d is level %d", MATRIX_COLS_PINS[col],
 				gpio_get_level(MATRIX_COLS_PINS[col]));
 	}
 
@@ -137,7 +140,7 @@ void matrix_setup(void) {
 		gpio_set_drive_capability(MATRIX_ROWS_PINS[row], GPIO_DRIVE_CAP_0);
 		gpio_set_level(MATRIX_ROWS_PINS[row], 0);
 
-		printf("\n%d is level %d", MATRIX_ROWS_PINS[row],
+		ESP_LOGI(GPIO_TAG,"%d is level %d", MATRIX_ROWS_PINS[row],
 				gpio_get_level(MATRIX_ROWS_PINS[row]));
 	}
 #endif
@@ -148,7 +151,7 @@ void matrix_setup(void) {
 		gpio_pad_select_gpio(MATRIX_ROWS_PINS[row]);
 		gpio_set_direction(MATRIX_ROWS_PINS[row], GPIO_MODE_INPUT_OUTPUT);
 		gpio_set_level(MATRIX_ROWS_PINS[row], 0);
-		printf("\n%d is level %d",MATRIX_ROWS_PINS[row],gpio_get_level(MATRIX_ROWS_PINS[row]));
+		ESP_LOGI(GPIO_TAG,"%d is level %d",MATRIX_ROWS_PINS[row],gpio_get_level(MATRIX_ROWS_PINS[row]));
 	}
 
 	// Initializing columns
@@ -159,7 +162,7 @@ void matrix_setup(void) {
 		gpio_set_drive_capability(MATRIX_COLS_PINS[col],GPIO_DRIVE_CAP_0);
 		gpio_set_level(MATRIX_COLS_PINS[col], 0);
 
-		printf("\n%d is level %d",MATRIX_COLS_PINS[col],gpio_get_level(MATRIX_COLS_PINS[col]));
+		ESP_LOGI(GPIO_TAG,"%d is level %d",MATRIX_COLS_PINS[col],gpio_get_level(MATRIX_COLS_PINS[col]));
 	}
 #endif
 }

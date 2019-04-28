@@ -11,6 +11,7 @@
 #include "esp_wifi.h"
 #include "esp_system.h"
 #include "esp_event.h"
+#include "esp_log.h"
 #include "esp_event_loop.h"
 #include "nvs_flash.h"
 #include "driver/gpio.h"
@@ -23,6 +24,7 @@
 #include "string.h"
 
 #include "cJSON.h"
+#define LAYOUT_TAG "Layout server"
 
 #define delay(ms) (vTaskDelay(ms/portTICK_RATE_MS))
 char* json_unformatted;
@@ -50,8 +52,7 @@ const static char http_index_hml[] = "<!DOCTYPE html>"
 #include "lwip/api.h"
 
 
-static void
-http_server_netconn_serve(struct netconn *conn)
+static void http_server_netconn_serve(struct netconn *conn)
 {
   struct netbuf *inbuf;
   char *buf;
@@ -109,8 +110,9 @@ http_server_netconn_serve(struct netconn *conn)
   netbuf_delete(inbuf);
 }
 
-static void http_server(void *pvParameters)
+void http_server(void *pvParameters)
 {
+  ESP_LOGI(LAYOUT_TAG, "Starting webserver");
   struct netconn *conn, *newconn;
   err_t err;
   conn = netconn_new(NETCONN_TCP);
@@ -125,20 +127,8 @@ static void http_server(void *pvParameters)
    } while(err == ERR_OK);
    netconn_close(conn);
    netconn_delete(conn);
-}
-
-
-
-
-//Initialize server for adding layouts
-void init_layout_server(void){
-
-
-	wifi_connection_init();
-//	xTaskCreate(&generate_json, "json", 2048, NULL, 5, NULL);
-	xTaskCreate(&http_server, "http_server", 2048, NULL, 5, NULL);
-;
-
-
+   ESP_LOGI(LAYOUT_TAG, "Webserver closed");
 
 }
+
+

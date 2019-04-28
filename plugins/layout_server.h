@@ -14,6 +14,7 @@ extern "C" {
 
 #include "plugin_manager.h"
 
+uint8_t killServer;
 
 #define OPENSSL_EXAMPLE_TASK_NAME        "openssl_example"
 #define OPENSSL_EXAMPLE_TASK_STACK_WORDS 10240
@@ -24,7 +25,7 @@ extern "C" {
 #define OPENSSL_EXAMPLE_LOCAL_TCP_PORT     443
 
 //Initialize the layout server
-void init_layout_server(void);
+void http_server(void * pvParameters);
 
 #ifdef __cplusplus
 }

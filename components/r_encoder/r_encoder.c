@@ -117,7 +117,7 @@ void r_encoder_command(uint8_t command, uint16_t encoder_commands[4]){
 			xQueueSend(keyboard_q,(void*)&key_state, (TickType_t) 0);
 			break;
 	}
-	vTaskDelay(3*portTICK_PERIOD_MS);
+	vTaskDelay(5/portTICK_PERIOD_MS);
 }
 //Setting Pulse counter and encoder button
 void r_encoder_setup(void){
@@ -169,10 +169,10 @@ uint8_t r_encoder_state(void){
 	uint8_t EncoderState = 0x00;
 	int16_t EncoderCount;
 	pcnt_get_counter_value(PCNT_UNIT_0, &EncoderCount);
-	if(EncoderCount>PastEncoderCount){
+	if(EncoderCount > PastEncoderCount){
 		EncoderState = 1;
 	}
-	if(EncoderCount<PastEncoderCount){
+	if(EncoderCount < PastEncoderCount){
 		EncoderState = 2;
 	}
 #ifdef ENCODER_S_PIN
@@ -180,7 +180,7 @@ uint8_t r_encoder_state(void){
 		EncoderState+= 4;
 	}
 #endif
-	PastEncoderCount=EncoderCount;
+	PastEncoderCount = EncoderCount;
 	return EncoderState;
 
 }

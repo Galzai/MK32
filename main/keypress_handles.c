@@ -27,6 +27,7 @@
 #include "hal_ble.h"
 #include "oled_tasks.h"
 #include "nvs_keymaps.h"
+#include "plugin_manager.h"
 
 #define KEY_PRESS_TAG "KEY_PRESS"
 
@@ -185,6 +186,12 @@ uint8_t *check_key_state(uint16_t **keymap) {
 				led_status = check_led_status(keycode);
 				if (matrix_state[row][col - MATRIX_COLS * pad] == 1) {
 
+
+					//checking for function
+					if (keycode >= PLUGIN_BASE_VAL){
+						plugin_launcher(keycode);
+						continue;
+					}
 					//checking for layer hold
 					if ((keycode >= LAYER_HOLD_BASE_VAL)
 							&& (keycode <= LAYER_HOLD_MAX_VAL)
