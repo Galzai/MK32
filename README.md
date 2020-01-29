@@ -1,5 +1,5 @@
 # MK32 - Simple BLE keyboard for ESP32
-Note: Currently tested and working on esp-idf v4.0.
+Note: Currently tested and working on esp-idf v4.0.  
 MK32 is a BLE keyboard firmware for ESP32 Microcontrollers,designed to be relativley easily customizable.  
 Please refer to the [MK32 Wiki page](https://github.com/Galzai/MK32/wiki) for information about building your own keyboard.
 Please make sure esp-idf is up-to-date before building and flashing.
