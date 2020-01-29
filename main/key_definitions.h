@@ -168,6 +168,9 @@
 #define KC_LWIN KC_LGUI
 #define KC_RCMD KC_RGUI
 #define KC_RWIN KC_RGUI
+
+/* Misc key aliases*/
+#define KC_NONE KC_UNDEFINED
 // USB HID Keyboard/Keypad Usage(0x07)
 enum hid_keyboard_keypad_usage {
 	KC_NO = 0x00,

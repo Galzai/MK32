@@ -194,13 +194,11 @@ uint8_t *check_key_state(uint16_t **keymap) {
 					}
 					//checking for layer hold
 					if ((keycode >= LAYER_HOLD_BASE_VAL)
-							&& (keycode <= LAYER_HOLD_MAX_VAL)
-							&& (layer_hold_flag == 0)) {
-						prev_layout = current_layout;
+							&& (keycode <= LAYER_HOLD_MAX_VAL)) {
 						if (layer_hold_flag == 0) {
+							prev_layout = current_layout;
 							current_layout = (keycode - LAYER_HOLD_BASE_VAL);
 							layer_hold_flag = 1;
-						}
 #ifdef OLED_ENABLE
 						xQueueSend(layer_recieve_q, &current_layout,
 								(TickType_t) 0);
@@ -208,6 +206,8 @@ uint8_t *check_key_state(uint16_t **keymap) {
 						ESP_LOGI(KEY_PRESS_TAG,
 								"Layer modified!, Current layer: %d ",
 								current_layout);
+						}
+
 						continue;
 
 					}

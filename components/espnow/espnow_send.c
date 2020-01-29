@@ -46,8 +46,9 @@
 QueueHandle_t espnow_matrix_send_q;
 QueueHandle_t espnow_encoder_send_q;
 //Mac adress of the main device (only mac address needed for ESP-NOW)
-static uint8_t master_mac_adr[6]= {0x30,0xAE,0xA4,0x5D,0xBE,0x54};
+static uint8_t master_mac_adr[6]= {0x80,0x7d,0x3a,0xba,0x26,0x88};
 
+uint8_t channel = 10;
 static esp_now_peer_info_t Peer;
 static esp_now_peer_info_t *pPeer=&Peer;
 
@@ -66,7 +67,7 @@ void wifi_initialize_send(void){
 	ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA)) ; // For some reason ESP-NOW only works if all devices are in the same mode
 	ESP_ERROR_CHECK(esp_wifi_set_storage(WIFI_STORAGE_RAM));
 	ESP_ERROR_CHECK(esp_wifi_start());
-	ESP_ERROR_CHECK( esp_wifi_set_channel(1, 0) ); // Make sure we are on the same channel
+	ESP_ERROR_CHECK(esp_wifi_set_channel(channel, 0) ); // Make sure we are on the same channel
 	ESP_ERROR_CHECK(esp_wifi_get_mac(ESP_IF_WIFI_STA,slave_mac_adr));
 
 	//Printout the mac ID (in case we change the starting one)
@@ -88,7 +89,7 @@ void espnow_send_cb(const uint8_t *mac_addr, esp_now_send_status_t status){
 	break;
 
 	case(ESP_NOW_SEND_FAIL):
-		ESP_LOGI(ESP_NOW_TAG,"Data not Sent");
+		ESP_LOGI(ESP_NOW_TAG,"Data not Sent, trying a different channel");
 	break;
 
 	break;
@@ -131,9 +132,9 @@ void espnow_initialize_send(void){
 
 	//We need to assign a peer for each pad, will be improved for multiple pad functionality in the future.
 
-	pPeer->channel=1;
+	pPeer->channel = channel;
 	memcpy(pPeer->peer_addr,master_mac_adr,6);
-	pPeer->ifidx=ESP_IF_WIFI_STA;
+	pPeer->ifidx = ESP_IF_WIFI_STA;
 	pPeer->encrypt = 0;
 	esp_now_add_peer(pPeer);
 

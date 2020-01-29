@@ -50,8 +50,6 @@
 #include "espnow_recieve.h"
 #include "espnow_send.h"
 #include "r_encoder.h"
-#include "oled_tasks.h"
-#include "oled_tasks.h"
 #include "battery_monitor.h"
 #include "nvs_funcs.h"
 #include "nvs_keymaps.h"
@@ -325,7 +323,7 @@ extern "C" void app_main() {
 #endif
 	//activate oled
 #ifdef	OLED_ENABLE
-	init_oled();
+	init_oled(ROTATION);
 	xTaskCreatePinnedToCore(oled_task, "oled task", 4096, NULL,
 			configMAX_PRIORITIES, &xOledTask, 1);
 	ESP_LOGI("Oled", "initializezd");

@@ -12,14 +12,22 @@
 #include <freertos/event_groups.h>
 #include <freertos/queue.h>
 #include <esp_log.h>
+#include "u8g2.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+//rotation defines
+#define LANDSCAPE U8G2_R0
+#define DEG90 U8G2_R1
+#define DEG180 U8G2_R2
+#define DEG270 U8G2_R3
+
 /** @brief Setup the oled screen
+ * @param rotation - Set rotation
  * */
-void init_oled(void );
+void init_oled(const u8g2_cb_t *rotation);
 
 /** @brief deinitialize the oled screen
  * */

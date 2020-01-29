@@ -541,6 +541,10 @@ uint8_t wifi_connection_init(void){
 			}
 		}
 	}
+#ifdef SPLIT_MASTER
+	ESP_ERROR_CHECK(esp_event_handler_unregister(WIFI_EVENT, ESP_EVENT_ANY_ID, event_handler));
+	esp_wifi_start();
+#endif
 	return FAILED;
 
 

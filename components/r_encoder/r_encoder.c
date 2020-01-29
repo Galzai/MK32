@@ -103,21 +103,21 @@ void r_encoder_command(uint8_t command, uint16_t encoder_commands[4]){
 				case KC_MS_WH_DOWN:
 					mouse_state[3]=-20;
 					break;
-					}
 				}
 			}
-			xQueueSend(mouse_q,(void*)&mouse_state, (TickType_t) 0);
-			break;
+		}
+		xQueueSend(mouse_q,(void*)&mouse_state, (TickType_t) 0);
+		break;
 
-		case KEY_ENCODER:
-			if(command>=4){
-				command=3;
-			}
-			key_state[2]=encoder_commands[command];
-			xQueueSend(keyboard_q,(void*)&key_state, (TickType_t) 0);
-			break;
+	case KEY_ENCODER:
+		if(command>=4){
+			command=3;
+		}
+		key_state[2] = encoder_commands[command];
+		xQueueSend(keyboard_q,(void*)&key_state, (TickType_t) 0);
+		break;
 	}
-	vTaskDelay(5/portTICK_PERIOD_MS);
+	vTaskDelay(5 / portTICK_PERIOD_MS);
 }
 //Setting Pulse counter and encoder button
 void r_encoder_setup(void){
@@ -148,7 +148,7 @@ void r_encoder_setup(void){
 	pcnt_filter_enable(PCNT_UNIT_0);
 
 	gpio_set_direction(ENCODER_A_PIN,GPIO_MODE_INPUT);
-	gpio_set_pull_mode(ENCODER_A_PIN,GPIO_FLOATING);
+	gpio_set_pull_mode(ENCODER_A_PIN,GPIO_PULLUP_ONLY);
 	gpio_set_direction(ENCODER_B_PIN,GPIO_MODE_INPUT);
 	gpio_set_pull_mode(ENCODER_B_PIN,GPIO_FLOATING);
 

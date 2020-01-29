@@ -33,10 +33,10 @@
  * GPIO34-39 can only be set as input mode and do not have software pullup or pulldown functions.
  * GPIOS 0,2,4,12-15,25-27,32-39 Can be used as RTC GPIOS as well (please read about power management in ReadMe)
  */
-const gpio_num_t MATRIX_ROWS_PINS[] = { GPIO_NUM_0, GPIO_NUM_2, GPIO_NUM_4,
-		GPIO_NUM_12, GPIO_NUM_13, GPIO_NUM_14 };
-const gpio_num_t MATRIX_COLS_PINS[] = { GPIO_NUM_15, GPIO_NUM_25, GPIO_NUM_26,
-		GPIO_NUM_27, GPIO_NUM_32, GPIO_NUM_33 };
+const gpio_num_t MATRIX_ROWS_PINS[] = { GPIO_NUM_0, GPIO_NUM_4, GPIO_NUM_5,
+		GPIO_NUM_12 };
+const gpio_num_t MATRIX_COLS_PINS[] = { GPIO_NUM_13, GPIO_NUM_14, GPIO_NUM_15,
+		GPIO_NUM_16, GPIO_NUM_17, GPIO_NUM_18 };
 
 // matrix states
 uint8_t MATRIX_STATE[MATRIX_ROWS][MATRIX_COLS] = { 0 };
@@ -155,7 +155,7 @@ void matrix_setup(void) {
 	}
 
 	// Initializing columns
-	for(uint8_t col=0; col < MATRIX_COLS; col++) {
+	for(uint8_t col=0; col < MATRIX_ROWS; col++) {
 
 		gpio_pad_select_gpio(MATRIX_COLS_PINS[col]);
 		gpio_set_direction(MATRIX_COLS_PINS[col], GPIO_MODE_INPUT_OUTPUT);
@@ -201,7 +201,7 @@ void scan_matrix(void) {
 
 		for(uint8_t col=0; col <MATRIX_COLS; col++) {
 
-			curState = gpio_get_level(MATRIX_COLS_PINS[col]);
+			curState = gpio_get_level(MATRIX_ROWS_PINS[row]);
 			if( PREV_MATRIX_STATE[row][col] != curState) {
 				DEBOUNCE_MATRIX[row][col] = millis();
 			}
