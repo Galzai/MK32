@@ -13,6 +13,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/event_groups.h"
+#include "oled_tasks.h"
 
 #define MODULE_ID "LOLIN 32"
 #define GATTS_TAG "MK32 V3.0" // The device's name

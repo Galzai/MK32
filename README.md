@@ -1,4 +1,5 @@
-# MK32 - Simple BLE keyboard for ESP32  
+# MK32 - Simple BLE keyboard for ESP32
+Note: Currently tested and working on esp-idf v4.0
 MK32 is a BLE keyboard firmware for ESP32 Microcontrollers,designed to be relativley easily customizable.  
 Please refer to the [MK32 Wiki page](https://github.com/Galzai/MK32/wiki) for information about building your own keyboard.
 Please make sure esp-idf is up-to-date before building and flashing.
@@ -16,11 +17,13 @@ Please make sure esp-idf is up-to-date before building and flashing.
 - Rotary Encoders (With customizable encoder commands)
 - Battery Monitoring
 - Power Management
+- Basic plugin support
 
 ## To-do:
+- Update esp-idf version to v4.1.
 - Plugin API support(Implemented):
 	-Currently only one plugin can run at a time (to modify).
-- More than 2 pads with espnow (currently supports 2 pads).
+- More than 2 pads with espnow (currently supports 2 pads) - Optional.
 - Connection switching.
 - Modify keymap via webserver:  
 	* Functions for storing (and reading) AP data on flash complete.  
@@ -29,5 +32,5 @@ Please make sure esp-idf is up-to-date before building and flashing.
 - Wifi manager:   
 	* Add plugin for adding AP.  
 	* Functions for storing (and reading) AP from flash done.  
-	* ESPNOW does not work if wifi AP is not on the same channel (Problematic for ESPNOW Based split boards).  
-- Security (?)
+	* ESPNOW does not work if wifi AP is not on the same channel (Problematic for ESPNOW Based split boards).   
+
