@@ -23,13 +23,14 @@
 #define SPLIT_MASTER	 // undefine if keyboard is not split and master
 //#define SLAVE	 // undefine if keyboard is master
 
-#define DEBOUNCE 7 //debounce time in ms
+#define DEBOUNCE 4 //debounce time in ms
 
 //Define matrix
 #define KEYPADS 2 // intended in order to create a Multiple keypad split boards
 #define MATRIX_ROWS 6
 #define MATRIX_COLS 6 // For split keyboards, define columns for one side only.
 
+//#define NKRO // does not work on Android and iOS!,  we can get 18KRO on those
 #define LAYERS 3 // number of layers defined
 
 // Select diode direction

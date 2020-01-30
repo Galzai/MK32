@@ -18,6 +18,8 @@
 #include "esp_gatt_defs.h"
 #include "esp_gap_ble_api.h"
 #include "hid_dev.h"
+#include "esp_gatt_common_api.h"
+#include "esp_gattc_api.h"
 
 typedef enum {
 	ESP_HIDD_EVENT_REG_FINISH = 0,

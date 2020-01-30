@@ -15,7 +15,7 @@
 #include "hidd_le_prf_int.h"
 #include <string.h>
 #include "esp_log.h"
-
+#include "hid_dev.h"
 /// characteristic presentation information
 struct prf_char_pres_fmt {
 	/// Unit (The Unit is a UUID)
@@ -527,9 +527,12 @@ static esp_gatts_attr_db_t hidd_le_gatt_db[HIDD_LE_IDX_NB] = {
 
 static void hid_add_id_tbl(void);
 
+
 void esp_hidd_prf_cb_hdl(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if,
 		esp_ble_gatts_cb_param_t *param) {
+
 	switch (event) {
+
 	case ESP_GATTS_REG_EVT: {
 		esp_ble_gap_config_local_icon(ESP_BLE_APPEARANCE_GENERIC_HID);
 		esp_hidd_cb_param_t hidd_param;
@@ -551,15 +554,17 @@ void esp_hidd_prf_cb_hdl(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if,
 
 		break;
 	}
-	case ESP_GATTS_CONF_EVT: {
+	case ESP_GATTS_CONF_EVT:
 		break;
-	}
+
 	case ESP_GATTS_CREATE_EVT:
 		break;
+
 	case ESP_GATTS_CONNECT_EVT: {
 		esp_hidd_cb_param_t cb_param = { 0 };
 		ESP_LOGI(HID_LE_PRF_TAG, "HID connection establish, conn_id = %x",
 				param->connect.conn_id);
+
 		memcpy(cb_param.connect.remote_bda, param->connect.remote_bda,
 				sizeof(esp_bd_addr_t));
 		cb_param.connect.conn_id = param->connect.conn_id;
@@ -568,9 +573,14 @@ void esp_hidd_prf_cb_hdl(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if,
 				ESP_BLE_SEC_ENCRYPT_NO_MITM);
 		if (hidd_le_env.hidd_cb != NULL) {
 			(hidd_le_env.hidd_cb)(ESP_HIDD_EVENT_BLE_CONNECT, &cb_param);
+
 		}
+
+
+
 		break;
 	}
+
 	case ESP_GATTS_DISCONNECT_EVT: {
 		if (hidd_le_env.hidd_cb != NULL) {
 			(hidd_le_env.hidd_cb)(ESP_HIDD_EVENT_BLE_DISCONNECT, NULL);
@@ -673,6 +683,8 @@ static void gatts_event_handler(esp_gatts_cb_event_t event,
 	if (event == ESP_GATTS_REG_EVT) {
 		if (param->reg.status == ESP_GATT_OK) {
 			heart_rate_profile_tab[PROFILE_APP_IDX].gatts_if = gatts_if;
+
+
 		} else {
 			ESP_LOGI(HID_LE_PRF_TAG, "Reg app failed, app_id %04x, status %d\n",
 					param->reg.app_id, param->reg.status);

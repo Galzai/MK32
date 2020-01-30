@@ -55,7 +55,7 @@
 #include "nvs_keymaps.h"
 #define KEY_REPORT_TAG "KEY_REPORT"
 #define SYSTEM_REPORT_TAG "KEY_REPORT"
-
+#define TRUNC_SIZE 20
 //plugin functions
 #include "plugins.h"
 
@@ -105,9 +105,12 @@ extern "C" void key_reports(void *pvParameters) {
 	uint8_t past_report[REPORT_LEN] = { 0 };
 	uint8_t report_state[REPORT_LEN];
 
+
+
 	while (1) {
 		memcpy(report_state, check_key_state(layouts[current_layout]),
 				sizeof report_state);
+
 		//Do not send anything if queues are uninitialized
 		if (mouse_q == NULL || keyboard_q == NULL || joystick_q == NULL) {
 			ESP_LOGE(KEY_REPORT_TAG, "queues not initialized");
@@ -117,13 +120,34 @@ extern "C" void key_reports(void *pvParameters) {
 		//Check if the report was modified, if so send it
 		if (memcmp(past_report, report_state, sizeof past_report) != 0) {
 			DEEP_SLEEP = false;
+			void* pReport;
 			memcpy(past_report, report_state, sizeof past_report);
 
+#ifndef NKRO
+			uint8_t trunc_report[REPORT_LEN] = {0};
+			trunc_report[0] = report_state[0];
+			trunc_report[1] = report_state[1];
+
+			uint16_t cur_index = 2;
+			//Phone's mtu size is usuaully limited to 20 bytes
+			for(uint16_t i = 2; i < REPORT_LEN && cur_index < TRUNC_SIZE; ++i){
+				if(report_state[i] != 0){
+					trunc_report[cur_index] = report_state[i];
+					++cur_index;
+				}
+			}
+
+			pReport = (void *) &trunc_report;
+#endif
+#ifdef NKRO
+			pReport = (void *) &report_state;
+#endif
+
 			if(BLE_EN == 1){
-				xQueueSend(keyboard_q, (void*) &report_state, (TickType_t) 0);
+				xQueueSend(keyboard_q, pReport, (TickType_t) 0);
 			}
 			if(input_str_q != NULL){
-				xQueueSend(input_str_q, (void*) &report_state, (TickType_t) 0);
+				xQueueSend(input_str_q, pReport, (TickType_t) 0);
 			}
 		}
 

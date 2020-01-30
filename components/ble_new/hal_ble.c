@@ -24,7 +24,7 @@
 #include "hal_ble.h"
 
 #define LOG_TAG "hal_ble"
-
+#define MAX_MTU 517 // Max possible mtu size
 /** @brief Set a global log limit for this file */
 #define LOG_LEVEL_BLE ESP_LOG_INFO
 
