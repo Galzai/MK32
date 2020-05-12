@@ -2,7 +2,7 @@
 Note: Currently tested and working on esp-idf v4.0.  
 MK32 is a BLE keyboard firmware for ESP32 Microcontrollers,designed to be relativley easily customizable.  
 Please refer to the [MK32 Wiki page](https://github.com/Galzai/MK32/wiki) for information about building your own keyboard.
-Please make sure esp-idf is up-to-date before building and flashing.
+Also note that this repository is not heavily maintained.
 
 ### Many thanks to:
 - Benjamin Aigner for his work on implementing HID over BLE on the ESP32: https://github.com/asterics/esp32_mouse_keyboard.
@@ -20,6 +20,7 @@ Please make sure esp-idf is up-to-date before building and flashing.
 - Basic plugin support
 
 ## To-do:
+- Refactor some bad coding habits (magic words etc, sorry I started this project when I had 0 experience!). 
 - Update esp-idf version to v4.1.
 - Plugin API support(Implemented):  
 	* Currently only one plugin can run at a time (to modify).
