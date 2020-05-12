@@ -20,7 +20,7 @@ Also note that this repository is not heavily maintained.
 - Basic plugin support
 
 ## To-do:
-- Refactor some bad coding habits (magic words etc, sorry I started this project when I had 0 experience!). 
+- Refactor some bad coding habits (magic numbers etc, sorry I started this project when I had 0 experience!). 
 - Update esp-idf version to v4.1.
 - Plugin API support(Implemented):  
 	* Currently only one plugin can run at a time (to modify).
