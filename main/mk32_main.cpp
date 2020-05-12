@@ -53,9 +53,12 @@
 #include "battery_monitor.h"
 #include "nvs_funcs.h"
 #include "nvs_keymaps.h"
+
 #define KEY_REPORT_TAG "KEY_REPORT"
 #define SYSTEM_REPORT_TAG "KEY_REPORT"
 #define TRUNC_SIZE 20
+#define USEC_TO_SEC 1000000
+#define SEC_TO_MIN 60
 //plugin functions
 #include "plugins.h"
 
@@ -239,7 +242,7 @@ extern "C" void deep_sleep(void *pvParameters) {
 			DEEP_SLEEP = true;
 		}
 
-		if (current_time_passed >= 1000000 * 60 * SLEEP_MINS) {
+		if (((double)current_time_passed/USEC_TO_SEC) >= (double)  (SEC_TO_MIN * SLEEP_MINS)) {
 			if (DEEP_SLEEP == true) {
 				ESP_LOGE(SYSTEM_REPORT_TAG, "going to sleep!");
 #ifdef OLED_ENABLE

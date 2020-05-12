@@ -45,8 +45,8 @@
 #define ENCODER_S_PIN GPIO_NUM_16// encoder switch pin
 
 //OLED Parameters
-//#define OLED_ENABLE //undefine if no oled is used
-#define ROTATION DEG90
+#define OLED_ENABLE //undefine if no oled is used
+#define ROTATION DEG270
 #define OLED_SDA_PIN GPIO_NUM_21
 #define OLED_SCL_PIN GPIO_NUM_22
 
@@ -58,7 +58,7 @@
 #define BATT_PIN ADC1_CHANNEL_7 //gpio pin 35, refer to the esp32 before modifying
 
 //deep sleep parameters, mind that reconnecting after deep sleep might take a minute or two
-#define SLEEP_MINS 5 // undefine if you do not need deep sleep, otherwise define number of minutes for deepsleep
+#define SLEEP_MINS 45 // undefine if you do not need deep sleep, otherwise define number of minutes for deepsleep
 
 /*
  *---------------------------- Everything below here should not be modified for standard usage----------------------

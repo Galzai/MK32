@@ -226,7 +226,8 @@ void ble_slave_oled(void) {
 
 //Waiting for connecting animation
 void waiting_oled(void) {
-	char waiting_conn[25] = "Waiting for connection";
+	char waiting[] = "Waiting for ";
+	char conn[] = "connection";
 
 #ifdef BATT_STAT
 	battery_percent = get_battery_level();
@@ -253,10 +254,11 @@ void waiting_oled(void) {
 	}
 
 	for (int i = 0; i < 3; i++) {
-		u8g2_DrawStr(&u8g2, 0, 26, waiting_conn);
+		u8g2_DrawStr(&u8g2, 0, 26, waiting);
+		u8g2_DrawStr(&u8g2, 0, 40, conn);
 		u8g2_SendBuffer(&u8g2);
 		vTaskDelay(100 / portTICK_PERIOD_MS);
-		strcat(waiting_conn, ".");
+		strcat(conn, ".");
 	}
 
 }

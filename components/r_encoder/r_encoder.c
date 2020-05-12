@@ -32,9 +32,9 @@ int PastEncoderCount=0;
 //How to process encoder activity
 void r_encoder_command(uint8_t command, uint16_t encoder_commands[4]){
 	uint8_t type = encoder_commands[0];
-	uint8_t media_state[2]={0};
-	uint8_t mouse_state[5]={0};
-	uint8_t key_state[REPORT_LEN]={0};
+	uint8_t media_state[2] = {0};
+	uint8_t mouse_state[5] = {0};
+	uint8_t key_state[REPORT_LEN] = {0};
 
 	switch(type){
 	case MEDIA_ENCODER:
@@ -66,42 +66,42 @@ void r_encoder_command(uint8_t command, uint16_t encoder_commands[4]){
 		break;
 
 	case MOUSE_ENCODER:
-		mouse_state[0]=0;
-		mouse_state[1]=0;
-		mouse_state[2]=0;
-		mouse_state[3]=0;
-		for(uint8_t i=0;i<3;i++){
+		mouse_state[0] = 0;
+		mouse_state[1] = 0;
+		mouse_state[2] = 0;
+		mouse_state[3] = 0;
+		for(uint8_t i = 0;i < 3; i++){
 			if((CHECK_BIT(command,i)) != 0){
-				switch(encoder_commands[i+1]){
+				switch(encoder_commands[i + 1]){
 				case KC_MS_UP :
-					mouse_state[2]=15;
+					mouse_state[2] = 15;
 					break;
 
 				case KC_MS_DOWN:
-					mouse_state[2]=-15;
+					mouse_state[2] = -15;
 					break;
 
 				case KC_MS_LEFT:
-					mouse_state[1]=-15;
+					mouse_state[1] = -15;
 					break;
 
 				case KC_MS_RIGHT:
-					mouse_state[1]=15;
+					mouse_state[1] = 15;
 					break;
 
 				case KC_MS_BTN1:
-					mouse_state[0]=1;
+					mouse_state[0] = 1;
 					break;
 
 				case KC_MS_BTN2:
-					mouse_state[0]=2;
+					mouse_state[0] = 2;
 					break;
 
 				case KC_MS_WH_UP:
-					mouse_state[3]=20;
+					mouse_state[3] = 1;
 					break;
 				case KC_MS_WH_DOWN:
-					mouse_state[3]=-20;
+					mouse_state[3] = -1;
 					break;
 				}
 			}
@@ -110,8 +110,8 @@ void r_encoder_command(uint8_t command, uint16_t encoder_commands[4]){
 		break;
 
 	case KEY_ENCODER:
-		if(command>=4){
-			command=3;
+		if(command >= 4){
+			command = 3;
 		}
 		key_state[2] = encoder_commands[command];
 		xQueueSend(keyboard_q,(void*)&key_state, (TickType_t) 0);
