@@ -16,6 +16,7 @@
 #include <string.h>
 #include "esp_log.h"
 #include "hid_dev.h"
+#include "battery_monitor.h"
 /// characteristic presentation information
 struct prf_char_pres_fmt {
 	/// Unit (The Unit is a UUID)
@@ -185,6 +186,8 @@ enum {
 	BAS_IDX_NB,
 };
 
+static uint16_t battery_table[BAS_IDX_NB];
+
 #define HI_UINT16(a) (((a) >> 8) & 0xFF)
 #define LO_UINT16(a) ((a) & 0xFF)
 #define PROFILE_NUM            1
@@ -265,15 +268,12 @@ static const uint16_t hid_repot_map_ext_desc_uuid =
 		ESP_GATT_UUID_EXT_RPT_REF_DESCR;
 static const uint16_t hid_report_ref_descr_uuid = ESP_GATT_UUID_RPT_REF_DESCR;
 ///the propoty definition
-static const uint8_t char_prop_notify = ESP_GATT_CHAR_PROP_BIT_NOTIFY;
 static const uint8_t char_prop_read = ESP_GATT_CHAR_PROP_BIT_READ;
 static const uint8_t char_prop_write_nr = ESP_GATT_CHAR_PROP_BIT_WRITE_NR;
 static const uint8_t char_prop_read_write = ESP_GATT_CHAR_PROP_BIT_WRITE
 		| ESP_GATT_CHAR_PROP_BIT_READ;
 static const uint8_t char_prop_read_notify = ESP_GATT_CHAR_PROP_BIT_READ
 		| ESP_GATT_CHAR_PROP_BIT_NOTIFY;
-static const uint8_t char_prop_read_write_notify = ESP_GATT_CHAR_PROP_BIT_READ
-		| ESP_GATT_CHAR_PROP_BIT_WRITE | ESP_GATT_CHAR_PROP_BIT_NOTIFY;
 
 /// battary Service
 static const uint16_t battary_svc = ESP_GATT_UUID_BATTERY_SERVICE_SVC;
@@ -305,7 +305,7 @@ static const esp_gatts_attr_db_t bas_att_db[BAS_IDX_NB] = {
 		// Battary level Characteristic - Client Characteristic Configuration Descriptor
 		[BAS_IDX_BATT_LVL_NTF_CFG] = { { ESP_GATT_AUTO_RSP }, { ESP_UUID_LEN_16,
 				(uint8_t *) &character_client_config_uuid, ESP_GATT_PERM_READ
-						| ESP_GATT_PERM_WRITE, sizeof(uint16_t),
+						| ESP_GATT_PERM_WRITE | ESP_GATT_CHAR_PROP_BIT_NOTIFY, sizeof(uint16_t),
 				sizeof(bat_lev_ccc), (uint8_t *) bat_lev_ccc } },
 
 		// Battary level report Characteristic Declaration
@@ -575,7 +575,12 @@ void esp_hidd_prf_cb_hdl(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if,
 			(hidd_le_env.hidd_cb)(ESP_HIDD_EVENT_BLE_CONNECT, &cb_param);
 
 		}
-
+		battary_lev = get_battery_level();
+		ESP_LOGI(HID_LE_PRF_TAG, "set battery value on conn %d, hanlde %d, value %d, length %d\n", 
+		 		param->connect.conn_id, battery_table[BAS_IDX_BATT_LVL_VAL], battary_lev, sizeof(battary_lev));
+		esp_ble_gatts_set_attr_value(battery_table[BAS_IDX_BATT_LVL_VAL], sizeof(uint8_t), &battary_lev);
+		esp_ble_gatts_send_indicate(gatts_if, param->connect.conn_id, battery_table[BAS_IDX_BATT_LVL_VAL], 
+				sizeof(uint8_t), &battary_lev, false);
 
 
 		break;
@@ -606,6 +611,7 @@ void esp_hidd_prf_cb_hdl(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if,
 					__func__, incl_svc.start_hdl);
 			esp_ble_gatts_create_attr_tab(hidd_le_gatt_db, gatts_if,
 					HIDD_LE_IDX_NB, 0);
+			memcpy(battery_table, param->add_attr_tab.handles, sizeof(battery_table));
 		}
 		if (param->add_attr_tab.num_handle == HIDD_LE_IDX_NB
 				&& param->add_attr_tab.status == ESP_GATT_OK) {

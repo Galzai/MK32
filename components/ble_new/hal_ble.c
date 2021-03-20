@@ -28,6 +28,8 @@
 /** @brief Set a global log limit for this file */
 #define LOG_LEVEL_BLE ESP_LOG_INFO
 
+/// @brief Battery level monitor queue
+QueueHandle_t battery_q;
 /// @brief Input queue for sending joystick reports
 QueueHandle_t joystick_q;
 /// @brief Input queue for sending keyboard reports
@@ -78,6 +80,7 @@ uint8_t activateJoystick = 0;
 ///@brief Is Media interface active?
 uint8_t activateMedia = 0;
 
+uint8_t battery_report[1] = { 0 };
 uint8_t key_report[HID_KEYBOARD_IN_RPT_LEN] = { 0 };
 uint8_t mouse_report[HID_MOUSE_IN_RPT_LEN] = { 0 };
 uint8_t media_report[HID_CC_IN_RPT_LEN] = { 0 };
@@ -156,6 +159,33 @@ static void gap_event_handler(esp_gap_ble_cb_event_t event,
 	}
 }
 
+void halBLETask_battery(void * params) {
+
+	if(battery_q != NULL)
+		xQueueReset(battery_q);
+
+	if(battery_q != NULL)
+		{
+			while (1){
+				if(xQueueReceive(battery_q, &battery_report, portMAX_DELAY)){
+					if(sec_conn == false)
+						continue;
+
+				uint8_t battery_lev = *battery_report;
+				ESP_LOGI(HID_LE_PRF_TAG, "set battery value on conn %d, hanlde %d, value %d, length %d\n", 
+		 				hid_conn_id, 42, battery_lev, sizeof(battery_lev));
+				esp_ble_gatts_set_attr_value(42, sizeof(uint8_t), &battery_lev);
+				esp_ble_gatts_send_indicate(hidd_le_env.gatt_if, hid_conn_id, 42, 
+				sizeof(uint8_t), &battery_lev, false);
+				}
+				else {
+					ESP_LOGE(LOG_TAG, "ble hid queue not initialized, retry in 1s");
+					vTaskDelay(1000 / portTICK_PERIOD_MS);
+				}
+			}
+		}
+		
+}
 /** @brief CONTINOUS TASK - sending HID commands via BLE
  * 
  * This task is used to wait for HID commands, sent to the hid_ble
@@ -166,7 +196,7 @@ void halBLETask_keyboard(void * params) {
 
 	//Empty queue if initialized (there might be something left from last connection)
 	if (keyboard_q != NULL)
-		xQueueReset(mouse_q);
+		xQueueReset(keyboard_q);
 
 	//check if queue is initialized
 	if (keyboard_q != NULL) {
@@ -196,7 +226,7 @@ void halBLETask_mouse(void * params) {
 	//Empty queue if initialized (there might be something left from last connection)
 
 	if (mouse_q != NULL)
-		xQueueReset(keyboard_q);
+		xQueueReset(mouse_q);
 
 	//check if queue is initialized
 	if (mouse_q != NULL) {
@@ -321,6 +351,7 @@ esp_err_t halBLEInit(uint8_t enableKeyboard, uint8_t enableMedia,
 	activateJoystick = enableJoystick;
 
 	//initialise queues, even if they might not be used.
+	battery_q = xQueueCreate(32, 1* sizeof(uint8_t));
 	mouse_q = xQueueCreate(32, HID_MOUSE_IN_RPT_LEN * sizeof(uint8_t));
 	keyboard_q = xQueueCreate(32, REPORT_LEN * sizeof(uint8_t));
 	joystick_q = xQueueCreate(32, HID_JOYSTICK_IN_RPT_LEN * sizeof(uint8_t));
@@ -396,11 +427,15 @@ esp_err_t halBLEInit(uint8_t enableKeyboard, uint8_t enableMedia,
 
 	//create BLE task
 	//xTaskCreate(&halBLETask, "ble_task", TASK_BLE_STACKSIZE, NULL, HAL_BLE_TASK_PRIORITY_BASE, NULL);
+	TaskHandle_t xBLETask_battery;
 	TaskHandle_t xBLETask_keyboard;
 	TaskHandle_t xBLETask_mouse;
 	TaskHandle_t xBLETask_media;
 	TaskHandle_t xBLETask_joystick;
 
+	xTaskCreatePinnedToCore(halBLETask_battery, "ble_task_battery",
+			TASK_BLE_STACKSIZE, NULL, configMAX_PRIORITIES, &xBLETask_battery,
+			0);
 	xTaskCreatePinnedToCore(halBLETask_keyboard, "ble_task_keyboard",
 			TASK_BLE_STACKSIZE, NULL, configMAX_PRIORITIES, &xBLETask_keyboard,
 			0);

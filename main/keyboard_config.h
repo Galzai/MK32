@@ -65,7 +65,7 @@
  *
  * */
 #define CHECK_BIT(var,pos) ((var) & (1<<(pos)))
-#define SET_BIT(var,pos) (var |= 1UL << pos);
+#define SET_BIT(var,pos) (var |= 1LLU << pos);
 
 #define MAX_LAYER (LAYERS-1)
 #define MOD_LED_BYTES 2 //bytes for led status and modifiers
