@@ -575,13 +575,14 @@ void esp_hidd_prf_cb_hdl(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if,
 			(hidd_le_env.hidd_cb)(ESP_HIDD_EVENT_BLE_CONNECT, &cb_param);
 
 		}
+#ifdef BATT_STAT
 		battary_lev = get_battery_level();
 		ESP_LOGI(HID_LE_PRF_TAG, "set battery value on conn %d, hanlde %d, value %d, length %d\n", 
 		 		param->connect.conn_id, battery_table[BAS_IDX_BATT_LVL_VAL], battary_lev, sizeof(battary_lev));
 		esp_ble_gatts_set_attr_value(battery_table[BAS_IDX_BATT_LVL_VAL], sizeof(uint8_t), &battary_lev);
 		esp_ble_gatts_send_indicate(gatts_if, param->connect.conn_id, battery_table[BAS_IDX_BATT_LVL_VAL], 
 				sizeof(uint8_t), &battary_lev, false);
-
+#endif
 
 		break;
 	}
