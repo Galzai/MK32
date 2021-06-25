@@ -16,6 +16,7 @@ COMPONENT_SRCDIRS +=../components/u8g2_OLED
 COMPONENT_SRCDIRS +=../components/r_encoder
 COMPONENT_SRCDIRS +=../components/espnow
 COMPONENT_SRCDIRS +=../components/ble_new
+COMPONENT_SRCDIRS +=../components/led_strip
 
 COMPONENT_ADD_INCLUDEDIRS=.
 COMPONENT_ADD_INCLUDEDIRS +=../plugins
@@ -28,6 +29,7 @@ COMPONENT_ADD_INCLUDEDIRS +=../components/u8g2_OLED
 COMPONENT_ADD_INCLUDEDIRS +=../components/r_encoder
 COMPONENT_ADD_INCLUDEDIRS +=../components/espnow
 COMPONENT_ADD_INCLUDEDIRS +=../components/ble_new
+COMPONENT_ADD_INCLUDEDIRS +=../components/led_strip/inc
 
 COMPONENT_EMBED_TXTFILES := ../plugins/cacert.pem
 COMPONENT_EMBED_TXTFILES += ../plugins/prvtkey.pem

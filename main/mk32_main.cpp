@@ -53,6 +53,7 @@
 #include "battery_monitor.h"
 #include "nvs_funcs.h"
 #include "nvs_keymaps.h"
+#include "led_strip/led_strip.h"
 
 #define KEY_REPORT_TAG "KEY_REPORT"
 #define SYSTEM_REPORT_TAG "KEY_REPORT"
@@ -70,6 +71,7 @@ bool DEEP_SLEEP = true; // flag to check if we need to go to deep sleep
 #ifdef OLED_ENABLE
 TaskHandle_t xOledTask;
 #endif
+
 TaskHandle_t xKeyreportTask;
 
 //Task for continually updating the OLED
@@ -296,6 +298,7 @@ extern "C" void deep_sleep(void *pvParameters) {
 #endif
 
 extern "C" void app_main() {
+
 	//Reset the rtc GPIOS
 	rtc_matrix_deinit();
 
@@ -381,6 +384,27 @@ extern "C" void app_main() {
 			configMAX_PRIORITIES, &xOledTask, 1);
 	ESP_LOGI("Oled", "initializezd");
 #endif
+
+	// LED "strip" on the keyboard
+// #ifdef LED_ENABLE
+// static struct led_color_t led_strip_buf_1[LED_STRIP_LENGTH];
+// 	static struct led_color_t led_strip_buf_2[LED_STRIP_LENGTH];
+// 	struct led_strip_t led_strip = {
+// 		.rgb_led_type = RGB_LED_TYPE_WS2812,		
+// 		.led_strip_length = LED_STRIP_LENGTH,
+// 		.rmt_channel = RMT_CHANNEL_1,
+// 		.rmt_interrupt_num = LED_STRIP_RMT_INTR_NUM,
+// 		.gpio = LED_PIN,
+// 		.showing_buf_1 = true,
+// 		.led_strip_buf_1 = led_strip_buf_1,
+// 		.led_strip_buf_2 = led_strip_buf_2,
+// 		.access_semaphore = xSemaphoreCreateBinary()
+// 	};
+	
+// 	led_strip_init(&led_strip);
+// 	led_strip_show(&led_strip);
+// #endif
+	// End of LED
 
 #ifdef BATT_STAT
 	init_batt_monitor();

@@ -27,7 +27,7 @@
 
 //Define matrix
 #define KEYPADS 1 // intended in order to create a Multiple keypad split boards
-#define MATRIX_ROWS 4
+#define MATRIX_ROWS 5
 #define MATRIX_COLS 12 // For split keyboards, define columns for one side only.
 
 //#define NKRO // does not work on Android and iOS!,  we can get 18KRO on those
@@ -40,15 +40,23 @@
 //Encoder definitions
 //#define R_ENCODER // undefine if no rotary encoder is used
 //#define R_ENCODER_SLAVE // undefine if no rotary encoder is used on slave pad
-#define ENCODER_A_PIN GPIO_NUM_17 // encoder phase A pin
+//#define ENCODER_A_PIN GPIO_NUM_17 // encoder phase A pin
+#define ENCODER_A_PIN GPIO_NUM_36 // encoder phase A pin
 #define ENCODER_B_PIN GPIO_NUM_34// encoder phase B pin
-#define ENCODER_S_PIN GPIO_NUM_16// encoder switch pin
+//#define ENCODER_S_PIN GPIO_NUM_16// encoder switch pin
+#define ENCODER_S_PIN GPIO_NUM_39// encoder switch pin
 
 //OLED Parameters
-//#define OLED_ENABLE //undefine if no oled is used
-#define ROTATION DEG270
+#define OLED_ENABLE //undefine if no oled is used
+#define ROTATION LANDSCAPE
 #define OLED_SDA_PIN GPIO_NUM_21
 #define OLED_SCL_PIN GPIO_NUM_22
+
+// LED GLOW
+#define LED_ENABLE
+#define LED_PIN GPIO_NUM_5
+#define LED_STRIP_LENGTH 2U
+#define LED_STRIP_RMT_INTR_NUM 19U
 
 /*Battery monitoring
  * Please read check battery_monitor.h for resistor values before applying
