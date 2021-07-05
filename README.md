@@ -4,7 +4,19 @@ Dung Phan's fork:
 - Updated to ESP-IDF v4.4.
 - Migrated to CMake build system.
 - Adding Docker to avoid dependency mess.
-- Developed "CatiONE OLKB" that relies on this firmware (https://github.com/dungphan90/OLKBBLE.git, don't judge me yet, I will clean up this codebase "soon"). Notice the change in the keyboard matrix and the GPIO connections.3
+- Developed "CatiONE OLKB" that relies on this firmware (https://github.com/dungphan90/OLKBBLE.git, don't judge me yet, I will clean up this codebase "soon"). Notice the change in the keyboard matrix and the GPIO connections.
+
+### Easy build process with Docker.
+```
+git clone https://github.com/dungphan90/MK32.git
+cd MK32
+git checkout cmake-develop
+chmod +x ./build.sh
+chmod +x ./run.sh
+./build.sh
+./run.sh
+```
+Once you're inside the container, you can run `make` to buid, `make flash` to flash the firmware, and `make monitor` to run debug. 
 
 ___
 
