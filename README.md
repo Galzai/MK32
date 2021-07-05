@@ -4,7 +4,7 @@ Dung Phan's fork:
 - Updated to ESP-IDF v4.4.
 - Migrated to CMake build system.
 - Adding Docker to avoid dependency mess.
-- Developed "CatiONE OLKB" that relies on this firmware.
+- Developed "CatiONE OLKB" that relies on this firmware (https://github.com/dungphan90/OLKBBLE.git, don't judge me yet, I will clean up this codebase "soon"). Notice the change in the keyboard matrix and the GPIO connections.3
 
 ___
 
