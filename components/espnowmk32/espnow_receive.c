@@ -40,6 +40,8 @@
 #include "r_encoder.h"
 #include "nvs_keymaps.h"
 
+QueueHandle_t espnow_receive_q;
+
 //ESP-now tag for reports
 #define ESP_NOW_TAG "ESP-NOW"
 
@@ -67,7 +69,7 @@ static void wifi_initialize_receive(void){
 
 	//Printout the mac ID (in case we change the starting one)
 	printf("\nDEVICE MAC ADDRESS:[");
-	for(int i=0;i<6; i++)
+	for (int i=0;i<6; i++)
 	{
 		printf("%d:", slave_mac_adr[i]);
 	}
