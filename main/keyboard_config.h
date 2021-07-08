@@ -21,7 +21,7 @@
 
 #define MASTER  // undefine if you are not flashing the main controller
 #define SPLIT_MASTER	 // undefine if keyboard is not split and master
-#define SLAVE	 // undefine if keyboard is master
+//#define SLAVE	 // undefine if keyboard is master
 
 #define DEBOUNCE 4 //debounce time in ms
 
@@ -38,14 +38,14 @@
 //#define ROW2COL
 
 //Encoder definitions
-#define R_ENCODER // undefine if no rotary encoder is used
+//#define R_ENCODER // undefine if no rotary encoder is used
 #define R_ENCODER_SLAVE // undefine if no rotary encoder is used on slave pad
 #define ENCODER_A_PIN GPIO_NUM_17 // encoder phase A pin
 #define ENCODER_B_PIN GPIO_NUM_34// encoder phase B pin
 #define ENCODER_S_PIN GPIO_NUM_16// encoder switch pin
 
 //OLED Parameters
-#define OLED_ENABLE //undefine if no oled is used
+//#define OLED_ENABLE //undefine if no oled is used
 #define ROTATION DEG270
 #define OLED_SDA_PIN GPIO_NUM_21
 #define OLED_SCL_PIN GPIO_NUM_22
@@ -54,7 +54,7 @@
  * Please read check battery_monitor.h for resistor values before applying
  * use ADC1 only,  */
 
-#define BATT_STAT //define to enable battery monitoring
+//#define BATT_STAT //define to enable battery monitoring
 #define BATT_PIN ADC1_CHANNEL_7 //gpio pin 35, refer to the esp32 before modifying
 
 //deep sleep parameters, mind that reconnecting after deep sleep might take a minute or two
