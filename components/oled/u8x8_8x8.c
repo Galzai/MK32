@@ -35,7 +35,7 @@
 
 */
 
-#include "../u8g2_OLED/u8x8.h"
+#include "u8x8.h"
 
 #if defined(ESP8266)
 uint8_t u8x8_pgm_read_esp(const uint8_t * addr) 

@@ -35,7 +35,7 @@
 
 */
 
-#include "../u8g2_OLED/u8g2.h"
+#include "u8g2.h"
 
 #ifdef __GNUC__
 #define U8G2_ALWAYS_INLINE __inline__ __attribute__((always_inline))

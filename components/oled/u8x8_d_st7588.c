@@ -38,7 +38,7 @@
 */
 
 
-#include "../u8g2_OLED/u8x8.h"
+#include "u8x8.h"
 
 /* function set, bit 2: power down, bit 3: MY, bit 4: MX, bit 5: must be 1 */
 #define FS (0x020)

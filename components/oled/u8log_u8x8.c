@@ -34,7 +34,7 @@
 
 */
 
-#include "../u8g2_OLED/u8x8.h"
+#include "u8x8.h"
 
 static void u8x8_DrawLogLine(u8x8_t *u8x8, uint8_t disp_x, uint8_t disp_y, uint8_t buf_y, u8log_t *u8log) U8X8_NOINLINE;
 static void u8x8_DrawLogLine(u8x8_t *u8x8, uint8_t disp_x, uint8_t disp_y, uint8_t buf_y, u8log_t *u8log)

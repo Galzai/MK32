@@ -32,7 +32,7 @@
   ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  
 
 */
-#include "../u8g2_OLED/u8g2.h"
+#include "u8g2.h"
 
 /* Clear screen buffer & display reliable for all u8g2 displays. */
 /* This is done with u8g2 picture loop, because we can not use the u8x8 function in all cases */

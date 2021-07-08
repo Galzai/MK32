@@ -58,7 +58,7 @@
 */
 
 
-#include "../u8g2_OLED/u8x8.h"
+#include "u8x8.h"
 
 
 #define L(a,b,c,d) (((a)<<6)|((b)<<4)|((c)<<2)|(d))

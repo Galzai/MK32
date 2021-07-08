@@ -34,7 +34,7 @@
 */
 
 #include <string.h>
-#include "../u8g2_OLED/u8g2.h"
+#include "u8g2.h"
 
 /*============================================*/
 void u8g2_ClearBuffer(u8g2_t *u8g2)

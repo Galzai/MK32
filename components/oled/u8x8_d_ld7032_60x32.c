@@ -35,7 +35,7 @@
 */
 
 
-#include "../u8g2_OLED/u8x8.h"
+#include "u8x8.h"
 
 
 /* testboard U8GLIB_LD7032_60x32 u8g(11, 12, 9, 10, 8);	// SPI Com: SCK = 11, MOSI = 12, CS = 9, A0 = 10, RST = 8  (SW SPI Nano Board) */

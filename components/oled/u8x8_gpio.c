@@ -34,7 +34,7 @@
 */
 
 
-#include "../u8g2_OLED/u8x8.h"
+#include "u8x8.h"
 
 
 void u8x8_gpio_call(u8x8_t *u8x8, uint8_t msg, uint8_t arg)

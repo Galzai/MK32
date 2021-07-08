@@ -1,7 +1,7 @@
 /* u8g2_d_setup.c */
 /* generated code, codebuild, u8g2 project */
 
-#include "../u8g2_OLED/u8g2.h"
+#include "u8g2.h"
 
 /* ssd1305 */
 /* ssd1305 1 */

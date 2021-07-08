@@ -33,7 +33,7 @@
 
 */
 
-#include "../u8g2_OLED/u8g2.h"
+#include "u8g2.h"
 
 /* this function is used as "u8g2_get_kerning_cb" */
 /*

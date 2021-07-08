@@ -33,7 +33,7 @@
   
 */
 
-#include "../u8g2_OLED/u8x8.h"
+#include "u8x8.h"
 
 uint8_t u8x8_draw_button_line(u8x8_t *u8x8, uint8_t y, uint8_t w, uint8_t cursor, const char *s)
 {

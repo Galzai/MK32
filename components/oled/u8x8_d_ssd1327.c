@@ -34,7 +34,7 @@
 */
 
 
-#include "../u8g2_OLED/u8x8.h"
+#include "u8x8.h"
 
 
 static const uint8_t u8x8_d_ssd1327_96x96_powersave0_seq[] = {

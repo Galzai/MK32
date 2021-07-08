@@ -17,7 +17,7 @@ extern "C" {
 //Queue for receiving report from slave
 extern QueueHandle_t espnow_receive_q;
 
-/** @Setup the function for receiveing data via espnow
+/** @Setup the function for receiving data via espnow
  * */
 void espnow_receive(void);
 

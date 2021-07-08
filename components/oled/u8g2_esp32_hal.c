@@ -1,4 +1,4 @@
-#include "../u8g2_OLED/u8g2_esp32_hal.h"
+#include "u8g2_esp32_hal.h"
 
 #include <stdio.h>
 #include <string.h>

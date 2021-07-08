@@ -27,7 +27,7 @@
   
 */
 
-#include "../u8g2_OLED/u8g2.h"
+#include "u8g2.h"
 
 
 static const uint8_t u8x8_d_st7586s_sleep_on[] = {

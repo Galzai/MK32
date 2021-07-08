@@ -34,7 +34,7 @@
 
 */
 
-#include "../u8g2_OLED/u8g2.h"
+#include "u8g2.h"
 /*
   Draw the u8log text at the specified x/y position.
   x/y position is the reference position of the first char of the first line.

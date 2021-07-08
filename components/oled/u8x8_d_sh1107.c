@@ -34,7 +34,7 @@
 */
 
 
-#include "../u8g2_OLED/u8x8.h"
+#include "u8x8.h"
 
 /* code copyied from SSD1306 */
 

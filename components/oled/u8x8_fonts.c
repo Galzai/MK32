@@ -1,7 +1,7 @@
 /*
   u8x8_fonts.c
 */
-#include "../u8g2_OLED/u8x8.h"
+#include "u8x8.h"
 
 /*
   Fontname: -FreeType-Amstrad CPC extended-Medium-R-Normal--8-80-72-72-P-64-ISO10646-1

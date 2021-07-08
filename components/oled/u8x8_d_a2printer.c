@@ -39,7 +39,7 @@
 */
 
 
-#include "../u8g2_OLED/u8x8.h"
+#include "u8x8.h"
 
 #define LINE_MIN_DELAY_MS 15
 /* higher values improve quality */

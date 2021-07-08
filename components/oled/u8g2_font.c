@@ -33,7 +33,7 @@
 
 */
 
-#include "../u8g2_OLED/u8g2.h"
+#include "u8g2.h"
 
 /* size of the font data structure, there is no struct or class... */
 /* this is the size for the new font format */

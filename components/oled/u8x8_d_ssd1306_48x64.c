@@ -32,7 +32,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  */
-#include "../u8g2_OLED/u8x8.h"
+#include "u8x8.h"
 
 /* Winstar 0.71 OLED */
 static const uint8_t u8x8_d_ssd1306_48x64_winstar_init_seq[] =

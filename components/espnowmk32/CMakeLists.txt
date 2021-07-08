@@ -1,3 +1,3 @@
-idf_component_register(SRCS "espnow_receive.c" "espnow_send.c"
-                    INCLUDE_DIRS "include"
-                    REQUIRES "nvs_flash" "ble" "rotencoder" "nvsfuncs")
+idf_component_register(SRCS "espnow_receive.cpp" "espnow_send.cpp"
+                    INCLUDE_DIRS "include" "${CMAKE_SOURCE_DIR}/main"
+                    REQUIRES "nvs_flash" "ble" "rotencoder" "nvsfuncs" "esp_wifi" "freertos")

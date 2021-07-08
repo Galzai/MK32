@@ -34,7 +34,7 @@
   
 */
 
-#include "../u8g2_OLED/u8x8.h"
+#include "u8x8.h"
 
 uint8_t u8x8_byte_SetDC(u8x8_t *u8x8, uint8_t dc)
 {

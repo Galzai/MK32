@@ -36,7 +36,7 @@
   --> no support for contrast adjustment, flip and power down.
 */
 
-#include "../u8g2_OLED/u8x8.h"
+#include "u8x8.h"
 
 #define SWAP8(a) ((((a) & 0x80) >> 7) | (((a) & 0x40) >> 5) | (((a) & 0x20) >> 3) | (((a) & 0x10) >> 1) | (((a) & 0x08) << 1) | (((a) & 0x04) << 3) | (((a) & 0x02) << 5) | (((a) & 0x01) << 7))
 

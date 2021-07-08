@@ -33,7 +33,7 @@
 
 */
 
-#include "../u8g2_OLED/u8g2.h"
+#include "u8g2.h"
 
 
 void u8g2_SetBitmapMode(u8g2_t *u8g2, uint8_t is_transparent) {

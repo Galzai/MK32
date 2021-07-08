@@ -35,7 +35,7 @@
   
 */
 
-#include "../u8g2_OLED/u8x8.h"
+#include "u8x8.h"
 
 static uint8_t u8x8_read_pin_state(u8x8_t *u8x8)
 {

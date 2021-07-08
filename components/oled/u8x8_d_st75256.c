@@ -58,7 +58,7 @@
 */
 
 
-#include "../u8g2_OLED/u8x8.h"
+#include "u8x8.h"
 
 
 /* not a real power down for the st75256... just a display off */

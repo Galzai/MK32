@@ -35,7 +35,7 @@
 
 */
 
-#include "../u8g2_OLED/u8x8.h"
+#include "u8x8.h"
 
 uint8_t u8x8_GetStringLineCnt(const char *str)
 {

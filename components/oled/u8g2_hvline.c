@@ -42,7 +42,7 @@
 */
 
 #include <assert.h>
-#include "../u8g2_OLED/u8g2.h"
+#include "u8g2.h"
 
 
 

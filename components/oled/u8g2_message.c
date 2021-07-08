@@ -33,7 +33,7 @@
   
 */
 
-#include "../u8g2_OLED/u8g2.h"
+#include "u8g2.h"
 
 #define SPACE_BETWEEN_BUTTONS_IN_PIXEL 6
 #define SPACE_BETWEEN_TEXT_AND_BUTTONS_IN_PIXEL 3
