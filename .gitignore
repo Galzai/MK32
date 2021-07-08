@@ -3,3 +3,4 @@ build/
 cmake-*
 .idea/
 sdkconfig.old
+sdkconfig
