@@ -46,7 +46,7 @@
 QueueHandle_t espnow_matrix_send_q;
 QueueHandle_t espnow_encoder_send_q;
 //Mac adress of the main device (only mac address needed for ESP-NOW)
-static uint8_t master_mac_adr[6]= {0x80,0x7d,0x3a,0xba,0x26,0x88};
+static uint8_t master_mac_adr[6] = {0x84,0xCC,0xA8,0x2C,0xC2,0x2E};  // {0x80,0x7d,0x3a,0xba,0x26,0x88};
 
 uint8_t channel = 10;
 static esp_now_peer_info_t Peer;
