@@ -46,6 +46,21 @@
 #define JP_GT   KC_GT   // >
 #define JP_QUES KC_QUES // ?
 
+/*
+// Standard Shifted Keys
+#define KC_TILD LSFT(KC_GRV) // ~ 
+#define KC_EXLM LSFT(KC_1)   // !
+#define KC_AT   LSFT(KC_2)   // @
+#define KC_HASH LSFT(KC_3)   // #
+#define KC_DLR  LSFT(KC_4)   // $
+#define KC_PERC LSFT(KC_5)   // %
+#define KC_CIRC LSFT(KC_6)   // ^
+#define KC_AMPR LSFT(KC_7)   // & 
+#define KC_ASTR LSFT(KC_8)   // *
+#define KC_LPRN LSFT(KC_9)   // (
+#define KC_RPRN LSFT(KC_0)   // ) 
+*/
+
 #define KC_LCTL KC_LCTRL
 #define KC_RCTL KC_RCTRL
 #define KC_LSFT KC_LSHIFT

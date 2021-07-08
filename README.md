@@ -1,6 +1,25 @@
 # MK32 - Simple BLE keyboard for ESP32
-Note: Currently tested and working on esp-idf v4.0.  
-MK32 is a BLE keyboard firmware for ESP32 Microcontrollers,designed to be relativley easily customizable.  
+
+dungphan90's fork:
+- Updated to ESP-IDF v4.4.
+- Migrated to CMake build system.
+- Added Docker to avoid dependency mess.
+- Added keyboard config and layout for "CatiONE OLKB" (https://github.com/dungphan90/OLKBBLE.git).
+
+### Easy build process with Docker.
+```
+git clone https://github.com/dungphan90/MK32.git
+cd MK32
+git checkout cmake-develop
+chmod +x ./build.sh
+chmod +x ./run.sh
+./build.sh
+./run.sh
+```
+Once you're inside the container, you can run `make` to buid, `make flash` to flash the firmware, and `make monitor` to run debug.
+___
+
+MK32 is a BLE keyboard firmware for ESP32 Microcontrollers,designed to be relatively easily customizable.  
 Please refer to the [MK32 Wiki page](https://github.com/Galzai/MK32/wiki) for information about building your own keyboard.
 Also note that this repository is not heavily maintained.
 

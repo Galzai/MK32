@@ -27,7 +27,7 @@
 #include "freertos/event_groups.h"
 #include "esp_system.h"
 #include "esp_wifi.h"
-#include "esp_event_loop.h"
+#include "esp_event.h"
 #include "esp_log.h"
 #include "nvs_flash.h"
 #include "esp_bt.h"
@@ -47,7 +47,7 @@
 #include "matrix.h"
 #include "keypress_handles.c"
 #include "keyboard_config.h"
-#include "espnow_recieve.h"
+#include "espnow_receive.h"
 #include "espnow_send.h"
 #include "r_encoder.h"
 #include "battery_monitor.h"
@@ -239,7 +239,7 @@ extern "C" void espnow_update_matrix(void *pvParameters) {
 
 	uint8_t CURRENT_MATRIX[MATRIX_ROWS][MATRIX_COLS] = { 0 };
 	while (1) {
-		if (xQueueReceive(espnow_recieve_q, &CURRENT_MATRIX, 10000)) {
+		if (xQueueReceive(espnow_receive_q, &CURRENT_MATRIX, 10000)) {
 			DEEP_SLEEP = false;
 			memcpy(&SLAVE_MATRIX_STATE, &CURRENT_MATRIX, sizeof CURRENT_MATRIX);
 		}
@@ -350,8 +350,8 @@ extern "C" void app_main() {
 
 	//If the device is a master for split board initialize receiving reports from slave
 #ifdef SPLIT_MASTER
-	espnow_recieve_q = xQueueCreate(32, REPORT_LEN * sizeof(uint8_t));
-	espnow_recieve();
+	espnow_receive_q = xQueueCreate(32, REPORT_LEN * sizeof(uint8_t));
+	espnow_receive();
 	xTaskCreatePinnedToCore(espnow_update_matrix, "ESP-NOW slave matrix state",
 			4096, NULL, configMAX_PRIORITIES, NULL, 1);
 	ESP_LOGI("ESPNOW", "initializezd");
