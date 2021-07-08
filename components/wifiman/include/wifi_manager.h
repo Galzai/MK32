@@ -9,10 +9,10 @@
 #define WIFI_MANAGER_WIFI_MANAGER_H_
 
 #include "keyboard_config.h"
-#include "tcpip_adapter.h"
+#include "esp_netif.h"
 #include "esp_wifi.h"
 #include "esp_wifi_types.h"
-#include "esp_event_loop.h"
+#include "esp_event.h"
 
 
 
