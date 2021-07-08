@@ -239,7 +239,7 @@ extern "C" void espnow_update_matrix(void *pvParameters) {
 
 	uint8_t CURRENT_MATRIX[MATRIX_ROWS][MATRIX_COLS] = { 0 };
 	while (1) {
-		if (xQueueReceive(espnow_recieve_q, &CURRENT_MATRIX, 10000)) {
+		if (xQueueReceive(espnow_receive_q, &CURRENT_MATRIX, 10000)) {
 			DEEP_SLEEP = false;
 			memcpy(&SLAVE_MATRIX_STATE, &CURRENT_MATRIX, sizeof CURRENT_MATRIX);
 		}
