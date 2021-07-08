@@ -40,7 +40,6 @@ Also note that this repository is not heavily maintained.
 
 ## To-do:
 - Refactor some bad coding habits (magic numbers etc, sorry I started this project when I had 0 experience!). 
-- Update esp-idf version to v4.1.
 - Plugin API support(Implemented):  
 	* Currently only one plugin can run at a time (to modify).
 - More than 2 pads with espnow (currently supports 2 pads) - Optional.
