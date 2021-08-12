@@ -157,6 +157,8 @@ void layer_adjust(uint16_t keycode) {
 	prev_time = cur_time;
 }
 
+uint8_t matrix_prev_state[MATRIX_ROWS][MATRIX_COLS] = { 0 };
+
 // checking the state of each key in the matrix
 uint8_t *check_key_state(uint16_t **keymap) {
 
@@ -166,9 +168,12 @@ uint8_t *check_key_state(uint16_t **keymap) {
 		uint8_t matrix_state[MATRIX_ROWS][MATRIX_COLS] = { 0 };
 		memcpy(matrix_state, matrix_states[pad], sizeof(matrix_state));
 
-		for (uint8_t col = (MATRIX_COLS * pad);
-				col < ((pad + 1) * (MATRIX_COLS)); col++) {
+		for (uint8_t col = (MATRIX_COLS * pad); col < ((pad + 1) * (MATRIX_COLS)); col++) {
 			for (uint8_t row = 0; row < MATRIX_ROWS; row++) {
+				
+				//if there are no changes on this matrix position, skip to next position
+				if(matrix_state[row][col] == matrix_prev_state[row][col])	
+					continue;
 
 				uint16_t report_index = (2 + col + row * KEYMAP_COLS);
 				keycode = keymap[row][col];
@@ -301,6 +306,7 @@ uint8_t *check_key_state(uint16_t **keymap) {
 				}
 			}
 		}
+		memcpy(matrix_prev_state, matrix_state, sizeof(matrix_state));
 	}
 	current_report[0] = modifier;
 	current_report[1] = led_status;
