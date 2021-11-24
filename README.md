@@ -8,9 +8,8 @@ dungphan90's fork:
 
 ### Easy build process with Docker.
 ```
-git clone https://github.com/dungphan90/MK32.git
+git clone https://github.com/Galzai/MK32.git
 cd MK32
-git checkout cmake-develop
 chmod +x ./build.sh
 chmod +x ./run.sh
 ./build.sh
