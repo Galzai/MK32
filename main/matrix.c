@@ -197,7 +197,7 @@ void scan_matrix(void) {
 #ifdef ROW2COL
 	// Setting row pin as low, and checking if the input of a column pin changes.
 	for(uint8_t row=0; row < MATRIX_ROWS; row++) {
-		gpio_set_level(MATRIX_ROWS_PINS[row], 0);
+		gpio_set_level(MATRIX_ROWS_PINS[row], 1);
 
 		for(uint8_t col=0; col <MATRIX_COLS; col++) {
 
