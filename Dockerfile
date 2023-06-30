@@ -4,5 +4,5 @@ WORKDIR /root/workspace
 COPY sdkconfig.defaults README.md CMakeLists.txt partitions.csv .
 COPY components ./components
 COPY main ./main
-RUN make
 RUN /bin/bash -c "source /opt/esp/idf/export.sh && cmake -B cmakebuild -S ."
+WORKDIR /root/workspace/cmakebuild
