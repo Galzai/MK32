@@ -1,6 +1,5 @@
 FROM espressif/idf:release-v4.4
-RUN mkdir /home/workspace
-RUN mkdir /home/workspace/cmakebuild
+RUN mkdir -pv /root/workspace/cmakebuild
 COPY components /home/workspace/components
 COPY main /home/workspace/main
 COPY CMakeLists.txt /home/workspace/
