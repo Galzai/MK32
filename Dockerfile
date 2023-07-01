@@ -3,9 +3,11 @@ RUN mkdir -pv /root/workspace/cmakebuild
 WORKDIR /root/workspace
 COPY sdkconfig.defaults README.md CMakeLists.txt partitions.csv .
 COPY components ./components
-COPY main ./main
 
+ARG KEYBOARD_FILES_FOLDER=default
 FROM initial as keyboard
+COPY main main/
+ADD keyboards/${KEYBOARD_FILES_FOLDER} ./main
 RUN /bin/bash -c "source /opt/esp/idf/export.sh && cmake -B cmakebuild -S . && cd cmakebuild && make"
 WORKDIR /root/workspace/cmakebuild
 
