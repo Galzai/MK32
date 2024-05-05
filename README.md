@@ -1,5 +1,7 @@
 # MK32 - Simple BLE keyboard for ESP32
 
+### *** This repo is not maintained ***
+### *** This was one of my first software projects and is very poorly designed and written. I recommend seeking an alternative FW solution ***
 dungphan90's fork:
 - Updated to ESP-IDF v4.4.
 - Migrated to CMake build system.
